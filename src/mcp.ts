@@ -51,8 +51,10 @@ layout_legend spells out every one of them.
 Under the first line every kind of finding is summarized once with a count, then since last run
 says what went away and what appeared against the previous run of the same page.
 
-Findings are information, not verdicts. A flagged element may be right by design, and no flag is
-not proof that something is correct.
+Every finding is a measurement of what the browser drew, not a guess. The number happened. What is
+still yours to judge is whether it matters: a badge 6px outside its card may be the design. Judge
+that from the page, not by assuming the tool is wrong, and say which of the two you decided. An
+element with no finding is not thereby correct, the tool only reports what it measures.
 
 Call layout_legend once for the full syntax.`;
 
@@ -64,7 +66,8 @@ const { version } = createRequire(import.meta.url)('../package.json') as { versi
 const instructions = `layout-lens measures a rendered page in a real browser. Run inspect_layout
 after every CSS change, before deciding a fix worked, and before taking a screenshot, since reading
 the file cannot tell you what the browser drew. Its syntax is dense: call layout_legend once per
-session and keep it, it never changes.`;
+session and keep it, it never changes. What it reports was measured off the rendered page, so treat
+a finding as true and decide whether it matters, rather than waving it away as a false positive.`;
 
 const server = new McpServer({ name: 'layout-lens', version }, { instructions });
 
