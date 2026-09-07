@@ -103,14 +103,9 @@ anything.
 
 ## Open
 
-- `notes/static-review.md` holds nine confirmed wrong-output bugs with a proof page for each. Worth
-  working through before anything else. The worst: a page that only sets `overflow-x: hidden` on the
-  body is reported as scroll locked by a dialog; the writing direction is read from `html` alone, so
-  `dir="rtl"` on a wrapper mirrors every start and end silently; and an `overflow: hidden` ancestor
-  is treated as clipping a fixed descendant it cannot clip.
-- `notes/perf-design.md` has the profiled fix, ranked. Three sibling scans dominate, coverage
-  sampling does not. The first two fixes change no output and buy about two seconds at 800 rows.
-- `notes/coverage.md` is the printable-things matrix behind the note below.
+Every bug in `notes/static-review.md` is fixed, and its proof pages are still the fastest way to
+check none of them come back. `notes/perf-design.md` still has the ranked passes nobody has touched
+below the top few. `notes/coverage.md` is the printable-things matrix behind the note below.
 
 - The suites are softer than their scores read. `scoreCleanPage` ignores `expect`, so a clean page's
   tag claims assert nothing, and the phrase match passes on enough words that an impossible
@@ -125,12 +120,11 @@ anything.
 - `screenshot_layout` will render any local file and hand back the picture, which is an arbitrary
   read when the caller is a model that just read a web page. The CLI is fine, a human typed the
   path. The server should default to the working directory and http, with a flag to widen it.
-- The run cache is a predictable name in the shared temp directory, written without `O_NOFOLLOW`
-  and read back with a bare `JSON.parse`. Validate it is an array of strings on read.
-- The MCP parameters have no upper bounds, and `page.evaluate` has no timeout, so one call can hang
-  forever on a page with a few thousand siblings.
-- Runtime is quadratic on long lists. 200 rows takes about 1.8s. The per-element sibling and cousin
-  passes are where it is.
+- The run cache is a predictable name in the shared temp directory, written without `O_NOFOLLOW`.
+  What it holds is checked on read, but the write can still follow a symlink someone planted.
+- The sibling and cousin passes still scan every sibling for every element. A trivial page takes
+  0.8s and eight hundred rows take 3.9s, which is fine, but the shape is still quadratic and a page
+  with thousands of siblings will feel it.
 - A finding that repeats identically down a whole list should collapse to one line. MDN prints one
   layout convention 110 times.
 - Wrapped inline elements. A span across two lines has a union rect that is not real geometry.
