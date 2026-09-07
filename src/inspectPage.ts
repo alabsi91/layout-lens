@@ -283,8 +283,8 @@ function summarizeFindings(entries: FindingEntry[]): string {
   // character no finding can hold. A plain `N` matched the capital in `div.Nav` and printed the
   // class back as `div.av`.
   const valuePlaceholder = String.fromCharCode(0xe000);
-  // leftover sentinel character, this whole line can be deleted: '';
-  // leftover sentinel character, this whole line can be deleted: '';
+  // the same character written out, for anyone searching the file for it: '';
+  //';
   // Quoted words are the element's own text, not a measurement. A label reading "908" is not a number
   // to put in a range.
   const maskQuotedText = (finding: string) => finding.replace(/"[^"]*"/g, '"…"');
