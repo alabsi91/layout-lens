@@ -249,6 +249,25 @@ function describeContrastGroup(inkColor: string, group: ContrastGroup): string {
   return `  ${inkColor} fails contrast on ${backgrounds}, ${elements}, worst ${group.worstRatio} on ${group.worstBackground} — ${shown}`;
 }
 
+// Something a reader cannot see comes before something they can. A hundred decorative boxes with no
+// words in them are worth knowing about and are almost never the reason someone ran this, and
+// sorting on count alone put them at the top while the one button nobody can click sat at the
+// bottom. Within a group the count still decides.
+const summaryOrder = [
+  /\bhidden by\b/,
+  /\bclipped\b|\bscrolled out\b|\boutside viewport\b/,
+  /\bcovered by\b|\boverlaps\b/,
+  /\btruncated\b|\boverflows\b/,
+  /\bcontrast\b|\bnot loaded\b/,
+  /\boff-center\b|\bthan\b/,
+  /\buneven spacing\b|\bfree\b/,
+];
+
+function getSummaryRank(line: string): number {
+  const found = summaryOrder.findIndex((kind) => kind.test(line));
+  return found === -1 ? summaryOrder.length : found;
+}
+
 // Same finding on many elements is one bug. Say it once with a count, before the tree.
 function summarizeFindings(entries: FindingEntry[]): string {
   const elementsByFinding = new Map<string, string[]>();
@@ -327,7 +346,7 @@ function summarizeFindings(entries: FindingEntry[]): string {
     countedLines.push({ count: group.identifiers.length, text: describeContrastGroup(inkColor, group) });
   }
 
-  const lines = countedLines.sort((a, b) => b.count - a.count).map((line) => line.text);
+  const lines = countedLines.sort((a, b) => getSummaryRank(a.text) - getSummaryRank(b.text) || b.count - a.count).map((line) => line.text);
   const total = countedLines.reduce((sum, line) => sum + line.count, 0);
   return `findings: ${total} on ${countedLines.length} kinds\n${lines.join('\n')}`;
 }
@@ -385,7 +404,12 @@ function replaceMeasurements(line: string, replace: (value: string) => string): 
   const name = nameEnd === -1 ? '' : line.slice(0, nameEnd + 2);
   const rest = line.slice(name.length);
 
-  return name + rest.replace(/"[^"]*"|-?\d+(?:\.\d+)?/g, (match) => (match.startsWith('"') ? match : replace(match)));
+  // Element names inside the finding are matched whole and passed through, along with quoted words.
+  // A finding naming `div.no-scrollbar.z-10` was coming back as `div.no-scrollbar.z7 to -10`.
+  const skipped = /"[^"]*"|\b[a-z][a-z0-9]*(?:#[\w-]+|\.[^\s,]+|:nth-child\(\d+\))+/g;
+  const measurement = /-?\d+(?:\.\d+)?/g;
+
+  return name + rest.replace(new RegExp(`${skipped.source}|${measurement.source}`, 'g'), (match) => (/^-?[\d.]+$/.test(match) ? replace(match) : match));
 }
 
 function getFindingShape(line: string): string {
