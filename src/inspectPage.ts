@@ -546,13 +546,13 @@ function finishAnimations(): void {
   }
 }
 
-type Viewport = { width: number; height: number };
+export type Viewport = { width: number; height: number };
 
 // The phone, the tablet and the laptop everyone checks. A width on its own gets the height that
 // goes with it.
 const defaultHeightByWidth: Record<number, number> = { 390: 844, 820: 1180, 1280: 720 };
 
-function parseViewports(widths: (number | string)[], fallbackHeight: number): Viewport[] {
+export function parseViewports(widths: (number | string)[], fallbackHeight: number): Viewport[] {
   return widths.map((entry) => {
     const [widthText = '', heightText] = String(entry).trim().split('x');
     const width = Number(widthText);

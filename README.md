@@ -62,9 +62,10 @@ That is the whole setup. Your agent now has three tools.
 - `inspect_layout` measures the page and returns the tree. It takes a url or a file path, a viewport,
   a scroll position, a color scheme, `findings_only` when the agent wants just what looks wrong,
   `colors` for the hex of everything that is painted, and `element` to print one component instead of
-  the page.
+  the page. `widths` measures the page at several viewports and `schemes` in both color schemes, and
+  says which findings only show up in some of them.
 - `screenshot_layout` returns a png of the same page, whole or one element, when the agent does want
-  to look.
+  to look. It takes `widths` and `schemes` too, and returns one picture per combination.
 - `layout_legend` returns the syntax. A model reads it once instead of on every run.
 
 Tell your agent to run `inspect_layout` after it changes CSS, before it decides it is done.

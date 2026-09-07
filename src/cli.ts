@@ -124,7 +124,7 @@ if (values['no-children'] && !values.element) {
 if (values.screenshot) {
   const outputPath = values.screenshot;
   try {
-    const { png } = await screenshotPage({
+    const shots = await screenshotPage({
       target,
       width,
       height,
@@ -133,6 +133,8 @@ if (values.screenshot) {
       timeout,
       element: values.element,
     });
+
+    const png = shots[0]!.png;
 
     mkdirSync(dirname(outputPath), { recursive: true });
     writeFileSync(outputPath, png);

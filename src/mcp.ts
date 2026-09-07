@@ -167,8 +167,12 @@ The picture shows what is drawn. It does not tell you a label is 3px off center 
 clipped by 10px, inspect_layout does. Use them together: numbers to find the bug, picture to see
 what it looks like.
 
-The image comes back with a line saying its pixel size, and in element mode where the element sits
-on the page.`;
+widths renders the page at several browser viewports and schemes renders it in both color schemes,
+the same way inspect_layout does, and you get one picture per combination. They set the window the
+page is laid out in, not the size of the png, which is as tall as the page turns out to be.
+
+The image comes back with a line saying its pixel size, the viewport and scheme it was taken at, and
+in element mode where the element sits on the page.`;
 
 server.registerTool(
   'screenshot_layout',
@@ -178,23 +182,37 @@ server.registerTool(
       target: z.string().describe('A url, or a path to a local html file.'),
       width: z.number().int().min(1).max(10000).default(1280).describe('Viewport width in px.'),
       height: z.number().int().min(1).max(10000).default(720).describe('Viewport height in px.'),
+      widths: z
+        .array(z.union([z.number(), z.string()]))
+        .max(10)
+        .optional()
+        .describe(
+          'Render the page at each of these browser viewports and take a shot of each, as [390, 820, 1280] or ["390x844", "1280x720"]. A width on its own gets 844 at 390, 1180 at 820, 720 at 1280, and the height option anywhere else. Width is ignored when this is given.',
+        ),
       scheme: z.enum(['light', 'dark']).default('light').describe('The color scheme the page is rendered in.'),
+      schemes: z
+        .array(z.enum(['light', 'dark']))
+        .optional()
+        .describe('Take a shot in each color scheme, as ["light", "dark"]. Scheme is ignored when this is given.'),
       scroll: z.union([z.number(), z.literal('bottom')]).default(0).describe('How far down the page is scrolled before the shot, in px, or "bottom".'),
       timeout: z.number().int().min(1000).max(120000).default(30000).describe('How long to wait for the page to load, in ms. The network then gets a quarter of it to go quiet.'),
       element: z.string().optional().describe('A CSS selector. Given, only the box of the first element matching it is captured. Left out, the whole page is.'),
     },
   },
-  async ({ target, width, height, scheme, scroll, timeout, element }) => {
+  async ({ target, width, height, widths, scheme, schemes, scroll, timeout, element }) => {
     try {
-      const { png, rect } = await screenshotPage({ target, width, height, scheme, scroll, timeout, element });
-      const size = getPngSize(png);
-      const place = rect ? `, ${element} at ${Math.round(rect.x)},${Math.round(rect.y)} ${Math.round(rect.width)}x${Math.round(rect.height)} on the page` : '';
-      return {
-        content: [
-          { type: 'image' as const, data: png.toString('base64'), mimeType: 'image/png' },
-          { type: 'text' as const, text: `screenshot ${size.width}x${size.height}${place}` },
-        ],
-      };
+      const shots = await screenshotPage({ target, width, height, widths, scheme, schemes, scroll, timeout, element });
+      const content = shots.flatMap((shot) => {
+        const size = getPngSize(shot.png);
+        const rect = shot.rect;
+        const at = `at viewport ${shot.viewport.width}x${shot.viewport.height}, ${shot.scheme}`;
+        const place = rect ? `, ${element} at ${Math.round(rect.x)},${Math.round(rect.y)} ${Math.round(rect.width)}x${Math.round(rect.height)} on the page` : '';
+        return [
+          { type: 'image' as const, data: shot.png.toString('base64'), mimeType: 'image/png' },
+          { type: 'text' as const, text: `screenshot ${size.width}x${size.height} ${at}${place}` },
+        ];
+      });
+      return { content };
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
       return { content: [{ type: 'text' as const, text: message }], isError: true };
