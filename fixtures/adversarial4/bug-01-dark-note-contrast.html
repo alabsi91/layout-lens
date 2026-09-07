@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Team plan</title>
+<style>
+  :root { color-scheme: light dark; }
+
+  body { margin: 0; background: #ffffff; color: #111827;
+         font-family: -apple-system, "Segoe UI", Arial, sans-serif; }
+
+  .page { width: 640px; margin: 0 auto; padding: 64px 0; }
+
+  h1 { margin: 0 0 8px; font-size: 24px; line-height: 32px; }
+  .lede { margin: 0 0 28px; font-size: 15px; line-height: 22px; color: #4b5563; }
+
+  .amount { margin: 0 0 4px; font-size: 32px; line-height: 40px; font-weight: 600; }
+  .cycle { margin: 0 0 24px; font-size: 15px; line-height: 22px; color: #4b5563; }
+
+  /* the muted grey was picked against white and never picked again for the dark
+     palette, where the page behind it went almost black */
+  .note { margin: 0; font-size: 14px; line-height: 20px; color: #5f6875; }
+
+  @media (prefers-color-scheme: dark) {
+    body { background: #14161a; color: #e6e8ec; }
+    .lede, .cycle { color: #9aa3b2; }
+  }
+</style>
+</head>
+<body>
+
+<div class="page">
+  <h1>Team plan</h1>
+  <p class="lede">Seats are billed on the first of the month. Adding a seat mid-cycle is
+     charged pro rata and shows on the next invoice.</p>
+
+  <p class="amount">$348.00</p>
+  <p class="cycle">12 seats, billed monthly</p>
+
+  <p class="note" id="renewal-note">Renews 1 March. Cancel any time before then and the
+     seats stay live until the end of the cycle.</p>
+</div>
+
+</body>
+</html>

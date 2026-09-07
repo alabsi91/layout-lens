@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Restore a snapshot</title>
+<style>
+  body { margin: 0; background: #ffffff; color: #111827;
+         font-family: -apple-system, "Segoe UI", Arial, sans-serif; }
+
+  .wrap { max-width: 680px; margin: 0 auto; padding: 48px 24px; }
+  .wrap h1 { margin: 0 0 20px; font-size: 24px; line-height: 32px; }
+
+  .steps { list-style: none; margin: 0; padding: 0; }
+
+  /* the numbers sit in a 28 wide gutter and share their end edge, so a one
+     digit marker and a two digit marker start in two places */
+  .step { display: grid; grid-template-columns: 28px 1fr; column-gap: 14px;
+          margin-bottom: 12px; }
+
+  .marker { justify-self: end; font-size: 14px; line-height: 22px; color: #9ca3af;
+            font-variant-numeric: tabular-nums; }
+
+  .step-text { margin: 0; font-size: 14px; line-height: 22px; color: #374151; }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <h1>Restore a snapshot</h1>
+
+  <ol class="steps">
+    <li class="step"><span class="marker" id="marker-8">8.</span><p class="step-text">Stop the writers on the primary node.</p></li>
+    <li class="step"><span class="marker" id="marker-9">9.</span><p class="step-text">Take the node out of the load balancer pool.</p></li>
+    <li class="step"><span class="marker" id="marker-10">10.</span><p class="step-text">Restore the snapshot into a scratch volume.</p></li>
+    <li class="step"><span class="marker" id="marker-11">11.</span><p class="step-text">Compare the row counts against the last export.</p></li>
+    <li class="step"><span class="marker" id="marker-12">12.</span><p class="step-text">Swap the volume and start the writers again.</p></li>
+  </ol>
+</div>
+
+</body>
+</html>

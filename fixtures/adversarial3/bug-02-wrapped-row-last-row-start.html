@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Topics</title>
+<style>
+  body { margin: 0; background: #ffffff; color: #111827;
+         font-family: -apple-system, "Segoe UI", Arial, sans-serif; }
+
+  .page { width: 720px; margin: 0 auto; padding: 40px 0; }
+  .page h1 { margin: 0 0 20px; font-size: 22px; line-height: 30px; }
+  .page p { margin: 0 0 24px; font-size: 14px; line-height: 20px; color: #6b7280; }
+
+  /* every row of this cloud is centred */
+  .cloud { width: 720px; display: flex; flex-wrap: wrap; justify-content: center; gap: 16px; }
+
+  .chip { width: 160px; height: 36px; box-sizing: border-box; border-radius: 18px;
+          background: #f1f5f9; color: #0f172a; font-size: 13px; line-height: 36px;
+          text-align: center; }
+
+  /* the planted defect: an auto margin left over from a one-row layout eats all the
+     free space in the last row, so that row packs to the start instead of centring */
+  .chip:last-child { margin-inline-end: auto; }
+</style>
+</head>
+<body>
+
+<div class="page">
+  <h1>Pick your topics</h1>
+  <p>We use these to shape the weekly digest.</p>
+
+  <div class="cloud">
+    <span class="chip">Payments</span>
+    <span class="chip">Fraud</span>
+    <span class="chip">Payouts</span>
+    <span class="chip">Disputes</span>
+    <span class="chip" id="chip-refunds">Refunds</span>
+    <span class="chip">Invoicing</span>
+  </div>
+</div>
+
+</body>
+</html>

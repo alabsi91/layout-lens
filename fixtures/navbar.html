@@ -1,0 +1,41 @@
+<!doctype html>
+<!--
+planted bugs:
+1. nav link "Pricing" sits 3px lower than its siblings
+2. logo is 4px off vertical center of the header
+3. button "Sign up" text sits high inside the button
+4. search input placeholder area overflows the header on the right by 12px, header clips it
+5. "Docs" link has contrast under 4.5
+-->
+<html>
+<head>
+  <style>
+    body { margin: 0; font-family: Helvetica, Arial, sans-serif; }
+    header { height: 64px; background: #fff; border-bottom: 1px solid #ddd; display: flex; align-items: center; padding: 0 24px; overflow: hidden; position: relative; }
+    .logo { width: 32px; height: 32px; background: #333; border-radius: 6px; position: relative; top: 4px; }
+    nav { display: flex; gap: 24px; margin-left: 40px; align-items: center; }
+    nav a { color: #222; text-decoration: none; font-size: 15px; line-height: 20px; }
+    nav a.pricing { position: relative; top: 3px; }
+    nav a.docs { color: #9a9a9a; }
+    .search { margin-left: auto; width: 240px; height: 36px; border: 1px solid #ccc; border-radius: 6px; position: relative; left: 12px; }
+    .signup { margin-left: 16px; height: 40px; padding: 0 16px 8px; background: #2563eb; color: #fff; border: 0; border-radius: 6px; font-size: 14px; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo"></div>
+    <nav>
+      <a href="#">Home</a>
+      <a href="#" class="pricing">Pricing</a>
+      <a href="#" class="docs">Docs</a>
+      <a href="#">Blog</a>
+    </nav>
+    <div class="search"></div>
+    <button class="signup">Sign up</button>
+  </header>
+  <main style="padding: 24px">
+    <h1 style="margin: 0 0 8px">Hello</h1>
+    <p style="margin: 0; max-width: 60ch">Nothing wrong down here. This paragraph is just filler so the page has a body.</p>
+  </main>
+</body>
+</html>

@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Recipients</title>
+<style>
+  body { margin: 0; background: #ffffff; color: #111827;
+         font-family: -apple-system, "Segoe UI", Arial, sans-serif; }
+
+  .panel { width: 560px; margin: 0 auto; padding: 48px 0; }
+  .panel h1 { margin: 0 0 4px; font-size: 22px; line-height: 30px; }
+  .panel p { margin: 0 0 20px; font-size: 14px; line-height: 20px; color: #6b7280; }
+
+  .recipient-row { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+
+  .recipient-input { width: 320px; height: 40px; box-sizing: border-box; padding: 0 12px;
+                     border: 1px solid #d1d5db; border-radius: 8px;
+                     font-family: inherit; font-size: 14px; }
+
+  .recipient-remove { height: 40px; padding: 0 16px; box-sizing: border-box;
+                      border: 1px solid #d1d5db; border-radius: 8px; background: #ffffff;
+                      font-family: inherit; font-size: 14px; }
+
+  /* the planted defect: this field kept the old 42 height, so it stands 2 taller
+     than the button beside it and its row is 2 taller than the rows above */
+  #row-third .recipient-input { height: 42px; }
+</style>
+</head>
+<body>
+
+<section class="panel">
+  <h1>Recipients</h1>
+  <p>Reports are mailed every Monday at 07:00.</p>
+
+  <div class="recipient-row">
+    <input class="recipient-input" placeholder="name@company.com" aria-label="Recipient">
+    <button class="recipient-remove" type="button">Remove</button>
+  </div>
+
+  <div class="recipient-row">
+    <input class="recipient-input" placeholder="name@company.com" aria-label="Recipient">
+    <button class="recipient-remove" type="button">Remove</button>
+  </div>
+
+  <div class="recipient-row" id="row-third">
+    <input class="recipient-input" id="third-input" placeholder="name@company.com" aria-label="Recipient">
+    <button class="recipient-remove" type="button">Remove</button>
+  </div>
+</section>
+
+</body>
+</html>

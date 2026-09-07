@@ -1,0 +1,218 @@
+[
+  {
+    "file": "bug-01-grid-area-notice-over-button.html",
+    "kind": "bug",
+    "width": 1280,
+    "height": 720,
+    "scroll": 0,
+    "expect": "button#export-csv.btn must report `control \"Export CSV\" hidden by div#status-bar.status`. The notice was given `grid-area: main` where it belongs in `head`, so it renders at the top of the 696 wide main cell (960 − 240 − 24) and is 40 tall, while the toolbar button is 34 tall at the very top of that same cell: 0 to 34 sits wholly inside 0 to 40, so none of the button can be clicked.",
+    "mustNotReport": "`overlaps div#status-bar.status` on section.results or the other way round (the section's box holds the notice, which is layering, not a collision), `text \"412 deals\" hidden by div#status-bar.status` on the h2 of section.results (its line starts 50 into the cell, 10 below the notice's bottom edge at 40), and `empty painted box` on div#status-bar.status (it has words of its own)."
+  },
+  {
+    "file": "bug-02-wrapped-row-last-row-start.html",
+    "kind": "bug",
+    "width": 1280,
+    "height": 720,
+    "scroll": 0,
+    "expect": "span#chip-refunds.chip must read `[pos: bottom 0, start 0]` while the four chips of the first row read `start 16`. The cloud is 720 wide with 160 wide chips and a 16 gap, so a row of four is 160 × 4 + 16 × 3 = 688 and centres with (720 − 688) / 2 = 16 either side; the last row of two is 160 × 2 + 16 = 336 and centring it would put its first chip at (720 − 336) / 2 = 192. An auto end margin left on the last chip eats all 384 of that row's free space, so the row packs to the start and this chip sits 192 to the start of where it belongs.",
+    "mustNotReport": "`overlaps` between any two span.chip (no two of them share any area), `uneven spacing` on div.cloud (every gap inside a row is 16), and `off-center-inline` on span#chip-refunds.chip (it touches the start edge and has an in-flow sibling after it on that axis)."
+  },
+  {
+    "file": "bug-03-cell-padding-differs.html",
+    "kind": "bug",
+    "width": 1280,
+    "height": 720,
+    "scroll": 0,
+    "expect": "span#hours-tue.hours must report `8 lower than span.hours in td.cell`. Every td.cell is `vertical-align: top` with `padding: 12px 16px`, and this one cell was left on `padding-top: 20px`, so its number starts 20 below the row's top edge where the numbers beside it start 12: 20 − 12 = 8.",
+    "mustNotReport": "the mirrored `8 higher than span.hours in td.cell` on the span in the cell after it (the finding belongs once, on the odd cell), and `8 taller than tr` between the body rows (Week 13 is 12 + 20 + 20 = 52 tall against 44 for the rows around it, but the three rows show different words, so no size finding may fire on them)."
+  },
+  {
+    "file": "bug-04-scrim-hides-cta.html",
+    "kind": "bug",
+    "width": 1280,
+    "height": 720,
+    "scroll": 0,
+    "expect": "button#claim-offer.cta-btn must report `control \"Claim offer\" hidden by div#hero-scrim.scrim`. The scrim is `inset: 0` over the 640x320 card and its gradient reaches full #0b1020 at 68% of the height, which is y 217.6, while the button is 44 tall at `bottom: 28`, so it runs from y 248 to 292 — wholly inside the opaque band. div#hero-scrim.scrim may also read `empty painted box`, it is 640x320 and paints nothing but the gradient. If the tool reads the gradient's transparent first stop as a tint the line becomes `all covered by div#hero-scrim.scrim (translucent)` instead, which would understate it: nothing of the button shows.",
+    "mustNotReport": "`text ... hidden by div#hero-scrim.scrim` on the h1 or p.lede of div.page (both sit outside the hero card), and `outside viewport`, `clipped` or `content overflows` on button#claim-offer.cta-btn (it is 32 from the start edge and 28 from the bottom of the card, wholly inside it)."
+  },
+  {
+    "file": "bug-05-line-clamp-cuts-summary.html",
+    "kind": "bug",
+    "width": 390,
+    "height": 844,
+    "scroll": 0,
+    "expect": "p#review-hana.summary must report `text truncated 40 hidden at end, ellipsis`. The summary is four lines at `line-height: 20px`, so its text is 4 × 20 = 80 tall, and `-webkit-line-clamp: 2` with `overflow: hidden` leaves a 2 × 20 = 40 tall box: 80 − 40 = 40 of text cannot be seen, and the computed `text-overflow` is `ellipsis`, so the cut is signposted.",
+    "mustNotReport": "`content truncated` or `content overflows` on p#review-hana.summary or its div.card (what is cut is the paragraph's own text, it has no element children), `text truncated 40 hidden at end, no ellipsis` (the computed `text-overflow` is `ellipsis`), and any truncation finding on the p.summary inside div.card.rest (its clamp is 4 and it has two lines)."
+  },
+  {
+    "file": "bug-06-icon-off-by-three.html",
+    "kind": "bug",
+    "width": 390,
+    "height": 844,
+    "scroll": 0,
+    "expect": "The svg inside button#compose.icon-btn must report `off-center-block 3 up, off-center-inline 3 toward end`. The button is 48x48 with `align-items: center` and `justify-content: center`, and the 20x20 glyph carries `margin: 0 0 6px 6px`, so its outer box is 26 on both axes and the 48 − 26 = 22 of free space splits 11 either side. That leaves the glyph 11 from the top with 17 under it and 17 from the start with 11 after it, so its centre is at 21 and 27 against the button's 24 and 24: 3 up and 3 toward the end.",
+    "mustNotReport": "`content overflows` on button#compose.icon-btn (the glyph plus its margins is 26 inside 48), `text off-center-block` on the button (it has no words of its own), and `empty painted box` on it (it holds the svg)."
+  },
+  {
+    "file": "bug-07-sticky-head-eats-first-row.html",
+    "kind": "bug",
+    "width": 1280,
+    "height": 720,
+    "scroll": 400,
+    "expect": "At scroll 400 div#row-first.table-row must report `top 24 covered by div#table-head.table-head`. The intro is 440 tall, so the head's natural top is page 440, which is viewport 40 at this scroll, and its `top: 64px` is left over from a nav bar that was removed, so it parks at viewport 64 to 104. The first row is 30 + 18 + 10 = 58 tall at page 480 to 538, viewport 80 to 138, so 104 − 80 = 24 of it sits under the head. Its own words start at viewport 80 + 30 = 110, 6 clear of the head's bottom edge, so only the box is covered. Nothing is wrong with this page at scroll 0.",
+    "mustNotReport": "`text \"Northwind renewal\" hidden by div#table-head.table-head` on div#row-first.table-row (its line starts 6 below the head), `overlaps div#table-head.table-head` on div.table-body or on any div.table-row, and any covered finding on the rows under the first one (row two starts at viewport 138, 34 below the head)."
+  },
+  {
+    "file": "bug-08-tooltip-off-viewport-end.html",
+    "kind": "bug",
+    "width": 1280,
+    "height": 720,
+    "scroll": 0,
+    "expect": "div#renew-tip.tip must report `outside viewport right 12`. The card's padding box starts at x 940 (40 of page padding plus a 900 start margin) and the hint is placed at `left: 152px` and is 200 wide, so it runs 940 + 152 = 1092 to 1292, which is 1292 − 1280 = 12 past the end edge of the viewport. The first line will read `page 1292x...` from the same 12.",
+    "mustNotReport": "`clipped right 12` on div#renew-tip.tip (nothing in its ancestry clips), `covered by div#renew-tip.tip` or `text ... hidden by div#renew-tip.tip` on div.card (the hint is at `top: 128px` and the card is 120 tall, so it sits wholly below it), and `content overflows` on div.card (an absolute descendant is never counted as its content)."
+  },
+  {
+    "file": "bug-09-cover-image-wider-than-card.html",
+    "kind": "bug",
+    "width": 1280,
+    "height": 720,
+    "scroll": 0,
+    "expect": "img#deal-photo.card-photo must report `content overflows 40 at end`. Its card is 300 wide and the photo kept `width: 340px` from an older wide card, so it pokes 340 − 300 = 40 past the card's end edge with `object-fit: cover` still drawing the picture undistorted. It is the last of three cards (its card starts at 40 + 2 × 324 = 688 and the image reaches 1028), so the spill lands on empty page and the finding must sit on the image, the cause, not on the card.",
+    "mustNotReport": "`content overflows 40 at end` on article.card (the child that pokes out carries it), any `[bleed ...]` tag on img#deal-photo.card-photo (it starts at the card's start edge and pokes out on one side only, it is not centred), `clipped right 40` on it (no ancestor clips), and `overlaps` between it and the cards beside it."
+  },
+  {
+    "file": "bug-10-tap-target-short.html",
+    "kind": "bug",
+    "width": 390,
+    "height": 844,
+    "scroll": 0,
+    "expect": "a#tap-help.tap-target must report `8 lower than a.tap-target`, and its line must print a height of 28 where the three links beside it print 44. The row is `align-items: center` and 44 tall, so a link sized from its line box at 28 starts (44 − 28) / 2 = 8 below the tops of its siblings and is 16 short of the tap target it looks like.",
+    "mustNotReport": "`16 shorter than a.tap-target` or any size finding between the a.tap-target siblings (44 − 28 = 16, past the 8 a size mismatch is reported within), the mirrored `8 higher than a.tap-target` on the link before it (the short one is last, so it is the only one out of line), and `off-center-block` on a#tap-help.tap-target (it has in-flow siblings before it)."
+  },
+  {
+    "file": "bug-11-input-taller-than-button.html",
+    "kind": "bug",
+    "width": 1280,
+    "height": 720,
+    "scroll": 0,
+    "expect": "div#row-third.recipient-row must report `2 taller than div.recipient-row`. Its input kept `height: 42px` where every other field is 40 and the button beside it is 40, so the row is 42 against 40 for the two rows above: 42 − 40 = 2. The input and the button cannot be compared with each other, a size or alignment finding needs the same tag and first class, so the row is where the 2 shows. All three rows hold an input then a button and show the same words (the same placeholder and the same `Remove`), which is what lets the row comparison fire at all.",
+    "mustNotReport": "`2 taller than input.recipient-input` or `2 lower than button.recipient-remove` (different tags never compare), `2 shorter than div.recipient-row` on either of the rows above (the odd row is last, so the finding lands once), and `off-center-block` on the button.recipient-remove inside div#row-third.recipient-row (40 in a 42 row is centred within 1)."
+  },
+  {
+    "file": "bug-12-rtl-amount-end-aligned.html",
+    "kind": "bug",
+    "width": 1280,
+    "height": 720,
+    "scroll": 0,
+    "expect": "span#amt-april.amount-val must report `start edge 12 further end than span.amount-val in td.amount`. The page is rtl, the amount column is 130 wide and every value is a 118 wide inline-block sitting on the column's start edge, which is the right in rtl, with 130 − 118 = 12 of slack at the end. This one cell was written `text-align: left`, the end edge in rtl, so its box moved the whole 12 toward the end. All four spans are 118 wide, so both edges moved by the same 12.",
+    "mustNotReport": "`12 wider than span.amount-val` or any size finding between the span.amount-val siblings (all four are 118 wide), the same alignment finding on the three rows above (the odd cell is the last row, so it is said once), and `text truncated` on any span.amount-val (118 holds all eight characters)."
+  },
+  {
+    "file": "clean-01-floating-label-on-border.html",
+    "kind": "clean",
+    "width": 1280,
+    "height": 720,
+    "scroll": 0,
+    "expect": "Nothing on input#company-name.field. label#company-name-label.float-label straddles the field's top border on purpose: it is 16 tall at `top: -8px`, so 8 of it is above the input's top edge and 8 is inside it. At most `overlaps input#company-name.field (overlay)` on the label, which the reader can skip.",
+    "mustNotReport": "`control \"\" hidden by label.float-label` or `top 8 covered by label#company-name-label.float-label` on input#company-name.field (the label is `pointer-events: none`, so it can be covered but never counts as a coverer), `text \"Company name\" hidden by input#company-name.field` on the label, and `off-center-block` or `off-center-inline` on the label (absolute, and closer to the top and start edges than it is big on either axis)."
+  },
+  {
+    "file": "clean-02-card-media-bleed.html",
+    "kind": "clean",
+    "width": 1280,
+    "height": 720,
+    "scroll": 0,
+    "expect": "img#recipe-photo.card-media must be tagged `[bleed 20]` and carry no finding. The card is 360 wide with 20 of padding, so its content box is 320, and the photo is 360 wide with `-20px` side margins: 360 − 320 = 40, 20 of overhang on each side, which is a card image drawn edge to edge on purpose.",
+    "mustNotReport": "`content overflows 40 at both` on img#recipe-photo.card-media, `content truncated` or `content overflows` on article.card, `clipped` or `outside viewport` on the image, and `off-center-inline` on it."
+  },
+  {
+    "file": "clean-03-avatar-corner-badge.html",
+    "kind": "clean",
+    "width": 1280,
+    "height": 720,
+    "scroll": 0,
+    "expect": "Nothing on span#msg-badge.badge. It is 20x20 pinned at `top: -6px` and `inset-inline-end: -6px` on a 48x48 avatar, so 14x14 of it lies on the picture and the rest hangs outside the circle on purpose. At most `14x14 covered by span#msg-badge.badge (overlay)` on the img.avatar under it, which the reader can skip.",
+    "mustNotReport": "`content overflows 12 at end` or any content overflow on div#peer-avatar.avatar-wrap (an absolute descendant is never counted as content that overflows), `off-center-block` or `off-center-inline` on span#msg-badge.badge (absolute and pinned 6 past two edges, closer to both than its 20), `empty painted box` on it (it shows `3`), and `outside viewport` or `clipped` on it."
+  },
+  {
+    "file": "clean-04-stepper-wide-active.html",
+    "kind": "clean",
+    "width": 1280,
+    "height": 720,
+    "scroll": 0,
+    "expect": "Nothing on div#step-payment.step.is-active, whose line reads `200x40` where every other div.step reads `150x40`: 200 − 150 = 50 apart, and all four share one row and one top edge. div.stepper must read `[gaps across: 16 ×3]`.",
+    "mustNotReport": "`50 wider than div.step` or any size finding between the div.step siblings (50 is far past the 8 a size mismatch is reported within, and the words differ as well), `start edge N further ...` or `N lower than` between them, `uneven spacing` on div.stepper (all three gaps are 16), and `off-center-inline` on the active step (it has in-flow siblings on both sides)."
+  },
+  {
+    "file": "clean-05-breadcrumb-middle-truncated.html",
+    "kind": "clean",
+    "width": 1280,
+    "height": 720,
+    "scroll": 0,
+    "expect": "Nothing on nav#crumbs.breadcrumb beyond `text truncated N hidden at end, ellipsis` on a#crumb-project.crumb.crumb-mid, which the reader can skip: the middle crumb is capped at `max-width: 140px` and signs its cut with an ellipsis on purpose, and N is however far its 49 characters run past 140 in the system font. The crumbs either side are uncapped and `white-space: nowrap`, and must stay quiet.",
+    "mustNotReport": "`text truncated N hidden at end, no ellipsis` on a#crumb-project.crumb.crumb-mid (the cut is signposted), `content truncated` or `content overflows` on nav#crumbs.breadcrumb, `clipped` on any a.crumb or span.sep, and `start edge N further ...` or `N lower than` between the a.crumb siblings (they sit on one 18 tall line)."
+  },
+  {
+    "file": "clean-06-multicol-masonry.html",
+    "kind": "clean",
+    "width": 1280,
+    "height": 720,
+    "scroll": 0,
+    "expect": "Nothing on the div.tile children of div#notes.masonry. The notes flow into three 296 wide columns ((936 − 2 × 24) / 3) filled in order to a 520 height, so the seven lines read `296x140`, `296x200`, `296x96`, `296x168`, `296x120`, `296x240` and `296x112`: column one ends at 140 + 24 + 200 + 24 + 96 = 484, column two at 168 + 24 + 120 = 312 and column three at 240 + 24 + 112 = 376. Ending over 100 apart is what a masonry looks like.",
+    "mustNotReport": "`N shorter than div.tile` or `N taller than div.tile` between the tiles (the closest pair is 48 apart, past the 8 a size mismatch is reported within, and all seven are 296 wide), `overlaps` between any two div.tile (no two share any area, the columns are 24 apart), `uneven spacing` on div#notes.masonry, and `content overflows` on it or on any div.tile."
+  },
+  {
+    "file": "clean-07-chat-last-bubble-other-side.html",
+    "kind": "clean",
+    "width": 390,
+    "height": 844,
+    "scroll": 0,
+    "expect": "div#msg-6.bubble.out must read `[pos: bottom 0, end 0]` and carry no finding. The thread is 390 − 2 × 16 = 358 wide, the outgoing bubble is 220 and sits at the end edge, so it starts 358 − 220 = 138 in where every incoming bubble starts at 0 — 138 is far past the 24 a near-miss alignment is reported within, and a message you sent sitting on the other side is the design.",
+    "mustNotReport": "`start edge 138 further end than div.bubble` (or any direction of it) on div#msg-6.bubble.out, `20 wider than div.bubble` or any size finding between the bubbles (240 against 220 is 20 apart), `off-center-inline` on the outgoing bubble (it touches the end edge), and `uneven spacing` on div.thread (every gap is 10)."
+  },
+  {
+    "file": "clean-08-right-aligned-numerics.html",
+    "kind": "clean",
+    "width": 1280,
+    "height": 720,
+    "scroll": 0,
+    "expect": "Nothing on span#amt-card.amount through span#amt-total.amount. The amount column is 140 wide and right aligned, so all four values end on one edge and start in four places, from the 4 characters of `9.40` to the 9 of `72,905.15`.",
+    "mustNotReport": "`start edge N further end than span.amount in td.num` (or any direction of it) between the span.amount siblings — they end on the same far edge, which is the design — and `N wider than span.amount` between them."
+  },
+  {
+    "file": "clean-09-avatar-stack-negative-margins.html",
+    "kind": "clean",
+    "width": 1280,
+    "height": 720,
+    "scroll": 0,
+    "expect": "div#viewers.avatar-stack must be tagged `[stacked 5]` and nothing may be said about its span.avatar children. Each circle is 36 wide and pulled 12 onto the one before it, so the row is 36 + 4 × 24 = 132 wide and every avatar but the first sits on its neighbour on purpose.",
+    "mustNotReport": "`overlaps` or `covered by` between the span.avatar siblings, `text \"MR\" hidden by span.avatar` or the same on any other pair of initials, and `uneven spacing` on div#viewers.avatar-stack from the −12 gaps."
+  },
+  {
+    "file": "clean-10-progress-thirty.html",
+    "kind": "clean",
+    "width": 1280,
+    "height": 720,
+    "scroll": 0,
+    "expect": "Nothing on div#seats-track.progress-track or div#seats-fill.progress-fill. The fill is 120 in a 400 wide track because 12 of 40 seats are used (400 × 0.3 = 120), and it must read `[pos: fills-block, start 0, end 280]`: it is as tall as the track and alone on the inline axis, touching the start edge with 400 − 120 = 280 of slack after it.",
+    "mustNotReport": "`empty painted box` on either (both are 10 tall, under the 24 floor), `off-center-inline` on div#seats-fill.progress-fill (it touches the start edge), and `free after`, `uneven spacing` or `content overflows` on div#seats-track.progress-track."
+  },
+  {
+    "file": "clean-11-toast-viewport-bottom.html",
+    "kind": "clean",
+    "width": 1280,
+    "height": 720,
+    "scroll": 0,
+    "expect": "div#saved-toast.toast must read `[pos: bottom 24 of viewport, centered-inline 460 of viewport]` ((1280 − 360) / 2 = 460) and carry no finding. It is fixed, 360x52, 24 up from the bottom of a 720 viewport, and the article above it ends around y 300, so it sits over blank page.",
+    "mustNotReport": "`off-center-block` on div#saved-toast.toast (fixed, and 24 from the bottom edge is closer than its 52 height), `overlaps` on it or against it (never said about a fixed element), and `control \"Undo\" hidden by` or `text ... hidden by div#saved-toast.toast` on anything in article.page."
+  },
+  {
+    "file": "clean-12-rtl-timeline-dots-end.html",
+    "kind": "clean",
+    "width": 1280,
+    "height": 720,
+    "scroll": 0,
+    "expect": "Nothing on the span.dot children of ul#history.timeline, span#dot-created.dot included. The page is rtl and the rail is drawn down the end side, the left, so every 12x12 dot is pinned `inset-inline-end: -6px` on it. Each li.event is 10 + 20 + 10 = 40 tall and the dot is at `top: 14px`, which is 40 − 14 − 12 = 14 under it as well, so it reads `centered-block 14`.",
+    "mustNotReport": "`content overflows 6 at end` or any content overflow on li.event from the dots (an absolute descendant is never counted as content), `off-center-block` or `off-center-inline` on any span.dot (centred on the block axis, and pinned past the end edge closer to it than its 12 width), `empty painted box` on them (12x12, under the 24 floor), and `overlaps` between a span.dot and the words of its li."
+  }
+]

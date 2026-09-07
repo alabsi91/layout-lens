@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Statement</title>
+<style>
+  body { margin: 0; background: #ffffff; color: #111827;
+         font-family: -apple-system, "Segoe UI", Arial, sans-serif; }
+
+  .wrap { max-width: 700px; margin: 0 auto; padding: 48px 24px; }
+  .wrap h1 { margin: 0 0 20px; font-size: 24px; line-height: 32px; }
+
+  table { table-layout: fixed; width: 520px; border-collapse: collapse; }
+  th { text-align: left; font-size: 12px; line-height: 16px; color: #6b7280;
+       font-weight: 600; text-transform: uppercase; letter-spacing: .04em;
+       padding: 8px 16px; border-bottom: 1px solid #e5e7eb; }
+  td { font-size: 14px; line-height: 20px; padding: 8px 16px;
+       border-bottom: 1px solid #f3f4f6; }
+
+  .num { width: 110px; text-align: right; }
+  th.num { text-align: right; }
+
+  .amount { display: inline-block; font-family: ui-monospace, Menlo, Consolas, monospace; }
+
+  /* the planted defect: this cell kept the default alignment */
+  #cell-march { text-align: left; }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <h1>Statement</h1>
+
+  <table>
+    <thead>
+      <tr><th>Period</th><th class="num">Billed</th><th class="num">Paid</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>January</td>
+        <td class="num"><span class="amount">1,240.00</span></td>
+        <td class="num"><span class="amount">1,240.00</span></td>
+      </tr>
+      <tr>
+        <td>February</td>
+        <td class="num"><span class="amount">3,180.00</span></td>
+        <td class="num"><span class="amount">3,180.00</span></td>
+      </tr>
+      <tr>
+        <td>March</td>
+        <td class="num" id="cell-march"><span class="amount">2,905.00</span></td>
+        <td class="num"><span class="amount">2,905.00</span></td>
+      </tr>
+      <tr>
+        <td>April</td>
+        <td class="num"><span class="amount">4,012.00</span></td>
+        <td class="num"><span class="amount">4,012.00</span></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+</body>
+</html>

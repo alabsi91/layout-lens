@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Inbox</title>
+<style>
+  body { margin: 0; background: #ffffff; color: #111827;
+         font-family: -apple-system, "Segoe UI", Arial, sans-serif; }
+
+  .app-bar { display: flex; align-items: center; justify-content: space-between;
+             padding: 10px 16px; border-bottom: 1px solid #e5e7eb; }
+  .app-bar h1 { margin: 0; font-size: 20px; line-height: 28px; }
+
+  .icon-btn { width: 48px; height: 48px; padding: 0; border: 0; border-radius: 12px;
+              background: #eef2ff;
+              display: flex; align-items: center; justify-content: center; }
+
+  .icon-btn svg { display: block; width: 20px; height: 20px; }
+
+  /* the planted defect: a nudge margin from an older icon size was never removed,
+     6 of margin in a centred box moves the glyph 3 */
+  #compose svg { margin: 0 0 6px 6px; }
+
+  .list { padding: 0 16px; }
+  .item { padding: 12px 0; border-bottom: 1px solid #f3f4f6; }
+  .item h2 { margin: 0 0 2px; font-size: 15px; line-height: 20px; }
+  .item p { margin: 0; font-size: 13px; line-height: 18px; color: #6b7280; }
+</style>
+</head>
+<body>
+
+<header class="app-bar">
+  <h1>Inbox</h1>
+  <button class="icon-btn" id="compose" aria-label="Compose">
+    <svg viewBox="0 0 24 24" fill="none" stroke="#1e3a8a" stroke-width="2">
+      <path d="M4 20h16M6 16l10-10 3 3-10 10H6z"></path>
+    </svg>
+  </button>
+</header>
+
+<main class="list">
+  <article class="item"><h2>Ledger export ready</h2><p>Finance &middot; 9:04</p></article>
+  <article class="item"><h2>Two invoices need approval</h2><p>Payables &middot; 8:41</p></article>
+  <article class="item"><h2>Card ending 4417 declined</h2><p>Alerts &middot; 8:02</p></article>
+  <article class="item"><h2>Weekly summary</h2><p>Reports &middot; Mon</p></article>
+</main>
+
+</body>
+</html>

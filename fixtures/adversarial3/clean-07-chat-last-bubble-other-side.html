@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Chat</title>
+<style>
+  body { margin: 0; background: #ffffff; color: #111827;
+         font-family: -apple-system, "Segoe UI", Arial, sans-serif; }
+
+  .thread { display: flex; flex-direction: column; gap: 10px; padding: 16px; }
+
+  .bubble { align-self: flex-start; width: 240px; box-sizing: border-box;
+            padding: 10px 12px; border-radius: 14px; background: #f3f4f6;
+            font-size: 14px; line-height: 20px; }
+
+  /* the message you sent sits on the other side of the thread on purpose */
+  .bubble.out { align-self: flex-end; width: 220px; background: #2563eb; color: #ffffff; }
+</style>
+</head>
+<body>
+
+<div class="thread">
+  <div class="bubble">Your driver is two streets away.</div>
+  <div class="bubble">Silver estate, plate KX21 ROV.</div>
+  <div class="bubble">He will wait at the side entrance.</div>
+  <div class="bubble">Traffic on the bridge is heavy.</div>
+  <div class="bubble">Five minutes, maybe six.</div>
+  <div class="bubble out" id="msg-6">On my way down now.</div>
+</div>
+
+</body>
+</html>

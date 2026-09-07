@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Seats</title>
+<style>
+  body { margin: 0; background: #ffffff; color: #111827;
+         font-family: -apple-system, "Segoe UI", Arial, sans-serif; }
+
+  .card { width: 440px; margin: 72px auto; border: 1px solid #e5e7eb; border-radius: 12px;
+          padding: 20px; }
+  .card h1 { margin: 0 0 4px; font-size: 17px; line-height: 24px; }
+  .card p { margin: 0 0 16px; font-size: 13px; line-height: 18px; color: #6b7280; }
+
+  /* the fill is as wide as the share that is used, the track shows the rest */
+  .progress-track { width: 400px; height: 10px; border-radius: 5px; background: #e5e7eb; }
+  .progress-fill { width: 120px; height: 10px; border-radius: 5px; background: #16a34a; }
+
+  .legend { display: flex; justify-content: space-between; margin-top: 10px;
+            font-size: 12px; line-height: 16px; color: #6b7280; }
+</style>
+</head>
+<body>
+
+<section class="card">
+  <h1>Seats in use</h1>
+  <p>Team plan &middot; renews 3 May</p>
+
+  <div class="progress-track" id="seats-track">
+    <div class="progress-fill" id="seats-fill"></div>
+  </div>
+
+  <div class="legend">
+    <span>30%</span>
+    <span>12 of 40 seats</span>
+  </div>
+</section>
+
+</body>
+</html>

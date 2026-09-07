@@ -1,0 +1,50 @@
+<!doctype html>
+<!--
+planted bugs:
+1. modal dialog is 20px left of horizontal center
+2. modal covers the top of the article
+3. fixed header covers the first 12px of the article's heading
+4. toast is opacity 0, present but not painted
+5. sidebar item "Settings" is scrolled out of view inside the sidebar's scroll box
+6. modal close button text sits 3px too low inside the button
+-->
+<html>
+<head>
+  <style>
+    body { margin: 0; font-family: Helvetica, Arial, sans-serif; }
+    header { position: fixed; top: 0; left: 0; right: 0; height: 56px; background: #111; color: #fff; display: flex; align-items: center; padding: 0 20px; }
+    .layout { display: flex; padding-top: 44px; }
+    aside { width: 220px; height: 300px; overflow-y: auto; border-right: 1px solid #ddd; }
+    aside a { display: block; padding: 12px 16px; color: #333; text-decoration: none; }
+    aside a.settings { margin-top: 400px; }
+    article { flex: 1; padding: 0 32px; }
+    article h1 { margin: 0 0 16px; font-size: 28px; line-height: 36px; }
+    .modal { position: fixed; top: 160px; left: calc(50% - 200px - 20px); width: 400px; height: 220px; background: #fff; border: 1px solid #ccc; box-shadow: 0 10px 40px rgba(0,0,0,.2); padding: 24px; box-sizing: border-box; }
+    .modal h2 { margin: 0 0 12px; font-size: 20px; }
+    .modal .close { position: absolute; top: 12px; right: 12px; width: 32px; height: 32px; border: 1px solid #ccc; background: #fff; padding: 6px 0 0; font-size: 16px; }
+    .toast { position: fixed; bottom: 24px; right: 24px; background: #16a34a; color: #fff; padding: 12px 16px; border-radius: 6px; opacity: 0; }
+  </style>
+</head>
+<body>
+  <header>Fixed header</header>
+  <div class="layout">
+    <aside>
+      <a href="#">Dashboard</a>
+      <a href="#">Projects</a>
+      <a href="#">Team</a>
+      <a href="#" class="settings">Settings</a>
+    </aside>
+    <article>
+      <h1>Article heading that the header eats</h1>
+      <p>Some paragraph text under the heading. The modal sits over part of this article.</p>
+      <p>Another paragraph. Still filler.</p>
+    </article>
+  </div>
+  <div class="modal">
+    <h2>Confirm</h2>
+    <p>Are you sure you want to do the thing?</p>
+    <button class="close">×</button>
+  </div>
+  <div class="toast">Saved</div>
+</body>
+</html>

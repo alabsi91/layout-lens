@@ -1,0 +1,1026 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pigeon — Chat</title>
+<style>
+  :root {
+    --bg: #0f1115;
+    --panel: #151922;
+    --panel-2: #1b2130;
+    --line: #262d3d;
+    --text: #e6e9f0;
+    --muted: #8d97ad;
+    --accent: #4f7cff;
+    --accent-2: #7a5cff;
+    --green: #34d399;
+    --bubble-in: #212938;
+    --bubble-out: #3a5cf0;
+    --radius: 16px;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    height: 100%;
+    margin: 0;
+  }
+
+  body {
+    display: flex;
+    background: var(--bg);
+    color: var(--text);
+    font: 14px/1.45 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    overflow: hidden;
+  }
+
+  .app {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+  }
+
+  /* ---------- left column ---------- */
+
+  .sidebar {
+    display: flex;
+    flex-direction: column;
+    width: 320px;
+    flex: 0 0 320px;
+    min-height: 0;
+    border-right: 1px solid var(--line);
+    background: var(--panel);
+  }
+
+  .sidebar-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    font-weight: 700;
+    letter-spacing: .2px;
+  }
+
+  .brand-mark {
+    width: 26px;
+    height: 26px;
+    border-radius: 8px;
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  }
+
+  .icon-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: var(--panel-2);
+    color: var(--muted);
+    font-size: 15px;
+    cursor: pointer;
+  }
+
+  .icon-btn:hover { color: var(--text); }
+
+  .spacer { flex: 1 1 auto; }
+
+  .search-wrap { padding: 12px 16px; }
+
+  .search {
+    width: 100%;
+    padding: 9px 12px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: var(--panel-2);
+    color: var(--text);
+    font: inherit;
+  }
+
+  .search::placeholder { color: var(--muted); }
+
+  .filters {
+    display: flex;
+    gap: 8px;
+    padding: 0 16px 12px;
+  }
+
+  .chip {
+    padding: 5px 11px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: transparent;
+    color: var(--muted);
+    font-size: 12px;
+    cursor: pointer;
+  }
+
+  .chip.is-on {
+    border-color: transparent;
+    background: var(--accent);
+    color: #fff;
+  }
+
+  .conversations {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    padding: 4px 8px 16px;
+  }
+
+  .list-label {
+    padding: 10px 8px 6px;
+    color: var(--muted);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: .8px;
+    text-transform: uppercase;
+  }
+
+  .conversation {
+    display: flex;
+    gap: 11px;
+    align-items: flex-start;
+    padding: 10px;
+    border-radius: 12px;
+    cursor: pointer;
+  }
+
+  .conversation:hover { background: var(--panel-2); }
+
+  .conversation.is-active { background: var(--panel-2); box-shadow: inset 2px 0 0 var(--accent); }
+
+  .avatar {
+    position: relative;
+    flex: 0 0 auto;
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 13px;
+    font-weight: 700;
+  }
+
+  .avatar.sm { width: 30px; height: 30px; font-size: 11px; }
+  .avatar.lg { width: 76px; height: 76px; font-size: 22px; }
+
+  .a1 { background: linear-gradient(135deg, #ff8a5c, #ff4d94); }
+  .a2 { background: linear-gradient(135deg, #4f7cff, #7a5cff); }
+  .a3 { background: linear-gradient(135deg, #34d399, #0ea5a5); }
+  .a4 { background: linear-gradient(135deg, #f59e0b, #ef4444); }
+  .a5 { background: linear-gradient(135deg, #22d3ee, #3b82f6); }
+  .a6 { background: linear-gradient(135deg, #a78bfa, #ec4899); }
+  .a7 { background: linear-gradient(135deg, #94a3b8, #475569); }
+
+  .dot {
+    position: absolute;
+    right: -1px;
+    bottom: -1px;
+    width: 12px;
+    height: 12px;
+    border: 2px solid var(--panel);
+    border-radius: 50%;
+    background: var(--green);
+  }
+
+  .dot.is-away { background: #f59e0b; }
+  .dot.is-off { background: #64748b; }
+
+  .conversation-body { flex: 1 1 auto; min-width: 0; }
+
+  .conversation-top {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+  }
+
+  .conversation-name {
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    font-weight: 600;
+  }
+
+  .time {
+    flex: 0 0 auto;
+    color: var(--muted);
+    font-size: 11px;
+  }
+
+  .conversation-bottom {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 2px;
+  }
+
+  .preview {
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    color: var(--muted);
+    font-size: 12.5px;
+  }
+
+  .badge {
+    flex: 0 0 auto;
+    min-width: 20px;
+    padding: 1px 6px;
+    border-radius: 999px;
+    background: var(--accent);
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    text-align: center;
+  }
+
+  .badge.is-muted { background: #3b4356; color: var(--muted); }
+
+  /* ---------- main column ---------- */
+
+  .chat {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+    min-width: 0;
+    min-height: 0;
+  }
+
+  .chat-head {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 11px 18px;
+    border-bottom: 1px solid var(--line);
+    background: var(--panel);
+  }
+
+  .chat-title { font-weight: 650; }
+
+  .chat-status { color: var(--green); font-size: 12px; }
+
+  .messages {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    padding: 8px 24px 20px;
+  }
+
+  .divider {
+    position: sticky;
+    top: 0;
+    z-index: 3;
+    display: flex;
+    justify-content: center;
+    padding: 10px 0 12px;
+  }
+
+  .divider span {
+    padding: 4px 12px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: var(--panel-2);
+    color: var(--muted);
+    font-size: 11px;
+    font-weight: 600;
+  }
+
+  .row {
+    display: flex;
+    gap: 10px;
+    align-items: flex-end;
+    margin-bottom: 10px;
+  }
+
+  .row.is-out { flex-direction: row-reverse; }
+
+  .row-body { max-width: 62%; min-width: 0; }
+
+  .row.is-out .row-body { display: flex; flex-direction: column; align-items: flex-end; }
+
+  .sender {
+    margin: 0 0 4px 4px;
+    color: var(--muted);
+    font-size: 11px;
+    font-weight: 600;
+  }
+
+  .bubble {
+    position: relative;
+    padding: 9px 13px;
+    border-radius: var(--radius);
+    background: var(--bubble-in);
+    word-wrap: break-word;
+  }
+
+  .bubble.is-tail-in { border-bottom-left-radius: 5px; }
+
+  .bubble.is-tail-in::before {
+    content: "";
+    position: absolute;
+    left: -6px;
+    bottom: 0;
+    width: 14px;
+    height: 14px;
+    background: var(--bubble-in);
+    clip-path: polygon(100% 0, 100% 100%, 0 100%);
+    border-bottom-left-radius: 4px;
+  }
+
+  .row.is-out .bubble {
+    background: var(--bubble-out);
+    color: #fff;
+  }
+
+  .row.is-out .bubble.is-tail-out { border-bottom-right-radius: 5px; }
+
+  .row.is-out .bubble.is-tail-out::after {
+    content: "";
+    position: absolute;
+    right: -6px;
+    bottom: 0;
+    width: 14px;
+    height: 14px;
+    background: var(--bubble-out);
+    clip-path: polygon(0 0, 0 100%, 100% 100%);
+    border-bottom-right-radius: 4px;
+  }
+
+  .bubble p { margin: 0; }
+  .bubble p + p { margin-top: 6px; }
+
+  .meta {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    justify-content: flex-end;
+    margin-top: 4px;
+    font-size: 10.5px;
+    opacity: .7;
+  }
+
+  .attachment {
+    width: 300px;
+    max-width: 100%;
+    height: 168px;
+    margin-bottom: 7px;
+    border-radius: 12px;
+    background:
+      radial-gradient(120% 90% at 18% 12%, rgba(255,255,255,.35), transparent 60%),
+      linear-gradient(135deg, #ff9a3c 0%, #ff4d94 38%, #7a5cff 72%, #22d3ee 100%);
+  }
+
+  .attachment-caption {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    color: var(--muted);
+    font-size: 11.5px;
+  }
+
+  .row.is-out .attachment-caption { color: rgba(255,255,255,.8); }
+
+  .reactions {
+    display: flex;
+    gap: 6px;
+    margin-top: -4px;
+    padding-left: 4px;
+  }
+
+  .reaction {
+    display: inline-flex;
+    gap: 4px;
+    align-items: center;
+    padding: 2px 8px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: var(--panel-2);
+    font-size: 11.5px;
+    cursor: pointer;
+  }
+
+  .reaction.is-mine { border-color: var(--accent); color: #b9c8ff; }
+
+  .quote {
+    margin-bottom: 6px;
+    padding: 5px 9px;
+    border-left: 3px solid rgba(255,255,255,.5);
+    border-radius: 7px;
+    background: rgba(255,255,255,.12);
+    font-size: 12.5px;
+    opacity: .9;
+  }
+
+  .typing {
+    display: flex;
+    gap: 5px;
+    align-items: center;
+    padding: 12px 14px;
+  }
+
+  .typing i {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--muted);
+    animation: blink 1.2s infinite;
+  }
+
+  .typing i:nth-child(2) { animation-delay: .2s; }
+  .typing i:nth-child(3) { animation-delay: .4s; }
+
+  @keyframes blink {
+    0%, 60%, 100% { opacity: .3; transform: translateY(0); }
+    30% { opacity: 1; transform: translateY(-3px); }
+  }
+
+  .typing-label {
+    margin: 2px 0 14px 56px;
+    color: var(--muted);
+    font-size: 11px;
+  }
+
+  /* ---------- composer ---------- */
+
+  .composer {
+    flex: 0 0 auto;
+    padding: 12px 18px 14px;
+    border-top: 1px solid var(--line);
+    background: var(--panel);
+  }
+
+  .composer-inner {
+    display: flex;
+    gap: 8px;
+    align-items: flex-end;
+    padding: 8px;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    background: var(--panel-2);
+  }
+
+  .composer textarea {
+    flex: 1 1 auto;
+    max-height: 120px;
+    min-height: 22px;
+    padding: 6px 4px;
+    border: 0;
+    background: transparent;
+    color: var(--text);
+    font: inherit;
+    resize: none;
+    outline: none;
+  }
+
+  .composer textarea::placeholder { color: var(--muted); }
+
+  .send-btn {
+    flex: 0 0 auto;
+    padding: 8px 16px;
+    border: 0;
+    border-radius: 11px;
+    background: var(--accent);
+    color: #fff;
+    font: inherit;
+    font-weight: 650;
+    cursor: pointer;
+  }
+
+  .send-btn:hover { background: #3f6bef; }
+
+  .composer-hint {
+    margin: 7px 4px 0;
+    color: var(--muted);
+    font-size: 11px;
+  }
+
+  /* ---------- right column ---------- */
+
+  .details {
+    display: flex;
+    flex-direction: column;
+    width: 300px;
+    flex: 0 0 300px;
+    min-height: 0;
+    overflow-y: auto;
+    border-left: 1px solid var(--line);
+    background: var(--panel);
+  }
+
+  .details-head {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 26px 20px 18px;
+    border-bottom: 1px solid var(--line);
+    text-align: center;
+  }
+
+  .details-name { font-size: 16px; font-weight: 700; }
+  .details-role { color: var(--muted); font-size: 12px; }
+
+  .details-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 6px;
+  }
+
+  .section { padding: 16px 20px; border-bottom: 1px solid var(--line); }
+
+  .section-title {
+    margin-bottom: 10px;
+    color: var(--muted);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .8px;
+    text-transform: uppercase;
+  }
+
+  .field {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 5px 0;
+    font-size: 12.5px;
+  }
+
+  .field span:first-child { color: var(--muted); }
+
+  .media-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+  }
+
+  .media {
+    aspect-ratio: 1 / 1;
+    border-radius: 9px;
+  }
+
+  .m1 { background: linear-gradient(135deg, #ff9a3c, #ff4d94); }
+  .m2 { background: linear-gradient(160deg, #22d3ee, #3b82f6); }
+  .m3 { background: linear-gradient(200deg, #34d399, #0f766e); }
+  .m4 { background: linear-gradient(45deg, #a78bfa, #ec4899); }
+  .m5 { background: linear-gradient(120deg, #f59e0b, #b91c1c); }
+  .m6 { background: linear-gradient(300deg, #4f7cff, #7a5cff); }
+  .m7 { background: linear-gradient(75deg, #64748b, #0f172a); }
+  .m8 { background: linear-gradient(15deg, #fbbf24, #10b981); }
+  .m9 { background: linear-gradient(215deg, #ef4444, #7c3aed); }
+
+  .file-row {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    padding: 7px 0;
+  }
+
+  .file-icon {
+    width: 32px;
+    height: 32px;
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    background: var(--panel-2);
+    font-size: 14px;
+  }
+
+  .file-name { font-size: 12.5px; }
+  .file-size { color: var(--muted); font-size: 11px; }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- left column -->
+  <aside class="sidebar">
+    <div class="sidebar-head">
+      <div class="brand">
+        <div class="brand-mark"></div>
+        <span>Pigeon</span>
+      </div>
+      <div class="spacer"></div>
+      <button class="icon-btn" title="New chat">+</button>
+      <button class="icon-btn" title="Settings">&#9881;</button>
+    </div>
+
+    <div class="search-wrap">
+      <input class="search" type="text" placeholder="Search people and messages">
+    </div>
+
+    <div class="filters">
+      <button class="chip is-on">All</button>
+      <button class="chip">Unread</button>
+      <button class="chip">Groups</button>
+      <button class="chip">Archived</button>
+    </div>
+
+    <div class="conversations">
+      <div class="list-label">Pinned</div>
+
+      <div class="conversation is-active">
+        <div class="avatar a1">MR<span class="dot"></span></div>
+        <div class="conversation-body">
+          <div class="conversation-top">
+            <div class="conversation-name">Mira Ranganathan</div>
+            <div class="time">09:41</div>
+          </div>
+          <div class="conversation-bottom">
+            <div class="preview">Pushed the fix, the sidebar stops jumping now</div>
+            <div class="badge">3</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="conversation">
+        <div class="avatar a2">DS<span class="dot"></span></div>
+        <div class="conversation-body">
+          <div class="conversation-top">
+            <div class="conversation-name">Design Standup</div>
+            <div class="time">09:12</div>
+          </div>
+          <div class="conversation-bottom">
+            <div class="preview">Tobias: can we cut the second row of filters?</div>
+            <div class="badge">12</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="list-label">Recent</div>
+
+      <div class="conversation">
+        <div class="avatar a3">JK<span class="dot is-away"></span></div>
+        <div class="conversation-body">
+          <div class="conversation-top">
+            <div class="conversation-name">Jonas Keller</div>
+            <div class="time">08:58</div>
+          </div>
+          <div class="conversation-bottom">
+            <div class="preview">You: sent the invoice, check spam if it's missing</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="conversation">
+        <div class="avatar a4">AO<span class="dot"></span></div>
+        <div class="conversation-body">
+          <div class="conversation-top">
+            <div class="conversation-name">Amara Okoye</div>
+            <div class="time">Yesterday</div>
+          </div>
+          <div class="conversation-bottom">
+            <div class="preview">The contrast on the muted text is still failing AA</div>
+            <div class="badge">1</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="conversation">
+        <div class="avatar a5">FE<span class="dot is-off"></span></div>
+        <div class="conversation-body">
+          <div class="conversation-top">
+            <div class="conversation-name">Frontend Guild</div>
+            <div class="time">Yesterday</div>
+          </div>
+          <div class="conversation-bottom">
+            <div class="preview">Priya: the sticky header eats the first row on Safari</div>
+            <div class="badge is-muted">48</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="conversation">
+        <div class="avatar a6">LT<span class="dot is-off"></span></div>
+        <div class="conversation-body">
+          <div class="conversation-top">
+            <div class="conversation-name">Lena Torres</div>
+            <div class="time">Tue</div>
+          </div>
+          <div class="conversation-bottom">
+            <div class="preview">Sounds good, let's do Thursday instead</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="conversation">
+        <div class="avatar a7">RB<span class="dot is-off"></span></div>
+        <div class="conversation-body">
+          <div class="conversation-top">
+            <div class="conversation-name">Rick Baumann</div>
+            <div class="time">Mon</div>
+          </div>
+          <div class="conversation-bottom">
+            <div class="preview">You: no worries, take the week</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="conversation">
+        <div class="avatar a2">QA<span class="dot is-away"></span></div>
+        <div class="conversation-body">
+          <div class="conversation-top">
+            <div class="conversation-name">QA Triage</div>
+            <div class="time">Mon</div>
+          </div>
+          <div class="conversation-bottom">
+            <div class="preview">Bot: 4 new regressions on the release branch</div>
+            <div class="badge is-muted">7</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="conversation">
+        <div class="avatar a3">SV<span class="dot is-off"></span></div>
+        <div class="conversation-body">
+          <div class="conversation-top">
+            <div class="conversation-name">Sofia Vidal</div>
+            <div class="time">Sun</div>
+          </div>
+          <div class="conversation-bottom">
+            <div class="preview">Photos from the launch dinner are up</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- main column -->
+  <main class="chat">
+    <header class="chat-head">
+      <div class="avatar a1">MR<span class="dot"></span></div>
+      <div>
+        <div class="chat-title">Mira Ranganathan</div>
+        <div class="chat-status">Online &middot; typing</div>
+      </div>
+      <div class="spacer"></div>
+      <button class="icon-btn" title="Search in chat">&#9906;</button>
+      <button class="icon-btn" title="Call">&#9742;</button>
+      <button class="icon-btn" title="Video">&#9635;</button>
+      <button class="icon-btn" title="More">&#8942;</button>
+    </header>
+
+    <div class="messages">
+
+      <div class="divider"><span>Tuesday, 3 September</span></div>
+
+      <div class="row">
+        <div class="avatar sm a1">MR</div>
+        <div class="row-body">
+          <div class="sender">Mira</div>
+          <div class="bubble is-tail-in">
+            <p>Morning. Did you get a chance to look at the layout bug on the settings panel?</p>
+            <div class="meta"><span>08:31</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row is-out">
+        <div class="avatar sm a2">ME</div>
+        <div class="row-body">
+          <div class="bubble is-tail-out">
+            <p>Yeah, opened it last night. The sidebar is 3px off center inside its own container.</p>
+            <div class="meta"><span>08:34</span><span>&#10003;&#10003;</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row is-out">
+        <div class="avatar sm a2" style="visibility:hidden">ME</div>
+        <div class="row-body">
+          <div class="bubble">
+            <p>It only shows up once the scrollbar appears, which is why nobody caught it on a Mac.</p>
+            <div class="meta"><span>08:34</span><span>&#10003;&#10003;</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="avatar sm a1">MR</div>
+        <div class="row-body">
+          <div class="bubble is-tail-in">
+            <p>That explains it. Windows QA has been screaming about it for a week.</p>
+            <div class="meta"><span>08:36</span></div>
+          </div>
+          <div class="reactions">
+            <button class="reaction is-mine"><span>&#128514;</span><span>3</span></button>
+            <button class="reaction"><span>&#128079;</span><span>2</span></button>
+            <button class="reaction"><span>&#128064;</span><span>1</span></button>
+          </div>
+        </div>
+      </div>
+
+      <div class="divider"><span>Yesterday</span></div>
+
+      <div class="row">
+        <div class="avatar sm a1">MR</div>
+        <div class="row-body">
+          <div class="sender">Mira</div>
+          <div class="bubble is-tail-in">
+            <div class="attachment"></div>
+            <div class="attachment-caption">
+              <span>&#128247;</span>
+              <span>settings-panel-overflow.png &middot; 412 KB</span>
+            </div>
+            <div class="meta"><span>17:04</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="avatar sm a1">MR</div>
+        <div class="row-body">
+          <div class="bubble">
+            <p>Left edge of the label is clipped by 6px. Same on the notification row.</p>
+            <div class="meta"><span>17:05</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row is-out">
+        <div class="avatar sm a2">ME</div>
+        <div class="row-body">
+          <div class="bubble is-tail-out">
+            <div class="quote">Left edge of the label is clipped by 6px.</div>
+            <p>That's the overflow hidden on the card. I'll swap it for a padding fix rather than bumping the width.</p>
+            <div class="meta"><span>17:22</span><span>&#10003;&#10003;</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="divider"><span>Today</span></div>
+
+      <div class="row">
+        <div class="avatar sm a1">MR</div>
+        <div class="row-body">
+          <div class="sender">Mira</div>
+          <div class="bubble is-tail-in">
+            <p>Pushed the fix, the sidebar stops jumping now.</p>
+            <div class="meta"><span>09:38</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="avatar sm a1">MR</div>
+        <div class="row-body">
+          <div class="bubble">
+            <p>Can you pull it and check on your Windows box before I tag the release?</p>
+            <div class="meta"><span>09:39</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row is-out">
+        <div class="avatar sm a2">ME</div>
+        <div class="row-body">
+          <div class="bubble is-tail-out">
+            <p>Pulling now. Give me ten minutes.</p>
+            <div class="meta"><span>09:41</span><span>&#10003;</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="avatar sm a1">MR</div>
+        <div class="row-body">
+          <div class="bubble is-tail-in typing">
+            <i></i><i></i><i></i>
+          </div>
+        </div>
+      </div>
+      <div class="typing-label">Mira is typing&hellip;</div>
+
+    </div>
+
+    <div class="composer">
+      <div class="composer-inner">
+        <button class="icon-btn" title="Emoji">&#9786;</button>
+        <button class="icon-btn" title="Attach">&#128206;</button>
+        <textarea rows="1" placeholder="Write a message&hellip;"></textarea>
+        <button class="icon-btn" title="Voice message">&#127908;</button>
+        <button class="send-btn">Send</button>
+      </div>
+      <div class="composer-hint">Enter to send, Shift + Enter for a new line</div>
+    </div>
+  </main>
+
+  <!-- right column -->
+  <aside class="details">
+    <div class="details-head">
+      <div class="avatar lg a1">MR<span class="dot"></span></div>
+      <div class="details-name">Mira Ranganathan</div>
+      <div class="details-role">Staff Engineer &middot; Platform</div>
+      <div class="details-actions">
+        <button class="icon-btn" title="Call">&#9742;</button>
+        <button class="icon-btn" title="Video">&#9635;</button>
+        <button class="icon-btn" title="Mute">&#128263;</button>
+        <button class="icon-btn" title="Star">&#9733;</button>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Details</div>
+      <div class="field"><span>Local time</span><span>18:11 IST</span></div>
+      <div class="field"><span>Email</span><span>mira@pigeon.dev</span></div>
+      <div class="field"><span>Team</span><span>Platform UI</span></div>
+      <div class="field"><span>Timezone</span><span>UTC+5:30</span></div>
+      <div class="field"><span>Shared groups</span><span>4</span></div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Shared media &middot; 42</div>
+      <div class="media-grid">
+        <div class="media m1"></div>
+        <div class="media m2"></div>
+        <div class="media m3"></div>
+        <div class="media m4"></div>
+        <div class="media m5"></div>
+        <div class="media m6"></div>
+        <div class="media m7"></div>
+        <div class="media m8"></div>
+        <div class="media m9"></div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Shared files</div>
+      <div class="file-row">
+        <div class="file-icon">&#128196;</div>
+        <div>
+          <div class="file-name">release-checklist.md</div>
+          <div class="file-size">8 KB &middot; Tue</div>
+        </div>
+      </div>
+      <div class="file-row">
+        <div class="file-icon">&#128202;</div>
+        <div>
+          <div class="file-name">layout-audit-q3.pdf</div>
+          <div class="file-size">2.4 MB &middot; Mon</div>
+        </div>
+      </div>
+      <div class="file-row">
+        <div class="file-icon">&#128230;</div>
+        <div>
+          <div class="file-name">panel-fix.patch</div>
+          <div class="file-size">14 KB &middot; Today</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Privacy</div>
+      <div class="field"><span>Notifications</span><span>On</span></div>
+      <div class="field"><span>Encryption</span><span>End to end</span></div>
+    </div>
+  </aside>
+
+</div>
+
+<script>
+  // Grow the composer with its content, capped by the CSS max-height.
+  const composerTextarea = document.querySelector(".composer textarea");
+
+  composerTextarea.addEventListener("input", () => {
+    composerTextarea.style.height = "auto";
+    composerTextarea.style.height = composerTextarea.scrollHeight + "px";
+  });
+
+  // Clicking a conversation moves the active highlight.
+  const conversationList = document.querySelector(".conversations");
+
+  conversationList.addEventListener("click", event => {
+    const clicked = event.target.closest(".conversation");
+    if (!clicked) return;
+
+    for (const item of conversationList.querySelectorAll(".conversation")) {
+      item.classList.remove("is-active");
+    }
+
+    clicked.classList.add("is-active");
+  });
+
+  // Start at the newest message.
+  const messages = document.querySelector(".messages");
+  messages.scrollTop = messages.scrollHeight;
+</script>
+</body>
+</html>

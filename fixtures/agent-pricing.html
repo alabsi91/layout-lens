@@ -1,0 +1,1223 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ledgerloop — Pricing</title>
+<style>
+  :root {
+    --ink: #10131a;
+    --ink-soft: #4b5364;
+    --ink-faint: #7d8598;
+    --line: #e3e7ef;
+    --paper: #ffffff;
+    --wash: #f6f8fc;
+    --brand: #4338ca;
+    --brand-soft: #eef0ff;
+    --accent: #06b6d4;
+    --shadow-sm: 0 1px 2px rgba(16, 19, 26, .06), 0 2px 8px rgba(16, 19, 26, .04);
+    --shadow-lg: 0 18px 48px rgba(29, 34, 56, .16), 0 2px 6px rgba(16, 19, 26, .06);
+    --radius: 14px;
+  }
+
+  * { box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font: 16px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1, h2, h3, h4 { margin: 0; line-height: 1.15; letter-spacing: -.02em; }
+
+  p { margin: 0; }
+
+  ul { margin: 0; padding: 0; list-style: none; }
+
+  a { color: inherit; text-decoration: none; }
+
+  .shell {
+    width: min(1140px, 100% - 40px);
+    margin-inline: auto;
+  }
+
+  /* ---------- header ---------- */
+
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    background: rgba(255, 255, 255, .86);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .site-header .shell {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+    height: 64px;
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    font-weight: 700;
+    letter-spacing: -.03em;
+    font-size: 18px;
+  }
+
+  .brand-mark {
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    background: linear-gradient(135deg, var(--brand), var(--accent));
+    box-shadow: var(--shadow-sm);
+  }
+
+  .site-nav {
+    display: flex;
+    gap: 22px;
+    margin-left: auto;
+    font-size: 14px;
+    color: var(--ink-soft);
+  }
+
+  .site-nav a:hover { color: var(--ink); }
+
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    border: 1px solid transparent;
+    border-radius: 10px;
+    padding: 10px 18px;
+    font: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform .12s ease, box-shadow .12s ease, background .12s ease;
+  }
+
+  .btn:active { transform: translateY(1px); }
+
+  .btn-primary {
+    background: linear-gradient(180deg, #5145d8, var(--brand));
+    color: #fff;
+    box-shadow: 0 6px 16px rgba(67, 56, 202, .28);
+  }
+
+  .btn-primary:hover { box-shadow: 0 10px 24px rgba(67, 56, 202, .34); }
+
+  .btn-ghost {
+    background: var(--paper);
+    border-color: var(--line);
+    color: var(--ink);
+  }
+
+  .btn-ghost:hover { background: var(--wash); }
+
+  .btn-block { width: 100%; }
+
+  /* ---------- hero ---------- */
+
+  .hero {
+    position: relative;
+    overflow: hidden;
+    padding: 74px 0 40px;
+    background:
+      radial-gradient(900px 420px at 50% -160px, #e4e7ff 0%, rgba(228, 231, 255, 0) 70%),
+      linear-gradient(180deg, var(--wash), var(--paper));
+    text-align: center;
+  }
+
+  .eyebrow {
+    display: inline-block;
+    padding: 5px 12px;
+    border-radius: 999px;
+    background: var(--brand-soft);
+    color: var(--brand);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+  }
+
+  .hero h1 {
+    margin: 18px auto 0;
+    max-width: 15ch;
+    font-size: clamp(34px, 5vw, 54px);
+  }
+
+  .hero h1 .gradient-word {
+    background: linear-gradient(100deg, var(--brand), var(--accent));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .hero-sub {
+    margin: 18px auto 0;
+    max-width: 60ch;
+    color: var(--ink-soft);
+    font-size: 18px;
+  }
+
+  .billing-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 14px;
+    margin-top: 30px;
+    padding: 8px 16px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: var(--paper);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .billing-toggle span {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--ink-faint);
+    transition: color .15s ease;
+  }
+
+  .billing-toggle span.is-active { color: var(--ink); }
+
+  .switch {
+    position: relative;
+    width: 50px;
+    height: 28px;
+    border: 0;
+    padding: 0;
+    border-radius: 999px;
+    background: #cfd6e4;
+    cursor: pointer;
+    transition: background .18s ease;
+  }
+
+  .switch[aria-checked="true"] { background: var(--brand); }
+
+  .switch::after {
+    content: "";
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, .3);
+    transition: transform .18s ease;
+  }
+
+  .switch[aria-checked="true"]::after { transform: translateX(22px); }
+
+  .save-pill {
+    padding: 3px 9px;
+    border-radius: 999px;
+    background: #dcfce7;
+    color: #15803d;
+    font-size: 12px;
+    font-weight: 700;
+  }
+
+  .trusted-by {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px 28px;
+    margin-top: 34px;
+    color: var(--ink-faint);
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: .04em;
+  }
+
+  /* ---------- tiers ---------- */
+
+  .tiers {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    align-items: start;
+    gap: 22px;
+    padding: 34px 0 76px;
+  }
+
+  .tier {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 28px 26px 30px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--paper);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .tier-featured {
+    transform: scale(1.045);
+    border-color: rgba(67, 56, 202, .34);
+    box-shadow: var(--shadow-lg);
+    z-index: 2;
+  }
+
+  .tier-featured::before {
+    content: "";
+    position: absolute;
+    inset: -1px;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(140deg, var(--brand), var(--accent));
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+  }
+
+  .badge-popular {
+    position: absolute;
+    top: -13px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 5px 14px;
+    border-radius: 999px;
+    background: linear-gradient(100deg, var(--brand), #6d5ce0);
+    color: #fff;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: .03em;
+    white-space: nowrap;
+    box-shadow: 0 6px 14px rgba(67, 56, 202, .35);
+  }
+
+  .tier-name {
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: .02em;
+  }
+
+  .tier-blurb {
+    margin-top: 6px;
+    min-height: 44px;
+    color: var(--ink-soft);
+    font-size: 14px;
+  }
+
+  .price-row {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+  }
+
+  .price {
+    font-size: 42px;
+    font-weight: 800;
+    letter-spacing: -.04em;
+  }
+
+  .price-unit {
+    color: var(--ink-faint);
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  .price-note {
+    margin-top: 6px;
+    color: var(--ink-faint);
+    font-size: 13px;
+  }
+
+  .feature-list {
+    display: flex;
+    flex-direction: column;
+    gap: 11px;
+    font-size: 14px;
+  }
+
+  .feature-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    color: var(--ink-soft);
+  }
+
+  .check {
+    flex: none;
+    width: 18px;
+    height: 18px;
+    margin-top: 1px;
+    color: var(--brand);
+  }
+
+  .feature-list li strong {
+    color: var(--ink);
+    font-weight: 600;
+  }
+
+  .tier-foot {
+    margin-top: auto;
+    padding-top: 4px;
+  }
+
+  /* ---------- comparison ---------- */
+
+  .section-head {
+    max-width: 56ch;
+    margin: 0 auto 30px;
+    text-align: center;
+  }
+
+  .section-head h2 { font-size: clamp(26px, 3.4vw, 36px); }
+
+  .section-head p {
+    margin-top: 12px;
+    color: var(--ink-soft);
+  }
+
+  .compare {
+    padding: 70px 0;
+    background: var(--wash);
+    border-block: 1px solid var(--line);
+  }
+
+  .table-wrap {
+    max-height: 560px;
+    overflow: auto;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--paper);
+    box-shadow: var(--shadow-sm);
+  }
+
+  table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-size: 14px;
+  }
+
+  th, td {
+    padding: 13px 18px;
+    text-align: center;
+    border-bottom: 1px solid var(--line);
+    white-space: nowrap;
+  }
+
+  thead th {
+    position: sticky;
+    top: 0;
+    z-index: 3;
+    background: #f0f3f9;
+    font-size: 13px;
+    letter-spacing: .03em;
+  }
+
+  thead th.col-feature {
+    left: 0;
+    z-index: 5;
+    text-align: left;
+  }
+
+  tbody th.col-feature {
+    position: sticky;
+    left: 0;
+    z-index: 2;
+    background: var(--paper);
+    text-align: left;
+    font-weight: 600;
+    box-shadow: 1px 0 0 var(--line);
+  }
+
+  tbody tr:hover th.col-feature,
+  tbody tr:hover td { background: #fafbfe; }
+
+  .group-row th {
+    position: sticky;
+    left: 0;
+    background: #eef1f8;
+    color: var(--ink-faint);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    text-align: left;
+  }
+
+  .yes { color: #16a34a; font-weight: 700; }
+
+  .no { color: #c2c8d4; }
+
+  .col-featured { background: rgba(238, 240, 255, .55); }
+
+  thead th.col-featured { background: #e6e8ff; }
+
+  /* ---------- faq ---------- */
+
+  .faq { padding: 74px 0; }
+
+  .faq-list {
+    max-width: 760px;
+    margin-inline: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .faq-item {
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: var(--paper);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+  }
+
+  .faq-item.is-open { border-color: rgba(67, 56, 202, .3); }
+
+  .faq-q {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    width: 100%;
+    padding: 17px 20px;
+    border: 0;
+    background: none;
+    font: inherit;
+    font-weight: 600;
+    text-align: left;
+    cursor: pointer;
+  }
+
+  .faq-q:hover { background: var(--wash); }
+
+  .faq-icon {
+    flex: none;
+    width: 18px;
+    height: 18px;
+    color: var(--brand);
+    transition: transform .18s ease;
+  }
+
+  .is-open .faq-icon { transform: rotate(45deg); }
+
+  .faq-a {
+    padding: 0 20px 18px;
+    color: var(--ink-soft);
+    font-size: 15px;
+  }
+
+  .faq-item:not(.is-open) .faq-a { display: none; }
+
+  /* ---------- testimonials ---------- */
+
+  .testimonials {
+    padding: 70px 0;
+    background:
+      radial-gradient(700px 300px at 20% 0%, #e9ecff 0%, rgba(233, 236, 255, 0) 70%),
+      var(--wash);
+    border-block: 1px solid var(--line);
+    text-align: center;
+  }
+
+  .carousel {
+    position: relative;
+    max-width: 780px;
+    margin-inline: auto;
+  }
+
+  .slide {
+    display: none;
+    padding: 34px 30px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--paper);
+    box-shadow: var(--shadow-lg);
+  }
+
+  .slide.is-current { display: block; }
+
+  .quote-mark {
+    font-size: 46px;
+    line-height: 1;
+    color: var(--brand);
+    opacity: .3;
+  }
+
+  .slide blockquote {
+    margin: 12px 0 0;
+    font-size: 19px;
+    line-height: 1.5;
+    letter-spacing: -.01em;
+  }
+
+  .who {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 22px;
+  }
+
+  .avatar {
+    display: grid;
+    place-items: center;
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--brand), var(--accent));
+    color: #fff;
+    font-size: 15px;
+    font-weight: 700;
+  }
+
+  .who-text { text-align: left; }
+
+  .who-name { font-size: 14px; font-weight: 700; }
+
+  .who-role { color: var(--ink-faint); font-size: 13px; }
+
+  .dots {
+    display: flex;
+    justify-content: center;
+    gap: 9px;
+    margin-top: 22px;
+  }
+
+  .dot {
+    width: 9px;
+    height: 9px;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: #c8cfdd;
+    cursor: pointer;
+    transition: transform .15s ease, background .15s ease;
+  }
+
+  .dot.is-current {
+    background: var(--brand);
+    transform: scale(1.45);
+  }
+
+  /* ---------- cta ---------- */
+
+  .cta-band {
+    margin: 74px auto;
+    padding: 52px 40px;
+    border-radius: 22px;
+    background: linear-gradient(120deg, #312a97, var(--brand) 45%, #0e8fb0);
+    color: #fff;
+    text-align: center;
+    box-shadow: 0 26px 60px rgba(49, 42, 151, .34);
+  }
+
+  .cta-band h2 { font-size: clamp(26px, 3.6vw, 38px); }
+
+  .cta-band p {
+    margin: 14px auto 0;
+    max-width: 52ch;
+    color: rgba(255, 255, 255, .82);
+  }
+
+  .cta-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 26px;
+  }
+
+  .btn-invert {
+    background: #fff;
+    color: var(--brand);
+  }
+
+  .btn-outline {
+    border-color: rgba(255, 255, 255, .5);
+    color: #fff;
+    background: transparent;
+  }
+
+  .cta-fineprint {
+    margin-top: 18px;
+    font-size: 13px;
+    color: rgba(255, 255, 255, .7);
+  }
+
+  /* ---------- footer ---------- */
+
+  .site-footer {
+    border-top: 1px solid var(--line);
+    background: var(--wash);
+    padding: 52px 0 30px;
+  }
+
+  .footer-grid {
+    display: grid;
+    grid-template-columns: 1.6fr repeat(4, 1fr);
+    gap: 34px;
+  }
+
+  .footer-col h4 {
+    margin-bottom: 14px;
+    font-size: 13px;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+  }
+
+  .footer-col li { margin-bottom: 9px; }
+
+  .footer-col a {
+    color: var(--ink-soft);
+    font-size: 14px;
+  }
+
+  .footer-col a:hover { color: var(--brand); }
+
+  .footer-about p {
+    margin-top: 12px;
+    max-width: 34ch;
+    color: var(--ink-soft);
+    font-size: 14px;
+  }
+
+  .footer-bottom {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 40px;
+    padding-top: 20px;
+    border-top: 1px solid var(--line);
+    color: var(--ink-faint);
+    font-size: 13px;
+  }
+
+  .footer-bottom nav {
+    display: flex;
+    gap: 18px;
+  }
+
+  @media (max-width: 900px) {
+    .tiers { grid-template-columns: 1fr; }
+    .tier-featured { transform: none; }
+    .footer-grid { grid-template-columns: 1fr 1fr; }
+    .site-nav { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="shell">
+    <a class="brand" href="#top">
+      <span class="brand-mark"></span>
+      Ledgerloop
+    </a>
+    <nav class="site-nav">
+      <a href="#tiers">Pricing</a>
+      <a href="#compare">Compare</a>
+      <a href="#faq">FAQ</a>
+      <a href="#customers">Customers</a>
+      <a href="#docs">Docs</a>
+    </nav>
+    <div class="header-actions">
+      <a class="btn btn-ghost" href="#signin">Sign in</a>
+      <a class="btn btn-primary" href="#trial">Start free trial</a>
+    </div>
+  </div>
+</header>
+
+<main id="top">
+
+  <section class="hero">
+    <div class="shell">
+      <span class="eyebrow">Pricing</span>
+      <h1>Close the books <span class="gradient-word">four days faster</span></h1>
+      <p class="hero-sub">Ledgerloop reconciles Stripe, bank feeds and your ledger every night, then hands your accountant a clean close. Plans scale by transaction volume, never by seat.</p>
+
+      <div class="billing-toggle">
+        <span id="labelMonthly" class="is-active">Monthly</span>
+        <button id="billingSwitch" class="switch" role="switch" aria-checked="false" aria-label="Switch to yearly billing"></button>
+        <span id="labelYearly">Yearly</span>
+        <span class="save-pill">Save 20%</span>
+      </div>
+
+      <div class="trusted-by">
+        <span>NORTHWIND</span>
+        <span>CARRERA LABS</span>
+        <span>BLUEFIN</span>
+        <span>OAKMONT &amp; CO</span>
+        <span>PALLET</span>
+        <span>HARBORSIDE</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="shell tiers" id="tiers">
+
+    <article class="tier">
+      <header>
+        <h3 class="tier-name">Starter</h3>
+        <p class="tier-blurb">For a founder doing their own books before the first finance hire.</p>
+      </header>
+      <div>
+        <div class="price-row">
+          <span class="price" data-monthly="$29" data-yearly="$23">$29</span>
+          <span class="price-unit">/ month</span>
+        </div>
+        <p class="price-note" data-monthly="Billed monthly, cancel anytime" data-yearly="$276 billed yearly">Billed monthly, cancel anytime</p>
+      </div>
+      <ul class="feature-list">
+        <li><svg class="check" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 10.5l4 4 8-9"/></svg><span>Up to <strong>2,000</strong> transactions / month</span></li>
+        <li><svg class="check" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 10.5l4 4 8-9"/></svg><span>2 bank or card connections</span></li>
+        <li><svg class="check" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 10.5l4 4 8-9"/></svg><span>Nightly reconciliation runs</span></li>
+        <li><svg class="check" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 10.5l4 4 8-9"/></svg><span>CSV and QuickBooks export</span></li>
+        <li><svg class="check" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 10.5l4 4 8-9"/></svg><span>Email support, 2 business days</span></li>
+      </ul>
+      <div class="tier-foot">
+        <a class="btn btn-ghost btn-block" href="#starter">Start free trial</a>
+      </div>
+    </article>
+
+    <article class="tier tier-featured">
+      <span class="badge-popular">Most popular</span>
+      <header>
+        <h3 class="tier-name">Growth</h3>
+        <p class="tier-blurb">For a small finance team that closes every month on a deadline.</p>
+      </header>
+      <div>
+        <div class="price-row">
+          <span class="price" data-monthly="$89" data-yearly="$71">$89</span>
+          <span class="price-unit">/ month</span>
+        </div>
+        <p class="price-note" data-monthly="Billed monthly, cancel anytime" data-yearly="$852 billed yearly">Billed monthly, cancel anytime</p>
+      </div>
+      <ul class="feature-list">
+        <li><svg class="check" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 10.5l4 4 8-9"/></svg><span>Up to <strong>25,000</strong> transactions / month</span></li>
+        <li><svg class="check" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 10.5l4 4 8-9"/></svg><span>Unlimited connections and entities</span></li>
+        <li><svg class="check" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 10.5l4 4 8-9"/></svg><span><strong>Multi-currency</strong> with daily FX rates</span></li>
+        <li><svg class="check" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 10.5l4 4 8-9"/></svg><span>Approval rules and audit trail</span></li>
+        <li><svg class="check" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 10.5l4 4 8-9"/></svg><span>Xero, NetSuite and Sage sync</span></li>
+        <li><svg class="check" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 10.5l4 4 8-9"/></svg><span>Chat support, 4 hour response</span></li>
+      </ul>
+      <div class="tier-foot">
+        <a class="btn btn-primary btn-block" href="#growth">Start free trial</a>
+      </div>
+    </article>
+
+    <article class="tier">
+      <header>
+        <h3 class="tier-name">Enterprise</h3>
+        <p class="tier-blurb">For groups with several entities, auditors and a security review.</p>
+      </header>
+      <div>
+        <div class="price-row">
+          <span class="price" data-monthly="$340" data-yearly="$272">$340</span>
+          <span class="price-unit">/ month</span>
+        </div>
+        <p class="price-note" data-monthly="Volume pricing above 250k transactions" data-yearly="$3,264 billed yearly">Volume pricing above 250k transactions</p>
+      </div>
+      <ul class="feature-list">
+        <li><svg class="check" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 10.5l4 4 8-9"/></svg><span>Unlimited transactions</span></li>
+        <li><svg class="check" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 10.5l4 4 8-9"/></svg><span><strong>SAML SSO</strong> and SCIM provisioning</span></li>
+        <li><svg class="check" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 10.5l4 4 8-9"/></svg><span>Intercompany eliminations</span></li>
+        <li><svg class="check" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 10.5l4 4 8-9"/></svg><span>Custom data residency (EU or US)</span></li>
+        <li><svg class="check" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 10.5l4 4 8-9"/></svg><span>Named onboarding engineer</span></li>
+        <li><svg class="check" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 10.5l4 4 8-9"/></svg><span>99.9% uptime SLA in contract</span></li>
+      </ul>
+      <div class="tier-foot">
+        <a class="btn btn-ghost btn-block" href="#sales">Talk to sales</a>
+      </div>
+    </article>
+
+  </section>
+
+  <section class="compare" id="compare">
+    <div class="shell">
+      <div class="section-head">
+        <h2>Every feature, side by side</h2>
+        <p>Scroll the table. The plan names stay pinned at the top and the feature names stay pinned on the left.</p>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th class="col-feature" scope="col">Feature</th>
+              <th scope="col">Starter</th>
+              <th class="col-featured" scope="col">Growth</th>
+              <th scope="col">Enterprise</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="group-row"><th colspan="4" scope="colgroup">Reconciliation</th></tr>
+            <tr>
+              <th class="col-feature" scope="row">Transactions per month</th>
+              <td>2,000</td>
+              <td class="col-featured">25,000</td>
+              <td>Unlimited</td>
+            </tr>
+            <tr>
+              <th class="col-feature" scope="row">Bank and card connections</th>
+              <td>2</td>
+              <td class="col-featured">Unlimited</td>
+              <td>Unlimited</td>
+            </tr>
+            <tr>
+              <th class="col-feature" scope="row">Nightly automatic runs</th>
+              <td class="yes">Included</td>
+              <td class="col-featured yes">Included</td>
+              <td class="yes">Included</td>
+            </tr>
+            <tr>
+              <th class="col-feature" scope="row">Custom matching rules</th>
+              <td class="no">&mdash;</td>
+              <td class="col-featured">Up to 50</td>
+              <td>Unlimited</td>
+            </tr>
+            <tr>
+              <th class="col-feature" scope="row">Multi-currency with daily FX</th>
+              <td class="no">&mdash;</td>
+              <td class="col-featured yes">Included</td>
+              <td class="yes">Included</td>
+            </tr>
+
+            <tr class="group-row"><th colspan="4" scope="colgroup">Close and reporting</th></tr>
+            <tr>
+              <th class="col-feature" scope="row">Close checklist</th>
+              <td class="yes">Included</td>
+              <td class="col-featured yes">Included</td>
+              <td class="yes">Included</td>
+            </tr>
+            <tr>
+              <th class="col-feature" scope="row">Intercompany eliminations</th>
+              <td class="no">&mdash;</td>
+              <td class="col-featured no">&mdash;</td>
+              <td class="yes">Included</td>
+            </tr>
+            <tr>
+              <th class="col-feature" scope="row">Scheduled board reports</th>
+              <td class="no">&mdash;</td>
+              <td class="col-featured yes">Included</td>
+              <td class="yes">Included</td>
+            </tr>
+            <tr>
+              <th class="col-feature" scope="row">Ledger history retained</th>
+              <td>12 months</td>
+              <td class="col-featured">7 years</td>
+              <td>Contractual</td>
+            </tr>
+
+            <tr class="group-row"><th colspan="4" scope="colgroup">Integrations</th></tr>
+            <tr>
+              <th class="col-feature" scope="row">QuickBooks and CSV export</th>
+              <td class="yes">Included</td>
+              <td class="col-featured yes">Included</td>
+              <td class="yes">Included</td>
+            </tr>
+            <tr>
+              <th class="col-feature" scope="row">Xero, NetSuite, Sage</th>
+              <td class="no">&mdash;</td>
+              <td class="col-featured yes">Included</td>
+              <td class="yes">Included</td>
+            </tr>
+            <tr>
+              <th class="col-feature" scope="row">REST API rate limit</th>
+              <td>60 / min</td>
+              <td class="col-featured">600 / min</td>
+              <td>Custom</td>
+            </tr>
+            <tr>
+              <th class="col-feature" scope="row">Outbound webhooks</th>
+              <td class="no">&mdash;</td>
+              <td class="col-featured yes">Included</td>
+              <td class="yes">Included</td>
+            </tr>
+
+            <tr class="group-row"><th colspan="4" scope="colgroup">Security and support</th></tr>
+            <tr>
+              <th class="col-feature" scope="row">SAML SSO and SCIM</th>
+              <td class="no">&mdash;</td>
+              <td class="col-featured no">&mdash;</td>
+              <td class="yes">Included</td>
+            </tr>
+            <tr>
+              <th class="col-feature" scope="row">Role based permissions</th>
+              <td class="no">&mdash;</td>
+              <td class="col-featured yes">Included</td>
+              <td class="yes">Granular</td>
+            </tr>
+            <tr>
+              <th class="col-feature" scope="row">SOC 2 Type II report</th>
+              <td class="yes">On request</td>
+              <td class="col-featured yes">On request</td>
+              <td class="yes">Included</td>
+            </tr>
+            <tr>
+              <th class="col-feature" scope="row">Support response target</th>
+              <td>2 business days</td>
+              <td class="col-featured">4 hours</td>
+              <td>1 hour, 24/7</td>
+            </tr>
+            <tr>
+              <th class="col-feature" scope="row">Uptime SLA</th>
+              <td class="no">&mdash;</td>
+              <td class="col-featured">99.5%</td>
+              <td>99.9%</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section class="faq" id="faq">
+    <div class="shell">
+      <div class="section-head">
+        <h2>Questions we get every week</h2>
+        <p>Anything else, email billing@ledgerloop.com and a human answers.</p>
+      </div>
+
+      <div class="faq-list">
+
+        <div class="faq-item is-open">
+          <button class="faq-q" aria-expanded="true">
+            <span>What counts as a transaction?</span>
+            <svg class="faq-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M10 4v12M4 10h12"/></svg>
+          </button>
+          <div class="faq-a">One line item pulled from a bank feed, a card, or a payment processor. A refund and its original charge count as two. Internal transfers between your own connected accounts are free and never counted.</div>
+        </div>
+
+        <div class="faq-item is-open">
+          <button class="faq-q" aria-expanded="true">
+            <span>What happens when I go over the plan limit?</span>
+            <svg class="faq-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M10 4v12M4 10h12"/></svg>
+          </button>
+          <div class="faq-a">Nothing breaks and nothing stops syncing. We email you at 80% and again at 100%, then bill overage at $0.004 per transaction on the next invoice. If you cross the limit three months running we suggest the next plan up, which is cheaper.</div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-q" aria-expanded="false">
+            <span>Can I switch between monthly and yearly later?</span>
+            <svg class="faq-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M10 4v12M4 10h12"/></svg>
+          </button>
+          <div class="faq-a">Yes, both directions. Moving to yearly credits the unused part of your current month. Moving back to monthly takes effect at the end of the paid year.</div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-q" aria-expanded="false">
+            <span>Do you charge per seat?</span>
+            <svg class="faq-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M10 4v12M4 10h12"/></svg>
+          </button>
+          <div class="faq-a">No. Invite your whole team, your bookkeeper and your auditor on any plan. We price on transaction volume because that is what actually costs us money.</div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-q" aria-expanded="false">
+            <span>How long does onboarding take?</span>
+            <svg class="faq-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M10 4v12M4 10h12"/></svg>
+          </button>
+          <div class="faq-a">Starter and Growth are self serve, most teams are reconciling the same afternoon. Enterprise gets a named onboarding engineer and a typical two week window for historical import and a security review.</div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-q" aria-expanded="false">
+            <span>Is there a refund if it does not work for us?</span>
+            <svg class="faq-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M10 4v12M4 10h12"/></svg>
+          </button>
+          <div class="faq-a">Thirty days, no questions, on the first invoice of any plan. After that we refund unused whole months on yearly plans.</div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <section class="testimonials" id="customers">
+    <div class="shell">
+      <div class="section-head">
+        <h2>Finance teams that stopped dreading month end</h2>
+      </div>
+
+      <div class="carousel">
+        <div class="slide is-current">
+          <div class="quote-mark">&ldquo;</div>
+          <blockquote>Our close ran eleven days and half of it was chasing Stripe payouts against the bank. Ledgerloop matched 96% of it the first night. We closed in six days that month and four the next.</blockquote>
+          <div class="who">
+            <span class="avatar">MR</span>
+            <span class="who-text">
+              <span class="who-name">Mireille Okafor</span>
+              <span class="who-role">Controller, Bluefin Logistics</span>
+            </span>
+          </div>
+        </div>
+
+        <div class="slide">
+          <div class="quote-mark">&ldquo;</div>
+          <blockquote>We run seven entities in four currencies. The FX handling is the part I expected to hate and it is the part I never think about now. Our auditor asked which system produced the trail and then asked for a demo.</blockquote>
+          <div class="who">
+            <span class="avatar">DK</span>
+            <span class="who-text">
+              <span class="who-name">Daniel Kwan</span>
+              <span class="who-role">VP Finance, Oakmont &amp; Co</span>
+            </span>
+          </div>
+        </div>
+
+        <div class="slide">
+          <div class="quote-mark">&ldquo;</div>
+          <blockquote>I am a founder who did the books at midnight on Sundays. The Starter plan cost less than one hour of my bookkeeper and gave me back the Sunday. That is the whole review.</blockquote>
+          <div class="who">
+            <span class="avatar">SA</span>
+            <span class="who-text">
+              <span class="who-name">Sara Almeida</span>
+              <span class="who-role">Founder, Pallet Supply</span>
+            </span>
+          </div>
+        </div>
+
+        <div class="dots">
+          <button class="dot is-current" aria-label="Show testimonial 1"></button>
+          <button class="dot" aria-label="Show testimonial 2"></button>
+          <button class="dot" aria-label="Show testimonial 3"></button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="shell">
+    <div class="cta-band" id="trial">
+      <h2>Try it against last month's books</h2>
+      <p>Connect one account, import a closed month, and see how much Ledgerloop matches on its own. Fourteen days, no card, and you can delete the data with one click.</p>
+      <div class="cta-actions">
+        <a class="btn btn-invert" href="#start">Start free trial</a>
+        <a class="btn btn-outline" href="#demo">Book a 20 minute demo</a>
+      </div>
+      <p class="cta-fineprint">SOC 2 Type II &middot; Read only bank access &middot; Cancel from settings, no email required</p>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="shell">
+    <div class="footer-grid">
+
+      <div class="footer-col footer-about">
+        <a class="brand" href="#top">
+          <span class="brand-mark"></span>
+          Ledgerloop
+        </a>
+        <p>Automated reconciliation and a faster month end close, for teams who would rather review than retype.</p>
+      </div>
+
+      <div class="footer-col">
+        <h4>Product</h4>
+        <ul>
+          <li><a href="#features">Features</a></li>
+          <li><a href="#tiers">Pricing</a></li>
+          <li><a href="#integrations">Integrations</a></li>
+          <li><a href="#changelog">Changelog</a></li>
+          <li><a href="#status">Status</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>Company</h4>
+        <ul>
+          <li><a href="#about">About</a></li>
+          <li><a href="#careers">Careers</a></li>
+          <li><a href="#blog">Blog</a></li>
+          <li><a href="#press">Press kit</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>Developers</h4>
+        <ul>
+          <li><a href="#docs">Documentation</a></li>
+          <li><a href="#api">API reference</a></li>
+          <li><a href="#webhooks">Webhooks</a></li>
+          <li><a href="#sdk">SDKs</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>Legal</h4>
+        <ul>
+          <li><a href="#terms">Terms</a></li>
+          <li><a href="#privacy">Privacy</a></li>
+          <li><a href="#dpa">DPA</a></li>
+          <li><a href="#security">Security</a></li>
+        </ul>
+      </div>
+
+    </div>
+
+    <div class="footer-bottom">
+      <span>&copy; 2026 Ledgerloop Inc. 340 Bryant Street, San Francisco.</span>
+      <nav>
+        <a href="#twitter">X</a>
+        <a href="#linkedin">LinkedIn</a>
+        <a href="#github">GitHub</a>
+      </nav>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // billing toggle
+  const billingSwitch = document.getElementById("billingSwitch");
+  const labelMonthly = document.getElementById("labelMonthly");
+  const labelYearly = document.getElementById("labelYearly");
+
+  billingSwitch.addEventListener("click", () => {
+    const isYearly = billingSwitch.getAttribute("aria-checked") !== "true";
+    billingSwitch.setAttribute("aria-checked", String(isYearly));
+    labelMonthly.classList.toggle("is-active", !isYearly);
+    labelYearly.classList.toggle("is-active", isYearly);
+
+    for (const element of document.querySelectorAll("[data-monthly]")) {
+      element.textContent = isYearly ? element.dataset.yearly : element.dataset.monthly;
+    }
+  });
+
+  // faq accordion
+  for (const question of document.querySelectorAll(".faq-q")) {
+    question.addEventListener("click", () => {
+      const item = question.closest(".faq-item");
+      const isOpen = item.classList.toggle("is-open");
+      question.setAttribute("aria-expanded", String(isOpen));
+    });
+  }
+
+  // testimonial carousel
+  const slides = document.querySelectorAll(".slide");
+  const dots = document.querySelectorAll(".dot");
+
+  dots.forEach((dot, index) => {
+    dot.addEventListener("click", () => {
+      slides.forEach((slide, slideIndex) => slide.classList.toggle("is-current", slideIndex === index));
+      dots.forEach((other, dotIndex) => other.classList.toggle("is-current", dotIndex === index));
+    });
+  });
+</script>
+
+</body>
+</html>

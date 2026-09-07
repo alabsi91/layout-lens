@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Checkout</title>
+<style>
+  body { margin: 0; background: #ffffff; color: #111827;
+         font-family: -apple-system, "Segoe UI", Arial, sans-serif; }
+
+  .page { width: 520px; margin: 0 auto; padding: 64px 0; }
+  .page h1 { margin: 0 0 6px; font-size: 22px; line-height: 30px; }
+  .page p { margin: 0 0 20px; font-size: 14px; line-height: 20px; color: #4b5563; }
+</style>
+</head>
+<body>
+
+<div class="page">
+  <h1>Checkout</h1>
+  <p>Step 3 of 5, delivery address</p>
+
+  <progress-steps id="checkout-steps" class="steps"></progress-steps>
+</div>
+
+<script>
+  class ProgressSteps extends HTMLElement {
+    connectedCallback() {
+      const shadowRoot = this.attachShadow({ mode: 'open' });
+
+      shadowRoot.innerHTML = `
+        <style>
+          :host { display: block; width: 320px; }
+          .track { display: flex; gap: 6px; }
+          .seg { width: 40px; height: 8px; border-radius: 4px; background: #d1d5db; }
+          .seg:nth-child(-n+3) { background: #2563eb; }
+
+          /* a hand tweak on the step that was being worked on, never taken back out */
+          #seg-3 { width: 45px; }
+        </style>
+
+        <div class="track">
+          <span class="seg"></span>
+          <span class="seg"></span>
+          <span class="seg" id="seg-3"></span>
+          <span class="seg"></span>
+          <span class="seg"></span>
+        </div>
+      `;
+    }
+  }
+
+  customElements.define('progress-steps', ProgressSteps);
+</script>
+
+</body>
+</html>

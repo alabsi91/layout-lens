@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Checkout</title>
+<style>
+  body { margin: 0; background: #ffffff; color: #111827;
+         font-family: -apple-system, "Segoe UI", Arial, sans-serif; }
+
+  .page { width: 760px; margin: 0 auto; padding: 56px 0; }
+  .page h1 { margin: 0 0 20px; font-size: 22px; line-height: 30px; }
+
+  .stepper { display: flex; gap: 16px; }
+
+  .step { display: flex; align-items: center; justify-content: center;
+          width: 150px; height: 40px; box-sizing: border-box; border-radius: 20px;
+          background: #f3f4f6; color: #4b5563; font-size: 14px; }
+
+  /* the step you are on is deliberately wider than the rest */
+  .step.is-active { width: 200px; background: #111827; color: #ffffff; font-weight: 600; }
+
+  .panel { margin-top: 24px; border: 1px solid #e5e7eb; border-radius: 12px; padding: 20px;
+           font-size: 14px; line-height: 22px; color: #374151; }
+</style>
+</head>
+<body>
+
+<div class="page">
+  <h1>Checkout</h1>
+
+  <div class="stepper">
+    <div class="step">Basket</div>
+    <div class="step">Address</div>
+    <div class="step is-active" id="step-payment">Payment</div>
+    <div class="step">Review</div>
+  </div>
+
+  <div class="panel">
+    Card ending 4417 &middot; expires 09/29<br>
+    Billed to Northwind Traders, London
+  </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Deals</title>
+<style>
+  body { margin: 0; background: #ffffff; color: #111827;
+         font-family: -apple-system, "Segoe UI", Arial, sans-serif; }
+
+  .deals { display: flex; gap: 24px; padding: 40px; }
+
+  .card { width: 300px; flex: 0 0 300px; background: #ffffff; border-radius: 12px;
+          box-shadow: 0 1px 3px rgba(17, 24, 39, .12); }
+  .card-body { padding: 12px 16px 16px; }
+  .card h2 { margin: 0 0 2px; font-size: 15px; line-height: 20px; }
+  .card p { margin: 0; font-size: 13px; line-height: 18px; color: #6b7280; }
+
+  .card-photo { display: block; width: 300px; height: 180px; object-fit: cover;
+                border-radius: 12px 12px 0 0; }
+
+  /* the planted defect: this photo kept the width of the old wide card, the aspect
+     ratio is still handled by object-fit but the box is 40 wider than the card */
+  #deal-photo { width: 340px; }
+</style>
+</head>
+<body>
+
+<div class="deals">
+  <article class="card">
+    <img class="card-photo" alt="Coast road"
+         src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='400'%3E%3Crect width='600' height='400' fill='%2394a3b8'/%3E%3C/svg%3E">
+    <div class="card-body"><h2>Coast road</h2><p>3 nights &middot; from 240</p></div>
+  </article>
+
+  <article class="card">
+    <img class="card-photo" alt="Lake cabin"
+         src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='400'%3E%3Crect width='600' height='400' fill='%23a3b8a0'/%3E%3C/svg%3E">
+    <div class="card-body"><h2>Lake cabin</h2><p>2 nights &middot; from 180</p></div>
+  </article>
+
+  <article class="card">
+    <img class="card-photo" id="deal-photo" alt="City loft"
+         src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='400'%3E%3Crect width='600' height='400' fill='%23b8a094'/%3E%3C/svg%3E">
+    <div class="card-body"><h2>City loft</h2><p>4 nights &middot; from 410</p></div>
+  </article>
+</div>
+
+</body>
+</html>

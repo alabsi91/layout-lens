@@ -1,0 +1,1519 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Orbit — Q3 Platform Board</title>
+<style>
+  :root {
+    --bg: #f1f2f6;
+    --nav: #16213e;
+    --nav-soft: #24345c;
+    --col: #e7e9f0;
+    --card: #ffffff;
+    --ink: #1c2333;
+    --ink-soft: #5b657d;
+    --ink-faint: #8b93a7;
+    --line: #d6dae4;
+    --accent: #4d63f5;
+    --shadow: 0 1px 2px rgba(20, 30, 60, .14), 0 1px 1px rgba(20, 30, 60, .08);
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    height: 100%;
+    margin: 0;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font: 13px/1.45 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  button {
+    font: inherit;
+    color: inherit;
+    cursor: pointer;
+  }
+
+  /* ---------- top navigation ---------- */
+
+  .top-nav {
+    background: var(--nav);
+    color: #eef1fa;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 10px 18px;
+    flex: none;
+  }
+
+  .brand-mark {
+    width: 26px;
+    height: 26px;
+    border-radius: 7px;
+    background: linear-gradient(135deg, #6f7cf7, #b06ff7);
+    display: grid;
+    place-items: center;
+    font-weight: 700;
+    font-size: 13px;
+  }
+
+  .project-switcher {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--nav-soft);
+    border: 1px solid #33436e;
+    border-radius: 7px;
+    padding: 6px 10px;
+  }
+
+  .project-switcher .project-name { font-weight: 600; }
+  .project-switcher .caret { font-size: 9px; opacity: .7; }
+
+  .board-title-group {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    margin-left: 6px;
+  }
+
+  .board-title {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 650;
+    letter-spacing: -.2px;
+  }
+
+  .board-star { color: #ffc857; font-size: 14px; }
+
+  .board-visibility {
+    font-size: 11px;
+    color: #a7b0cc;
+    border: 1px solid #3a4a75;
+    border-radius: 20px;
+    padding: 2px 8px;
+  }
+
+  .nav-spacer { flex: 1; }
+
+  /* avatar stack */
+
+  .avatar-stack {
+    display: flex;
+    align-items: center;
+    padding-left: 4px;
+  }
+
+  .avatar-stack .avatar {
+    margin-left: -8px;
+    border: 2px solid var(--nav);
+  }
+
+  .avatar {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    font-size: 11px;
+    font-weight: 650;
+    color: #fff;
+    letter-spacing: .3px;
+    flex: none;
+  }
+
+  .avatar.small { width: 22px; height: 22px; font-size: 9px; }
+  .avatar.large { width: 34px; height: 34px; font-size: 13px; }
+
+  .avatar-more {
+    background: #46557f;
+    color: #d8ddef;
+  }
+
+  .a-rose { background: #e2537b; }
+  .a-amber { background: #d98524; }
+  .a-teal { background: #17948a; }
+  .a-violet { background: #7a55d6; }
+  .a-blue { background: #2f6fd0; }
+  .a-green { background: #3d8f4b; }
+  .a-slate { background: #566079; }
+  .a-pink { background: #c2519f; }
+
+  .invite-button {
+    background: #4d63f5;
+    border: 0;
+    border-radius: 7px;
+    color: #fff;
+    padding: 7px 12px;
+    font-weight: 600;
+    margin-left: 12px;
+  }
+
+  /* ---------- sub bar: filters + view toggle ---------- */
+
+  .sub-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 18px;
+    background: #fbfbfe;
+    border-bottom: 1px solid var(--line);
+    flex: none;
+  }
+
+  .filter-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: .8px;
+    color: var(--ink-faint);
+    font-weight: 650;
+  }
+
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    padding: 4px 11px;
+    color: var(--ink-soft);
+    white-space: nowrap;
+  }
+
+  .chip.is-active {
+    background: #eaeeff;
+    border-color: #b9c4fb;
+    color: #33409e;
+    font-weight: 600;
+  }
+
+  .chip .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: currentColor;
+  }
+
+  .chip .chip-remove { font-size: 12px; opacity: .55; }
+
+  .search-box {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 7px;
+    padding: 5px 10px;
+    color: var(--ink-faint);
+    width: 210px;
+  }
+
+  .search-box input {
+    border: 0;
+    outline: 0;
+    font: inherit;
+    width: 100%;
+    background: transparent;
+    color: var(--ink);
+  }
+
+  .view-toggle {
+    display: flex;
+    background: #e8eaf1;
+    border-radius: 8px;
+    padding: 3px;
+    gap: 2px;
+  }
+
+  .view-toggle button {
+    border: 0;
+    background: transparent;
+    border-radius: 6px;
+    padding: 5px 12px;
+    color: var(--ink-soft);
+    font-weight: 550;
+  }
+
+  .view-toggle button.is-active {
+    background: #fff;
+    color: var(--ink);
+    box-shadow: var(--shadow);
+  }
+
+  /* ---------- board ---------- */
+
+  .board {
+    flex: 1;
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 16px 18px 22px;
+    overflow-x: auto;
+    overflow-y: hidden;
+  }
+
+  .column {
+    width: 288px;
+    flex: none;
+    background: var(--col);
+    border-radius: 11px;
+    padding: 10px 9px 9px;
+    max-height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .column-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 2px 5px 10px;
+    flex: none;
+  }
+
+  .column-title {
+    font-weight: 650;
+    font-size: 13px;
+  }
+
+  .count-badge {
+    background: #d0d5e2;
+    color: #4b556e;
+    border-radius: 20px;
+    padding: 1px 8px;
+    font-size: 11px;
+    font-weight: 650;
+  }
+
+  .column-wip {
+    font-size: 11px;
+    color: var(--ink-faint);
+  }
+
+  .menu-dots {
+    margin-left: auto;
+    border: 0;
+    background: transparent;
+    color: var(--ink-soft);
+    border-radius: 6px;
+    padding: 2px 6px;
+    letter-spacing: 1px;
+  }
+
+  .card-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    overflow-y: auto;
+    padding: 1px 3px 4px;
+  }
+
+  .card {
+    background: var(--card);
+    border-radius: 9px;
+    box-shadow: var(--shadow);
+    padding: 9px 10px 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+  }
+
+  .cover-band {
+    height: 28px;
+    margin: -9px -10px 2px;
+    border-radius: 9px 9px 0 0;
+  }
+
+  .cover-sky { background: linear-gradient(90deg, #59a5f5, #7ec6f7); }
+  .cover-lime { background: linear-gradient(90deg, #56ab5b, #96ce6b); }
+  .cover-flame { background: linear-gradient(90deg, #e4713f, #f0a24a); }
+  .cover-grape { background: linear-gradient(90deg, #7d5bd6, #b06fd2); }
+
+  .label-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+  }
+
+  .label {
+    font-size: 10px;
+    font-weight: 650;
+    letter-spacing: .3px;
+    border-radius: 4px;
+    padding: 2px 7px;
+    text-transform: uppercase;
+  }
+
+  .l-bug { background: #fde0e0; color: #a52c2c; }
+  .l-feature { background: #dfeafd; color: #23539c; }
+  .l-design { background: #f0e2fb; color: #6a2fa5; }
+  .l-infra { background: #e0f0ec; color: #14705f; }
+  .l-urgent { background: #ffe2c9; color: #9c4c11; }
+  .l-docs { background: #e6e8ef; color: #4c5468; }
+  .l-research { background: #fdf0cc; color: #8a6410; }
+
+  .card-title {
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.35;
+  }
+
+  .card-desc {
+    font-size: 11.5px;
+    color: var(--ink-soft);
+    line-height: 1.4;
+  }
+
+  .progress-track {
+    height: 5px;
+    background: #e6e8ef;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    border-radius: 4px;
+    background: var(--accent);
+  }
+
+  .progress-fill.is-done { background: #3d8f4b; }
+  .progress-fill.is-late { background: #d1443e; }
+
+  .card-meta {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--ink-faint);
+    font-size: 11px;
+  }
+
+  .due-date {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    border-radius: 5px;
+    padding: 2px 6px;
+    background: #eef0f5;
+  }
+
+  .due-date.is-overdue { background: #fde2e0; color: #a53230; font-weight: 600; }
+  .due-date.is-soon { background: #fdf1d6; color: #8a6410; font-weight: 600; }
+  .due-date.is-done { background: #e0f0e2; color: #2f6f3b; font-weight: 600; }
+
+  .meta-stat {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .card-meta .avatar { margin-left: auto; }
+
+  /* the card being dragged */
+
+  .card.is-dragging {
+    transform: rotate(3deg) scale(1.02);
+    box-shadow: 0 18px 34px rgba(20, 30, 60, .3), 0 4px 8px rgba(20, 30, 60, .18);
+    border: 1px solid #b9c4fb;
+    position: relative;
+    z-index: 5;
+  }
+
+  .drop-placeholder {
+    height: 74px;
+    border: 2px dashed #b6bdcd;
+    border-radius: 9px;
+    background: #dfe2ec;
+  }
+
+  .add-card-button {
+    margin-top: 8px;
+    border: 0;
+    background: transparent;
+    color: var(--ink-soft);
+    text-align: left;
+    border-radius: 7px;
+    padding: 7px 8px;
+    font-weight: 550;
+    flex: none;
+  }
+
+  .add-card-button:hover { background: #dcdfe9; }
+
+  .add-column {
+    width: 260px;
+    flex: none;
+    border: 1px dashed #c3c9d6;
+    border-radius: 11px;
+    background: rgba(255, 255, 255, .5);
+    color: var(--ink-soft);
+    padding: 12px;
+    text-align: left;
+    font-weight: 550;
+  }
+
+  /* ---------- modal ---------- */
+
+  .backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(16, 22, 40, .55);
+    display: flex;
+    justify-content: center;
+    padding: 40px 20px;
+    overflow-y: auto;
+    z-index: 40;
+  }
+
+  .modal {
+    background: #fff;
+    width: 780px;
+    max-width: 100%;
+    height: fit-content;
+    border-radius: 12px;
+    box-shadow: 0 24px 60px rgba(10, 16, 35, .4);
+    overflow: hidden;
+  }
+
+  .modal-cover {
+    height: 68px;
+    background: linear-gradient(100deg, #4d63f5, #8a5be0 60%, #c05bb4);
+  }
+
+  .modal-body {
+    display: flex;
+    gap: 22px;
+    padding: 16px 20px 22px;
+  }
+
+  .modal-main { flex: 1; min-width: 0; }
+  .modal-side { width: 178px; flex: none; }
+
+  .modal-head {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .modal-title {
+    margin: 0;
+    font-size: 19px;
+    line-height: 1.3;
+    letter-spacing: -.2px;
+  }
+
+  .modal-breadcrumb {
+    font-size: 11.5px;
+    color: var(--ink-faint);
+    margin: 4px 0 0;
+  }
+
+  .close-button {
+    margin-left: auto;
+    border: 0;
+    background: #f0f1f6;
+    border-radius: 50%;
+    width: 28px;
+    height: 28px;
+    color: var(--ink-soft);
+    font-size: 14px;
+    line-height: 1;
+  }
+
+  .modal-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    align-items: center;
+    margin: 14px 0 18px;
+  }
+
+  .section { margin-bottom: 20px; }
+
+  .section-head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+
+  .section-title {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .7px;
+    color: var(--ink-soft);
+  }
+
+  .section-action {
+    margin-left: auto;
+    border: 0;
+    background: #f0f1f6;
+    border-radius: 6px;
+    padding: 3px 9px;
+    font-size: 11.5px;
+    color: var(--ink-soft);
+  }
+
+  .rich-text p {
+    margin: 0 0 8px;
+    color: #323b52;
+    line-height: 1.55;
+  }
+
+  .rich-text ul {
+    margin: 0 0 8px;
+    padding-left: 18px;
+    color: #323b52;
+  }
+
+  .rich-text li { margin-bottom: 3px; }
+
+  .checklist-progress {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    margin-bottom: 9px;
+  }
+
+  .checklist-progress .progress-track { flex: 1; }
+  .checklist-progress .percent { font-size: 11px; color: var(--ink-faint); width: 32px; }
+
+  .check-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 9px;
+    padding: 5px 7px;
+    border-radius: 6px;
+  }
+
+  .check-item:hover { background: #f5f6fa; }
+
+  .check-box {
+    width: 15px;
+    height: 15px;
+    border-radius: 4px;
+    border: 1.5px solid #b6bdcd;
+    flex: none;
+    margin-top: 2px;
+    display: grid;
+    place-items: center;
+    font-size: 10px;
+    color: #fff;
+  }
+
+  .check-item.is-checked .check-box {
+    background: #3d8f4b;
+    border-color: #3d8f4b;
+  }
+
+  .check-item.is-checked .check-text {
+    text-decoration: line-through;
+    color: var(--ink-faint);
+  }
+
+  .check-text { flex: 1; }
+
+  .check-owner { font-size: 10.5px; color: var(--ink-faint); }
+
+  .comment {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+
+  .comment-body { flex: 1; }
+
+  .comment-head {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    margin-bottom: 3px;
+  }
+
+  .comment-author { font-weight: 650; }
+  .comment-time { font-size: 11px; color: var(--ink-faint); }
+
+  .comment-bubble {
+    background: #f5f6fa;
+    border-radius: 8px;
+    padding: 8px 10px;
+    color: #323b52;
+    line-height: 1.5;
+  }
+
+  .comment-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 5px;
+    font-size: 11px;
+    color: var(--ink-faint);
+  }
+
+  .comment-composer {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+  }
+
+  .composer-field {
+    flex: 1;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 9px 11px;
+    color: var(--ink-faint);
+    background: #fff;
+  }
+
+  .composer-buttons {
+    display: flex;
+    gap: 8px;
+    margin-top: 9px;
+    align-items: center;
+  }
+
+  .primary-button {
+    background: var(--accent);
+    color: #fff;
+    border: 0;
+    border-radius: 7px;
+    padding: 6px 14px;
+    font-weight: 600;
+  }
+
+  .ghost-button {
+    background: transparent;
+    border: 0;
+    color: var(--ink-soft);
+    padding: 6px 8px;
+  }
+
+  .side-group { margin-bottom: 16px; }
+
+  .side-label {
+    font-size: 10.5px;
+    text-transform: uppercase;
+    letter-spacing: .8px;
+    color: var(--ink-faint);
+    font-weight: 700;
+    margin-bottom: 7px;
+  }
+
+  .side-action {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    background: #f0f1f6;
+    border: 0;
+    border-radius: 7px;
+    padding: 7px 10px;
+    margin-bottom: 6px;
+    color: #313a51;
+    text-align: left;
+    font-weight: 550;
+  }
+
+  .side-action:hover { background: #e6e8f0; }
+  .side-action.is-danger { color: #a5322f; }
+  .side-action .glyph { width: 14px; text-align: center; opacity: .8; }
+
+  .side-members {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+  }
+
+  .side-meta {
+    font-size: 11px;
+    color: var(--ink-faint);
+    line-height: 1.6;
+  }
+</style>
+</head>
+<body>
+
+<nav class="top-nav">
+  <div class="brand-mark">O</div>
+
+  <button class="project-switcher">
+    <span class="project-name">Orbit Platform</span>
+    <span class="caret">▼</span>
+  </button>
+
+  <div class="board-title-group">
+    <h1 class="board-title">Q3 Delivery Board</h1>
+    <span class="board-star">★</span>
+    <span class="board-visibility">Team visible</span>
+  </div>
+
+  <div class="nav-spacer"></div>
+
+  <div class="avatar-stack">
+    <div class="avatar a-rose" title="Mara Okoye">MO</div>
+    <div class="avatar a-teal" title="Dev Raman">DR</div>
+    <div class="avatar a-amber" title="Sofia Lang">SL</div>
+    <div class="avatar a-violet" title="Ken Ito">KI</div>
+    <div class="avatar a-blue" title="Priya Nadar">PN</div>
+    <div class="avatar a-green" title="Tom Vega">TV</div>
+    <div class="avatar avatar-more" title="3 more">+3</div>
+  </div>
+
+  <button class="invite-button">Invite</button>
+</nav>
+
+<div class="sub-bar">
+  <span class="filter-label">Filters</span>
+  <button class="chip is-active"><span class="dot"></span>My cards</button>
+  <button class="chip"><span class="dot" style="background:#d1443e"></span>Bug</button>
+  <button class="chip is-active">Due this week <span class="chip-remove">✕</span></button>
+  <button class="chip">Sprint 24</button>
+  <button class="chip">No assignee</button>
+  <button class="chip">+ Add filter</button>
+
+  <div class="search-box">
+    <span>⌕</span>
+    <input type="text" placeholder="Search cards" value="">
+  </div>
+
+  <div class="view-toggle">
+    <button class="is-active">Board</button>
+    <button>List</button>
+    <button>Timeline</button>
+    <button>Calendar</button>
+  </div>
+</div>
+
+<main class="board">
+
+  <!-- ---------- Backlog ---------- -->
+  <section class="column">
+    <header class="column-header">
+      <span class="column-title">Backlog</span>
+      <span class="count-badge">7</span>
+      <span class="column-wip">no limit</span>
+      <button class="menu-dots">•••</button>
+    </header>
+
+    <div class="card-list">
+
+      <article class="card">
+        <div class="label-row">
+          <span class="label l-research">Research</span>
+          <span class="label l-feature">Feature</span>
+        </div>
+        <div class="card-title">Evaluate SSO providers for enterprise tier</div>
+        <p class="card-desc">Compare Okta, WorkOS and a self-hosted Keycloak on price, SCIM support and audit logging.</p>
+        <div class="progress-track"><div class="progress-fill" style="width:20%"></div></div>
+        <div class="card-meta">
+          <span class="due-date">📅 Oct 2</span>
+          <span class="meta-stat">☑ 1/5</span>
+          <span class="meta-stat">💬 2</span>
+          <span class="avatar small a-slate">RB</span>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="label-row">
+          <span class="label l-docs">Docs</span>
+        </div>
+        <div class="card-title">Rewrite the onboarding guide for the new CLI</div>
+        <p class="card-desc">The install section still points at the deprecated npm package name.</p>
+        <div class="progress-track"><div class="progress-fill" style="width:0%"></div></div>
+        <div class="card-meta">
+          <span class="due-date">📅 Oct 14</span>
+          <span class="meta-stat">📎 3</span>
+          <span class="avatar small a-amber">SL</span>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="cover-band cover-grape"></div>
+        <div class="label-row">
+          <span class="label l-design">Design</span>
+          <span class="label l-research">Research</span>
+        </div>
+        <div class="card-title">Dark mode audit across settings screens</div>
+        <p class="card-desc">Eleven screens still use hardcoded greys. Collect them and propose tokens.</p>
+        <div class="progress-track"><div class="progress-fill" style="width:12%"></div></div>
+        <div class="card-meta">
+          <span class="due-date">📅 Nov 1</span>
+          <span class="meta-stat">☑ 2/16</span>
+          <span class="avatar small a-violet">KI</span>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="label-row">
+          <span class="label l-infra">Infra</span>
+        </div>
+        <div class="card-title">Move staging database to the new region</div>
+        <p class="card-desc">Latency from the EU workers is 240ms on every write. Needs a maintenance window.</p>
+        <div class="progress-track"><div class="progress-fill" style="width:5%"></div></div>
+        <div class="card-meta">
+          <span class="due-date">📅 Oct 21</span>
+          <span class="meta-stat">💬 7</span>
+          <span class="avatar small a-teal">DR</span>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="label-row">
+          <span class="label l-feature">Feature</span>
+        </div>
+        <div class="card-title">Bulk export for saved reports</div>
+        <p class="card-desc">Customers ask for CSV and XLSX. Start with CSV behind a flag.</p>
+        <div class="progress-track"><div class="progress-fill" style="width:0%"></div></div>
+        <div class="card-meta">
+          <span class="due-date">📅 Nov 12</span>
+          <span class="meta-stat">👁 4</span>
+          <span class="avatar small a-pink">AN</span>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="label-row">
+          <span class="label l-bug">Bug</span>
+        </div>
+        <div class="card-title">Timezone picker shows duplicated cities</div>
+        <p class="card-desc">Reported twice in support. The IANA list is merged with a stale hardcoded array.</p>
+        <div class="progress-track"><div class="progress-fill" style="width:0%"></div></div>
+        <div class="card-meta">
+          <span class="due-date">📅 Oct 30</span>
+          <span class="avatar small a-blue">PN</span>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="label-row">
+          <span class="label l-research">Research</span>
+        </div>
+        <div class="card-title">Spike: streaming diffs over websockets</div>
+        <p class="card-desc">Two days timeboxed. Write up the memory profile before we commit.</p>
+        <div class="progress-track"><div class="progress-fill" style="width:0%"></div></div>
+        <div class="card-meta">
+          <span class="meta-stat">no due date</span>
+          <span class="avatar small a-green">TV</span>
+        </div>
+      </article>
+
+    </div>
+
+    <button class="add-card-button">＋ Add a card</button>
+  </section>
+
+  <!-- ---------- Design ---------- -->
+  <section class="column">
+    <header class="column-header">
+      <span class="column-title">Design</span>
+      <span class="count-badge">4</span>
+      <span class="column-wip">wip 5</span>
+      <button class="menu-dots">•••</button>
+    </header>
+
+    <div class="card-list">
+
+      <article class="card">
+        <div class="cover-band cover-sky"></div>
+        <div class="label-row">
+          <span class="label l-design">Design</span>
+          <span class="label l-urgent">Urgent</span>
+        </div>
+        <div class="card-title">Card detail modal — final spec</div>
+        <p class="card-desc">Sidebar actions, checklist states and the comment thread. Handoff to engineering Friday.</p>
+        <div class="progress-track"><div class="progress-fill" style="width:78%"></div></div>
+        <div class="card-meta">
+          <span class="due-date is-soon">📅 Sep 8</span>
+          <span class="meta-stat">☑ 7/9</span>
+          <span class="meta-stat">💬 12</span>
+          <span class="avatar small a-rose">MO</span>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="label-row">
+          <span class="label l-design">Design</span>
+        </div>
+        <div class="card-title">Empty states for the reports tab</div>
+        <p class="card-desc">Three variants: never used, filtered to nothing, and permission denied.</p>
+        <div class="progress-track"><div class="progress-fill" style="width:45%"></div></div>
+        <div class="card-meta">
+          <span class="due-date">📅 Sep 19</span>
+          <span class="meta-stat">☑ 4/9</span>
+          <span class="avatar small a-violet">KI</span>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="label-row">
+          <span class="label l-design">Design</span>
+          <span class="label l-docs">Docs</span>
+        </div>
+        <div class="card-title">Icon set cleanup, drop the duplicates</div>
+        <p class="card-desc">Forty-one icons, nine of them are near copies. Ship one grid at 20px.</p>
+        <div class="progress-track"><div class="progress-fill" style="width:33%"></div></div>
+        <div class="card-meta">
+          <span class="due-date">📅 Sep 26</span>
+          <span class="meta-stat">📎 8</span>
+          <span class="avatar small a-amber">SL</span>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="label-row">
+          <span class="label l-feature">Feature</span>
+          <span class="label l-design">Design</span>
+        </div>
+        <div class="card-title">Keyboard shortcut overlay</div>
+        <p class="card-desc">Press ? anywhere. Group by area, and mark the six that already work.</p>
+        <div class="progress-track"><div class="progress-fill" style="width:60%"></div></div>
+        <div class="card-meta">
+          <span class="due-date">📅 Sep 30</span>
+          <span class="meta-stat">💬 3</span>
+          <span class="avatar small a-pink">AN</span>
+        </div>
+      </article>
+
+    </div>
+
+    <button class="add-card-button">＋ Add a card</button>
+  </section>
+
+  <!-- ---------- In Progress ---------- -->
+  <section class="column">
+    <header class="column-header">
+      <span class="column-title">In Progress</span>
+      <span class="count-badge">5</span>
+      <span class="column-wip">wip 4 · over</span>
+      <button class="menu-dots">•••</button>
+    </header>
+
+    <div class="card-list">
+
+      <article class="card is-dragging">
+        <div class="cover-band cover-flame"></div>
+        <div class="label-row">
+          <span class="label l-bug">Bug</span>
+          <span class="label l-urgent">Urgent</span>
+        </div>
+        <div class="card-title">Session drops after the token refresh race</div>
+        <p class="card-desc">Two tabs refresh at once and the loser gets a 401. Fix with a shared lock in the worker.</p>
+        <div class="progress-track"><div class="progress-fill is-late" style="width:55%"></div></div>
+        <div class="card-meta">
+          <span class="due-date is-overdue">📅 Sep 3</span>
+          <span class="meta-stat">☑ 3/6</span>
+          <span class="meta-stat">💬 9</span>
+          <span class="avatar small a-teal">DR</span>
+        </div>
+      </article>
+
+      <div class="drop-placeholder"></div>
+
+      <article class="card">
+        <div class="label-row">
+          <span class="label l-feature">Feature</span>
+        </div>
+        <div class="card-title">Inline card editing on the board</div>
+        <p class="card-desc">Double click a title, edit in place, escape cancels. No modal round trip.</p>
+        <div class="progress-track"><div class="progress-fill" style="width:64%"></div></div>
+        <div class="card-meta">
+          <span class="due-date is-soon">📅 Sep 9</span>
+          <span class="meta-stat">☑ 5/8</span>
+          <span class="avatar small a-rose">MO</span>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="label-row">
+          <span class="label l-infra">Infra</span>
+          <span class="label l-feature">Feature</span>
+        </div>
+        <div class="card-title">Realtime presence with a shared channel</div>
+        <p class="card-desc">Show who else has the board open. Heartbeat every 15s, drop after 45.</p>
+        <div class="progress-track"><div class="progress-fill" style="width:40%"></div></div>
+        <div class="card-meta">
+          <span class="due-date">📅 Sep 22</span>
+          <span class="meta-stat">💬 5</span>
+          <span class="avatar small a-blue">PN</span>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="cover-band cover-lime"></div>
+        <div class="label-row">
+          <span class="label l-feature">Feature</span>
+        </div>
+        <div class="card-title">Saved filter views per member</div>
+        <p class="card-desc">Store the chip state in the URL first, then persist it against the user.</p>
+        <div class="progress-track"><div class="progress-fill" style="width:72%"></div></div>
+        <div class="card-meta">
+          <span class="due-date">📅 Sep 15</span>
+          <span class="meta-stat">☑ 6/8</span>
+          <span class="avatar small a-green">TV</span>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="label-row">
+          <span class="label l-bug">Bug</span>
+        </div>
+        <div class="card-title">Column scroll jumps when a card is dropped</div>
+        <p class="card-desc">Scroll anchoring fights the placeholder height. Repro in Chrome only.</p>
+        <div class="progress-track"><div class="progress-fill" style="width:30%"></div></div>
+        <div class="card-meta">
+          <span class="due-date">📅 Sep 12</span>
+          <span class="meta-stat">💬 4</span>
+          <span class="avatar small a-slate">RB</span>
+        </div>
+      </article>
+
+    </div>
+
+    <button class="add-card-button">＋ Add a card</button>
+  </section>
+
+  <!-- ---------- Review ---------- -->
+  <section class="column">
+    <header class="column-header">
+      <span class="column-title">In Review</span>
+      <span class="count-badge">4</span>
+      <span class="column-wip">wip 6</span>
+      <button class="menu-dots">•••</button>
+    </header>
+
+    <div class="card-list">
+
+      <article class="card">
+        <div class="label-row">
+          <span class="label l-infra">Infra</span>
+        </div>
+        <div class="card-title">Cut the CI image from 2.1GB to 700MB</div>
+        <p class="card-desc">Multi stage build, drop the browser bundle from the test layer.</p>
+        <div class="progress-track"><div class="progress-fill" style="width:90%"></div></div>
+        <div class="card-meta">
+          <span class="due-date is-soon">📅 Sep 7</span>
+          <span class="meta-stat">👁 3</span>
+          <span class="avatar small a-teal">DR</span>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="label-row">
+          <span class="label l-bug">Bug</span>
+          <span class="label l-docs">Docs</span>
+        </div>
+        <div class="card-title">Long board names clip in the top bar</div>
+        <p class="card-desc">Truncate at 28 characters with a tooltip. Screenshot in the thread.</p>
+        <div class="progress-track"><div class="progress-fill" style="width:95%"></div></div>
+        <div class="card-meta">
+          <span class="due-date">📅 Sep 11</span>
+          <span class="meta-stat">💬 6</span>
+          <span class="avatar small a-amber">SL</span>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="cover-band cover-sky"></div>
+        <div class="label-row">
+          <span class="label l-feature">Feature</span>
+        </div>
+        <div class="card-title">Card cover colors and attachments preview</div>
+        <p class="card-desc">Eight colors plus a picked image. Falls back to a band when the image fails.</p>
+        <div class="progress-track"><div class="progress-fill" style="width:88%"></div></div>
+        <div class="card-meta">
+          <span class="due-date">📅 Sep 10</span>
+          <span class="meta-stat">☑ 7/8</span>
+          <span class="avatar small a-violet">KI</span>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="label-row">
+          <span class="label l-infra">Infra</span>
+          <span class="label l-urgent">Urgent</span>
+        </div>
+        <div class="card-title">Rotate the leaked staging API key</div>
+        <p class="card-desc">Key was in a public gist for nine hours. Rotated, now audit the access logs.</p>
+        <div class="progress-track"><div class="progress-fill" style="width:85%"></div></div>
+        <div class="card-meta">
+          <span class="due-date is-overdue">📅 Sep 1</span>
+          <span class="meta-stat">💬 14</span>
+          <span class="avatar small a-blue">PN</span>
+        </div>
+      </article>
+
+    </div>
+
+    <button class="add-card-button">＋ Add a card</button>
+  </section>
+
+  <!-- ---------- Done ---------- -->
+  <section class="column">
+    <header class="column-header">
+      <span class="column-title">Done</span>
+      <span class="count-badge">6</span>
+      <span class="column-wip">this sprint</span>
+      <button class="menu-dots">•••</button>
+    </header>
+
+    <div class="card-list">
+
+      <article class="card">
+        <div class="label-row">
+          <span class="label l-feature">Feature</span>
+        </div>
+        <div class="card-title">Drag and drop between columns</div>
+        <p class="card-desc">Pointer events, no library. Autoscroll at the board edges.</p>
+        <div class="progress-track"><div class="progress-fill is-done" style="width:100%"></div></div>
+        <div class="card-meta">
+          <span class="due-date is-done">✓ Aug 29</span>
+          <span class="meta-stat">☑ 9/9</span>
+          <span class="avatar small a-rose">MO</span>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="cover-band cover-lime"></div>
+        <div class="label-row">
+          <span class="label l-design">Design</span>
+        </div>
+        <div class="card-title">New label palette, accessible contrast</div>
+        <p class="card-desc">Every label pair clears 4.5:1 against its own background.</p>
+        <div class="progress-track"><div class="progress-fill is-done" style="width:100%"></div></div>
+        <div class="card-meta">
+          <span class="due-date is-done">✓ Aug 27</span>
+          <span class="avatar small a-violet">KI</span>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="label-row">
+          <span class="label l-bug">Bug</span>
+        </div>
+        <div class="card-title">Avatar stack overflowed on narrow screens</div>
+        <p class="card-desc">Collapse to four plus a counter under 900px.</p>
+        <div class="progress-track"><div class="progress-fill is-done" style="width:100%"></div></div>
+        <div class="card-meta">
+          <span class="due-date is-done">✓ Aug 25</span>
+          <span class="meta-stat">💬 2</span>
+          <span class="avatar small a-green">TV</span>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="label-row">
+          <span class="label l-infra">Infra</span>
+        </div>
+        <div class="card-title">Nightly backup restore drill</div>
+        <p class="card-desc">Restored a 40GB snapshot in 11 minutes. Runbook updated.</p>
+        <div class="progress-track"><div class="progress-fill is-done" style="width:100%"></div></div>
+        <div class="card-meta">
+          <span class="due-date is-done">✓ Aug 22</span>
+          <span class="meta-stat">📎 2</span>
+          <span class="avatar small a-teal">DR</span>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="label-row">
+          <span class="label l-docs">Docs</span>
+        </div>
+        <div class="card-title">API reference for the webhooks endpoint</div>
+        <p class="card-desc">Payload samples for all six event types, plus the retry policy.</p>
+        <div class="progress-track"><div class="progress-fill is-done" style="width:100%"></div></div>
+        <div class="card-meta">
+          <span class="due-date is-done">✓ Aug 20</span>
+          <span class="avatar small a-amber">SL</span>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="label-row">
+          <span class="label l-feature">Feature</span>
+          <span class="label l-research">Research</span>
+        </div>
+        <div class="card-title">Board activity feed, first version</div>
+        <p class="card-desc">Grouped by day, collapses repeated moves by the same person.</p>
+        <div class="progress-track"><div class="progress-fill is-done" style="width:100%"></div></div>
+        <div class="card-meta">
+          <span class="due-date is-done">✓ Aug 18</span>
+          <span class="meta-stat">💬 8</span>
+          <span class="avatar small a-pink">AN</span>
+        </div>
+      </article>
+
+    </div>
+
+    <button class="add-card-button">＋ Add a card</button>
+  </section>
+
+  <button class="add-column">＋ Add another list</button>
+</main>
+
+<!-- ---------- card detail modal ---------- -->
+<div class="backdrop" id="cardDetailBackdrop">
+  <div class="modal">
+    <div class="modal-cover"></div>
+
+    <div class="modal-body">
+      <div class="modal-main">
+
+        <div class="modal-head">
+          <div>
+            <h2 class="modal-title">Card detail modal — final spec</h2>
+            <p class="modal-breadcrumb">in list <strong>Design</strong> · added by Mara Okoye on Aug 30</p>
+          </div>
+          <button class="close-button" id="closeModalButton">✕</button>
+        </div>
+
+        <div class="modal-tags">
+          <span class="label l-design">Design</span>
+          <span class="label l-urgent">Urgent</span>
+          <span class="due-date is-soon">📅 Due Sep 8, 17:00</span>
+          <span class="chip">Sprint 24</span>
+          <span class="chip">8 points</span>
+        </div>
+
+        <section class="section">
+          <div class="section-head">
+            <span class="section-title">Description</span>
+            <button class="section-action">Edit</button>
+          </div>
+          <div class="rich-text">
+            <p>The modal opens over the board with the board still visible behind a dimmed backdrop. Closing it returns focus to the card that opened it.</p>
+            <ul>
+              <li>Sidebar actions stay pinned while the main column scrolls.</li>
+              <li>Checklist shows a percentage bar above the items.</li>
+              <li>Comments load newest first, older ones behind a button.</li>
+            </ul>
+            <p>Handoff includes the hover and focus states for every button in the sidebar.</p>
+          </div>
+        </section>
+
+        <section class="section">
+          <div class="section-head">
+            <span class="section-title">Checklist — Spec handoff</span>
+            <button class="section-action">Hide checked</button>
+          </div>
+
+          <div class="checklist-progress">
+            <span class="percent">78%</span>
+            <div class="progress-track"><div class="progress-fill" style="width:78%"></div></div>
+          </div>
+
+          <div class="check-item is-checked">
+            <span class="check-box">✓</span>
+            <span class="check-text">Layout grid for the two column body</span>
+            <span class="check-owner">MO</span>
+          </div>
+          <div class="check-item is-checked">
+            <span class="check-box">✓</span>
+            <span class="check-text">Backdrop opacity and blur values</span>
+            <span class="check-owner">MO</span>
+          </div>
+          <div class="check-item is-checked">
+            <span class="check-box">✓</span>
+            <span class="check-text">Label chips inside the header row</span>
+            <span class="check-owner">KI</span>
+          </div>
+          <div class="check-item is-checked">
+            <span class="check-box">✓</span>
+            <span class="check-text">Checklist item hover and checked states</span>
+            <span class="check-owner">KI</span>
+          </div>
+          <div class="check-item is-checked">
+            <span class="check-box">✓</span>
+            <span class="check-text">Comment bubble spacing at three densities</span>
+            <span class="check-owner">SL</span>
+          </div>
+          <div class="check-item is-checked">
+            <span class="check-box">✓</span>
+            <span class="check-text">Sidebar action icons at 14px</span>
+            <span class="check-owner">SL</span>
+          </div>
+          <div class="check-item is-checked">
+            <span class="check-box">✓</span>
+            <span class="check-text">Focus ring style shared with the board</span>
+            <span class="check-owner">MO</span>
+          </div>
+          <div class="check-item">
+            <span class="check-box"></span>
+            <span class="check-text">Mobile layout, sidebar collapses under the body</span>
+            <span class="check-owner">unassigned</span>
+          </div>
+          <div class="check-item">
+            <span class="check-box"></span>
+            <span class="check-text">Write the handoff notes in the shared doc</span>
+            <span class="check-owner">MO</span>
+          </div>
+        </section>
+
+        <section class="section">
+          <div class="section-head">
+            <span class="section-title">Activity — 12 comments</span>
+            <button class="section-action">Show details</button>
+          </div>
+
+          <div class="comment-composer">
+            <div class="avatar a-rose">MO</div>
+            <div style="flex:1">
+              <div class="composer-field">Write a comment…</div>
+              <div class="composer-buttons">
+                <button class="primary-button">Save</button>
+                <button class="ghost-button">📎 Attach</button>
+                <button class="ghost-button">@ Mention</button>
+                <button class="ghost-button">☺ Emoji</button>
+              </div>
+            </div>
+          </div>
+
+          <div style="height:16px"></div>
+
+          <div class="comment">
+            <div class="avatar a-teal">DR</div>
+            <div class="comment-body">
+              <div class="comment-head">
+                <span class="comment-author">Dev Raman</span>
+                <span class="comment-time">2 hours ago</span>
+              </div>
+              <div class="comment-bubble">The sidebar is 178px in the spec but our settings panel uses 200px. Can we share one value so I do not add a second token?</div>
+              <div class="comment-actions"><span>Reply</span><span>👍 3</span><span>Edit</span></div>
+            </div>
+          </div>
+
+          <div class="comment">
+            <div class="avatar a-rose">MO</div>
+            <div class="comment-body">
+              <div class="comment-head">
+                <span class="comment-author">Mara Okoye</span>
+                <span class="comment-time">1 hour ago</span>
+              </div>
+              <div class="comment-bubble">Good catch. Take 178 everywhere, the settings panel was never measured, it just grew. I will update the settings frame today.</div>
+              <div class="comment-actions"><span>Reply</span><span>👍 5</span><span>Edit</span></div>
+            </div>
+          </div>
+
+          <div class="comment">
+            <div class="avatar a-violet">KI</div>
+            <div class="comment-body">
+              <div class="comment-head">
+                <span class="comment-author">Ken Ito</span>
+                <span class="comment-time">46 minutes ago</span>
+              </div>
+              <div class="comment-bubble">Checklist percentage should round down, otherwise 8 of 9 reads as 89% and people think one item is missing.</div>
+              <div class="comment-actions"><span>Reply</span><span>👍 1</span><span>Edit</span></div>
+            </div>
+          </div>
+
+          <div class="comment">
+            <div class="avatar a-amber">SL</div>
+            <div class="comment-body">
+              <div class="comment-head">
+                <span class="comment-author">Sofia Lang</span>
+                <span class="comment-time">12 minutes ago</span>
+              </div>
+              <div class="comment-bubble">Attached the two overdue states so we can compare them side by side before the handoff.</div>
+              <div class="comment-actions"><span>Reply</span><span>📎 2 files</span><span>Edit</span></div>
+            </div>
+          </div>
+
+          <button class="section-action" style="margin:0">Show 8 older comments</button>
+        </section>
+
+      </div>
+
+      <aside class="modal-side">
+
+        <div class="side-group">
+          <div class="side-label">Members</div>
+          <div class="side-members">
+            <div class="avatar small a-rose">MO</div>
+            <div class="avatar small a-violet">KI</div>
+            <div class="avatar small a-amber">SL</div>
+            <div class="avatar small a-teal">DR</div>
+            <div class="avatar small avatar-more" style="background:#dcdfe9;color:#5b657d">＋</div>
+          </div>
+        </div>
+
+        <div class="side-group">
+          <div class="side-label">Add to card</div>
+          <button class="side-action"><span class="glyph">👤</span>Members</button>
+          <button class="side-action"><span class="glyph">🏷</span>Labels</button>
+          <button class="side-action"><span class="glyph">☑</span>Checklist</button>
+          <button class="side-action"><span class="glyph">📅</span>Dates</button>
+          <button class="side-action"><span class="glyph">📎</span>Attachment</button>
+          <button class="side-action"><span class="glyph">🎨</span>Cover</button>
+        </div>
+
+        <div class="side-group">
+          <div class="side-label">Actions</div>
+          <button class="side-action"><span class="glyph">→</span>Move</button>
+          <button class="side-action"><span class="glyph">⧉</span>Copy</button>
+          <button class="side-action"><span class="glyph">★</span>Watch</button>
+          <button class="side-action"><span class="glyph">🗄</span>Archive</button>
+          <button class="side-action is-danger"><span class="glyph">🗑</span>Delete card</button>
+        </div>
+
+        <div class="side-group">
+          <div class="side-label">Details</div>
+          <div class="side-meta">
+            Created Aug 30, 09:14<br>
+            Last edit 12 minutes ago<br>
+            Card ID ORB-482<br>
+            3 watchers
+          </div>
+        </div>
+
+      </aside>
+    </div>
+  </div>
+</div>
+
+<script>
+  const cardDetailBackdrop = document.getElementById("cardDetailBackdrop");
+
+  function closeCardDetail() {
+    cardDetailBackdrop.hidden = true;
+  }
+
+  document.getElementById("closeModalButton").addEventListener("click", closeCardDetail);
+
+  cardDetailBackdrop.addEventListener("click", event => {
+    if (event.target === cardDetailBackdrop) {
+      closeCardDetail();
+    }
+  });
+
+  document.addEventListener("keydown", event => {
+    if (event.key === "Escape") {
+      closeCardDetail();
+    }
+  });
+
+  for (const chip of document.querySelectorAll(".sub-bar .chip")) {
+    chip.addEventListener("click", () => chip.classList.toggle("is-active"));
+  }
+
+  for (const viewButton of document.querySelectorAll(".view-toggle button")) {
+    viewButton.addEventListener("click", () => {
+      document.querySelector(".view-toggle .is-active").classList.remove("is-active");
+      viewButton.classList.add("is-active");
+    });
+  }
+
+  for (const checkItem of document.querySelectorAll(".check-item")) {
+    checkItem.addEventListener("click", () => checkItem.classList.toggle("is-checked"));
+  }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Chat</title>
+<style>
+  body { margin: 0; background: #f2f4f7; color: #111827;
+         font-family: -apple-system, "Segoe UI", Arial, sans-serif; }
+
+  .thread { padding: 16px 16px 24px; }
+
+  .msg-row { display: flex; margin-bottom: 14px; }
+  .msg-row.mine { justify-content: flex-end; }
+
+  .bubble { position: relative; max-width: 260px; padding: 9px 13px; border-radius: 14px;
+            font-size: 14px; line-height: 20px; }
+
+  .theirs .bubble { background: #ffffff; border-bottom-left-radius: 4px; }
+  .mine .bubble { background: #2563eb; color: #ffffff; border-bottom-right-radius: 4px; }
+
+  /* the tail is drawn with a pseudo element, it has no box of its own */
+  .mine .bubble::after { content: ""; position: absolute; right: -5px; bottom: 0;
+                         border: 6px solid transparent; border-left-color: #2563eb;
+                         border-bottom: 0; }
+
+  .stamp { margin: 4px 2px 0; font-size: 11px; line-height: 14px; color: #6b7280; text-align: right; }
+</style>
+</head>
+<body>
+
+<main class="thread">
+  <div class="msg-row theirs">
+    <div class="bubble">Did the March export come through on your side?</div>
+  </div>
+
+  <div class="msg-row mine">
+    <div class="bubble" id="bubble-out">Yes, both files. The second one is missing the VAT column though.</div>
+  </div>
+
+  <p class="stamp">Delivered 09:41</p>
+
+  <div class="msg-row theirs">
+    <div class="bubble">Rerunning it now, give me five minutes.</div>
+  </div>
+</main>
+
+</body>
+</html>

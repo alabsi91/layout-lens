@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Billing email</title>
+<style>
+  body { margin: 0; background: #ffffff; color: #1a1a1a; font-family: Arial, Helvetica, sans-serif; }
+
+  .form-card { width: 380px; margin: 70px auto 0; }
+  .form-card h2 { margin: 0 0 16px; font-size: 19px; }
+
+  .field-label { display: block; margin: 0 0 6px; font-size: 13px; line-height: 20px; font-weight: 700; }
+
+  .field { display: block; width: 100%; box-sizing: border-box; padding: 9px 12px;
+           border: 1px solid #9ca3af; border-radius: 6px;
+           font-family: inherit; font-size: 14px; line-height: 20px; color: #1a1a1a; background: #ffffff; }
+
+  .field-help { margin: 8px 0 0; font-size: 13px; line-height: 20px; }
+
+  /* the planted defect: 4.3 against the white card */
+  #email-help { color: #7a7a7a; }
+
+  .save { margin-top: 18px; padding: 10px 18px; border: 0; border-radius: 6px;
+          background: #1a56db; color: #ffffff; font-family: inherit; font-size: 14px; line-height: 20px; }
+</style>
+</head>
+<body>
+
+<section class="form-card">
+  <h2>Billing email</h2>
+
+  <label class="field-label" for="email">Where invoices go</label>
+  <input class="field" id="email" type="email" value="accounts@northwind.co">
+  <p class="field-help" id="email-help">We send a receipt within a minute of every charge.</p>
+
+  <button class="save" type="button">Save changes</button>
+</section>
+
+</body>
+</html>

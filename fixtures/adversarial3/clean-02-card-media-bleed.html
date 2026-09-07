@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Recipe</title>
+<style>
+  body { margin: 0; background: #f6f7f9; color: #111827;
+         font-family: -apple-system, "Segoe UI", Arial, sans-serif; }
+
+  .page { width: 360px; margin: 0 auto; padding: 48px 0; }
+
+  .card { width: 360px; box-sizing: border-box; padding: 20px; background: #ffffff;
+          border-radius: 14px; }
+  .card h1 { margin: 0 0 4px; font-size: 20px; line-height: 28px; }
+  .card p { margin: 0; font-size: 14px; line-height: 20px; color: #6b7280; }
+
+  /* edge to edge on purpose: 360 wide inside a 320 content box, pulled 20 out on
+     both sides by the negative margins */
+  .card-media { display: block; width: 360px; height: 180px; object-fit: cover;
+                margin: -20px -20px 16px; border-radius: 14px 14px 0 0; }
+</style>
+</head>
+<body>
+
+<div class="page">
+  <article class="card">
+    <img class="card-media" id="recipe-photo" alt="Bowl of soup"
+         src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='720' height='360'%3E%3Crect width='720' height='360' fill='%23c2a08a'/%3E%3C/svg%3E">
+    <h1>Leek and potato soup</h1>
+    <p>Forty minutes, one pot, four bowls.</p>
+  </article>
+</div>
+
+</body>
+</html>

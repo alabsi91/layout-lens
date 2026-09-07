@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Workspace</title>
+<style>
+  body { margin: 0; background: #ffffff; color: #111827;
+         font-family: -apple-system, "Segoe UI", Arial, sans-serif; }
+
+  .page { padding: 40px 32px; }
+  .page h1 { margin: 0 0 20px; font-size: 24px; line-height: 32px; }
+
+  .tabs { display: flex; gap: 8px; }
+
+  .tab { box-sizing: border-box; height: 44px; padding: 10px 16px; border-radius: 8px;
+         background: #f3f4f6; color: #1f2937; font-size: 16px; line-height: 24px;
+         text-decoration: none; }
+
+  /* the padding was nudged to move the box and moved the words instead. the box is
+     still 44 tall and still level with the others, the label rides low in it */
+  #tab-usage { padding-top: 14px; padding-bottom: 6px; }
+
+  .panel { margin-top: 24px; font-size: 15px; line-height: 24px; color: #4b5563; }
+</style>
+</head>
+<body>
+
+<div class="page">
+  <h1>Workspace</h1>
+
+  <nav class="tabs">
+    <a class="tab" href="#o">Overview</a>
+    <a class="tab" href="#u" id="tab-usage">Usage</a>
+    <a class="tab" href="#b">Billing</a>
+    <a class="tab" href="#m">Members</a>
+  </nav>
+
+  <p class="panel">Usage is counted per run and rolled up nightly.</p>
+</div>
+
+</body>
+</html>

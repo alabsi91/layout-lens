@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Invoices</title>
+<style>
+  body { margin: 0; background: #ffffff; color: #1a1a1a; font-family: Arial, Helvetica, sans-serif; }
+
+  .page { width: 900px; margin: 0 auto; padding: 28px 0 80px; }
+  .page h1 { margin: 0 0 16px; font-size: 24px; }
+
+  .table { border: 1px solid #e5e7eb; border-radius: 10px; }
+
+  /* on purpose: the head stays at the top while the rows run under it */
+  .table-head { position: sticky; top: 0; display: flex; align-items: center; gap: 16px;
+                height: 44px; padding: 0 16px; background: #f6f7f9;
+                border-bottom: 1px solid #e5e7eb; font-size: 13px; font-weight: 700; }
+
+  .table-row { display: flex; align-items: center; gap: 16px; height: 44px; padding: 0 16px;
+               border-bottom: 1px solid #e5e7eb; font-size: 14px; }
+
+  .c-id { width: 110px; }
+  .c-name { flex: 1; }
+  .c-amt { width: 90px; text-align: right; }
+</style>
+</head>
+<body>
+
+<main class="page">
+  <h1>Invoices</h1>
+
+  <div class="table">
+    <div class="table-head" id="rows-head">
+      <span class="c-id">Number</span>
+      <span class="c-name">Customer</span>
+      <span class="c-amt">Amount</span>
+    </div>
+
+    <div class="table-row"><span class="c-id">INV-2201</span><span class="c-name">Ravenscar Coffee</span><span class="c-amt">$412.00</span></div>
+    <div class="table-row"><span class="c-id">INV-2202</span><span class="c-name">Halden Bros</span><span class="c-amt">$88.50</span></div>
+    <div class="table-row"><span class="c-id">INV-2203</span><span class="c-name">Aldgate Print</span><span class="c-amt">$1,240.00</span></div>
+    <div class="table-row"><span class="c-id">INV-2204</span><span class="c-name">Meridian Tiles</span><span class="c-amt">$96.00</span></div>
+    <div class="table-row"><span class="c-id">INV-2205</span><span class="c-name">North Sail Loft</span><span class="c-amt">$530.25</span></div>
+    <div class="table-row"><span class="c-id">INV-2206</span><span class="c-name">Quay Books</span><span class="c-amt">$74.00</span></div>
+    <div class="table-row"><span class="c-id">INV-2207</span><span class="c-name">Fenwick Joinery</span><span class="c-amt">$2,015.00</span></div>
+    <div class="table-row"><span class="c-id">INV-2208</span><span class="c-name">Slate & Co</span><span class="c-amt">$310.00</span></div>
+    <div class="table-row"><span class="c-id">INV-2209</span><span class="c-name">Brackley Farm</span><span class="c-amt">$145.60</span></div>
+    <div class="table-row"><span class="c-id">INV-2210</span><span class="c-name">Ostler Garage</span><span class="c-amt">$620.00</span></div>
+    <div class="table-row"><span class="c-id">INV-2211</span><span class="c-name">Kettle Lane Deli</span><span class="c-amt">$58.40</span></div>
+    <div class="table-row"><span class="c-id">INV-2212</span><span class="c-name">Wharf Studios</span><span class="c-amt">$980.00</span></div>
+    <div class="table-row"><span class="c-id">INV-2213</span><span class="c-name">Ellis Plumbing</span><span class="c-amt">$264.00</span></div>
+    <div class="table-row"><span class="c-id">INV-2214</span><span class="c-name">Marsh & Rowe</span><span class="c-amt">$1,102.00</span></div>
+    <div class="table-row"><span class="c-id">INV-2215</span><span class="c-name">Coldbeck Dairy</span><span class="c-amt">$77.25</span></div>
+    <div class="table-row"><span class="c-id">INV-2216</span><span class="c-name">Tyne Signs</span><span class="c-amt">$430.00</span></div>
+    <div class="table-row"><span class="c-id">INV-2217</span><span class="c-name">Pinfold Glass</span><span class="c-amt">$205.10</span></div>
+    <div class="table-row"><span class="c-id">INV-2218</span><span class="c-name">Garrick Hire</span><span class="c-amt">$1,860.00</span></div>
+    <div class="table-row"><span class="c-id">INV-2219</span><span class="c-name">Beckwith Tea</span><span class="c-amt">$39.90</span></div>
+    <div class="table-row"><span class="c-id">INV-2220</span><span class="c-name">Sandgate Vets</span><span class="c-amt">$512.00</span></div>
+    <div class="table-row"><span class="c-id">INV-2221</span><span class="c-name">Holt Cycles</span><span class="c-amt">$168.75</span></div>
+    <div class="table-row"><span class="c-id">INV-2222</span><span class="c-name">Wray Electrical</span><span class="c-amt">$744.00</span></div>
+  </div>
+</main>
+
+</body>
+</html>

@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Notes</title>
+<style>
+  body { margin: 0; background: #ffffff; color: #111827;
+         font-family: -apple-system, "Segoe UI", Arial, sans-serif; }
+
+  .head { padding: 20px 16px 4px; }
+  .head h1 { margin: 0; font-size: 22px; line-height: 28px; }
+
+  .notes { padding: 8px 16px 16px; }
+  .note { padding: 12px 0; border-bottom: 1px solid #f3f4f6; }
+  .note h2 { margin: 0 0 2px; font-size: 15px; line-height: 20px; }
+  .note p { margin: 0; font-size: 13px; line-height: 18px; color: #6b7280; }
+
+  /* pinned to the corner over the page, well clear of the last row */
+  .fab { position: fixed; right: 16px; bottom: 16px; width: 56px; height: 56px;
+         padding: 0; border: none; border-radius: 28px; background: #111827;
+         box-shadow: 0 8px 20px rgba(15,18,25,.32);
+         display: flex; align-items: center; justify-content: center; }
+  .fab svg { width: 24px; height: 24px; display: block; }
+</style>
+</head>
+<body>
+
+<header class="head"><h1>Notes</h1></header>
+
+<main class="notes">
+  <article class="note"><h2>Warehouse call</h2><p>Ask about the pallet count for week 14</p></article>
+  <article class="note"><h2>Invoice 2044</h2><p>Chase the PO number before Friday</p></article>
+  <article class="note"><h2>Interview prep</h2><p>Three questions on reconciliation</p></article>
+  <article class="note"><h2>Groceries</h2><p>Oat milk, tomatoes, bread</p></article>
+</main>
+
+<button class="fab" id="new-note" aria-label="New note">
+  <svg viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2">
+    <path d="M12 5v14M5 12h14"></path>
+  </svg>
+</button>
+
+</body>
+</html>

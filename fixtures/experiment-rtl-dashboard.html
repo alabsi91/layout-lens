@@ -1,0 +1,1229 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>مرسى — لوحة التحكم</title>
+    <style>
+      :root {
+        --ink: #10201f;
+        --ink-soft: #5b6f6d;
+        --ink-faint: #5f7370;
+        --line: #dfe7e5;
+        --surface: #ffffff;
+        --ground: #f2f6f5;
+        --accent: #0f766e;
+        --accent-soft: #e2f2f0;
+        --up: #12652f;
+        --up-soft: #e4f5e9;
+        --down: #b91c1c;
+        --down-soft: #fdeaea;
+        --warn: #b45309;
+        --warn-soft: #fdf1de;
+        --radius: 12px;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        height: 100%;
+        margin: 0;
+        overflow: hidden;
+      }
+
+      body {
+        background: var(--ground);
+        color: var(--ink);
+        font-family: "SF Arabic", -apple-system, "Geeza Pro", "Segoe UI", Tahoma, Arial, sans-serif;
+        font-size: 14px;
+        line-height: 1.5;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      .icon {
+        width: 20px;
+        height: 20px;
+        flex: none;
+        stroke: currentColor;
+        stroke-width: 1.6;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        fill: none;
+      }
+
+      .app {
+        display: flex;
+        flex-direction: column;
+        height: 100vh;
+      }
+
+      /* ---------- top bar ---------- */
+
+      .topbar {
+        display: flex;
+        align-items: center;
+        gap: 24px;
+        flex: none;
+        height: 64px;
+        padding: 0 24px;
+        background: var(--surface);
+        border-bottom: 1px solid var(--line);
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        width: 196px;
+        flex: none;
+      }
+
+      .brand-mark {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 34px;
+        height: 34px;
+        flex: none;
+        border-radius: 10px;
+        background: var(--accent);
+        color: #fff;
+      }
+
+      .brand-name {
+        font-size: 19px;
+        font-weight: 700;
+        letter-spacing: 0;
+      }
+
+      .brand-sub {
+        font-size: 11px;
+        color: var(--ink-faint);
+      }
+
+      .search {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex: 1 1 auto;
+        max-width: 420px;
+        margin: 0 auto;
+        height: 38px;
+        padding: 0 12px;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        background: var(--ground);
+        color: var(--ink-faint);
+      }
+
+      .search input {
+        flex: 1 1 auto;
+        min-width: 0;
+        border: 0;
+        outline: 0;
+        background: transparent;
+        font: inherit;
+        color: var(--ink);
+      }
+
+      .search input::placeholder {
+        color: var(--ink-faint);
+      }
+
+      .topbar-end {
+        display: flex;
+        align-items: center;
+        gap: 18px;
+        flex: none;
+      }
+
+      .bell {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 38px;
+        height: 38px;
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        background: var(--surface);
+        color: var(--ink-soft);
+      }
+
+      .bell-badge {
+        position: absolute;
+        top: -10px;
+        inset-inline-end: -10px;
+        min-width: 19px;
+        height: 19px;
+        padding: 0 5px;
+        border: 2px solid var(--surface);
+        border-radius: 999px;
+        background: var(--down);
+        color: #fff;
+        font-size: 11px;
+        font-weight: 700;
+        line-height: 15px;
+        text-align: center;
+      }
+
+      .user {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .avatar {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 36px;
+        height: 36px;
+        flex: none;
+        border-radius: 50%;
+        background: var(--accent-soft);
+        color: var(--accent);
+        font-weight: 700;
+      }
+
+      .user-name {
+        font-size: 13px;
+        font-weight: 600;
+        white-space: nowrap;
+      }
+
+      .user-role {
+        font-size: 11px;
+        color: var(--ink-faint);
+        white-space: nowrap;
+      }
+
+      /* ---------- body ---------- */
+
+      .body {
+        position: relative;
+        display: flex;
+        flex: 1 1 auto;
+        min-height: 0;
+      }
+
+      /* ---------- sidebar ---------- */
+
+      .sidebar {
+        display: flex;
+        flex-direction: column;
+        width: 220px;
+        flex: none;
+        padding: 16px 12px;
+        background: var(--surface);
+        border-inline-end: 1px solid var(--line);
+      }
+
+      .nav {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+      }
+
+      .nav-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        height: 40px;
+        padding-inline: 12px;
+        border-inline-start: 3px solid transparent;
+        border-radius: 0 9px 9px 0;
+        color: var(--ink-soft);
+        font-size: 13.5px;
+      }
+
+      .nav-item.is-active {
+        border-inline-start-color: var(--accent);
+        background: var(--accent-soft);
+        color: var(--accent);
+        font-weight: 700;
+      }
+
+      .help-card {
+        margin-top: auto;
+        padding: 12px;
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: var(--ground);
+      }
+
+      .help-title {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 13px;
+        font-weight: 700;
+      }
+
+      .help-text {
+        margin-top: 4px;
+        font-size: 11.5px;
+        color: var(--ink-faint);
+      }
+
+      .help-link {
+        display: inline-block;
+        margin-top: 8px;
+        color: var(--accent);
+        font-size: 12px;
+        font-weight: 700;
+      }
+
+      /* ---------- main ---------- */
+
+      .main {
+        flex: 1 1 auto;
+        min-width: 0;
+        padding: 20px 24px 24px;
+        overflow-y: auto;
+      }
+
+      .page-head {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 16px;
+      }
+
+      .greeting {
+        font-size: 19px;
+        font-weight: 700;
+      }
+
+      .greeting-sub {
+        font-size: 12.5px;
+        color: var(--ink-soft);
+      }
+
+      .today {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 7px 12px;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        background: var(--surface);
+        color: var(--ink-soft);
+        font-size: 12.5px;
+        white-space: nowrap;
+      }
+
+      .stats {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 14px;
+        margin-top: 16px;
+      }
+
+      .stat {
+        position: relative;
+        padding: 14px 14px 12px;
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: var(--surface);
+      }
+
+      .stat-label {
+        margin-inline-end: 68px;
+        font-size: 12.5px;
+        color: var(--ink-soft);
+      }
+
+      .stat-value {
+        margin-top: 6px;
+        font-size: 24px;
+        font-weight: 700;
+        letter-spacing: -0.2px;
+      }
+
+      .stat-foot {
+        margin-top: 2px;
+        font-size: 11.5px;
+        color: var(--ink-faint);
+      }
+
+      .pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 3px;
+        padding: 3px 8px;
+        border-radius: 999px;
+        font-size: 11.5px;
+        font-weight: 700;
+        white-space: nowrap;
+      }
+
+      .pill .icon {
+        width: 13px;
+        height: 13px;
+        stroke-width: 2.2;
+      }
+
+      .pill-up {
+        background: var(--up-soft);
+        color: var(--up);
+      }
+
+      .pill-down {
+        background: var(--down-soft);
+        color: var(--down);
+      }
+
+      .stat .pill {
+        position: absolute;
+        top: 12px;
+        inset-inline-end: 12px;
+      }
+
+      .panels {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 14px;
+        margin-top: 14px;
+      }
+
+      .panel {
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: var(--surface);
+      }
+
+      .panel-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 13px 16px;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .panel-title {
+        font-size: 14px;
+        font-weight: 700;
+      }
+
+      .panel-note {
+        font-size: 11.5px;
+        color: var(--ink-faint);
+        white-space: nowrap;
+      }
+
+      /* ---------- bar chart ---------- */
+
+      .chart {
+        display: flex;
+        align-items: stretch;
+        flex: 1 1 auto;
+        gap: 10px;
+        padding: 16px;
+      }
+
+      .chart-col {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        flex: 1 1 0;
+        min-width: 0;
+      }
+
+      .chart-track {
+        display: flex;
+        align-items: flex-end;
+        justify-content: center;
+        flex: 1 1 auto;
+        width: 100%;
+      }
+
+      .chart-bar {
+        width: 60%;
+        max-width: 26px;
+        border-radius: 5px 5px 0 0;
+        background: var(--accent);
+      }
+
+      .chart-bar.is-muted {
+        background: #bcd9d5;
+      }
+
+      .chart-month {
+        margin-top: 8px;
+        width: 100%;
+        color: var(--ink-faint);
+        font-size: 11px;
+        text-align: center;
+      }
+
+      /* ---------- transactions ---------- */
+
+      .txn-list {
+        display: flex;
+        flex-direction: column;
+        padding: 6px 0;
+      }
+
+      .txn {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 7px 16px;
+      }
+
+      .txn-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 34px;
+        height: 34px;
+        flex: none;
+        border-radius: 10px;
+        background: var(--ground);
+        color: var(--ink-soft);
+      }
+
+      .txn-text {
+        flex: 1 1 auto;
+        min-width: 0;
+      }
+
+      .txn-name {
+        font-size: 13px;
+        font-weight: 600;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .txn-cat {
+        font-size: 11.5px;
+        color: var(--ink-faint);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .txn-amount {
+        flex: none;
+        width: 96px;
+        font-size: 13px;
+        font-weight: 700;
+        text-align: end;
+        font-variant-numeric: tabular-nums;
+      }
+
+      .amount-out {
+        color: var(--down);
+      }
+
+      .amount-in {
+        color: var(--up);
+      }
+
+      /* ---------- table ---------- */
+
+      .table-wrap {
+        margin-top: 14px;
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: var(--surface);
+        overflow: hidden;
+      }
+
+      .table-scroll {
+        max-height: 240px;
+        overflow-y: auto;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      th,
+      td {
+        padding: 10px 16px;
+        text-align: start;
+        white-space: nowrap;
+      }
+
+      thead th {
+        position: sticky;
+        top: 0;
+        z-index: 1;
+        background: var(--ground);
+        border-bottom: 1px solid var(--line);
+        color: var(--ink-soft);
+        font-size: 12px;
+        font-weight: 700;
+      }
+
+      tbody td {
+        border-bottom: 1px solid var(--line);
+        font-size: 13px;
+      }
+
+      tbody tr:last-child td {
+        border-bottom: 0;
+      }
+
+      .num {
+        text-align: end;
+        font-variant-numeric: tabular-nums;
+      }
+
+      .status {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 3px 9px;
+        border-radius: 999px;
+        font-size: 11.5px;
+        font-weight: 700;
+      }
+
+      .status::before {
+        content: "";
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: currentColor;
+      }
+
+      .status-done {
+        background: var(--up-soft);
+        color: var(--up);
+      }
+
+      .status-wait {
+        background: var(--warn-soft);
+        color: var(--warn);
+      }
+
+      .status-fail {
+        background: var(--down-soft);
+        color: var(--down);
+      }
+
+      /* ---------- drawer ---------- */
+
+      .drawer {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        inset-inline-end: 0;
+        display: flex;
+        flex-direction: column;
+        width: 330px;
+        background: var(--surface);
+        border-inline-start: 1px solid var(--line);
+        box-shadow: -18px 0 40px rgba(16, 32, 31, 0.16);
+        z-index: 5;
+      }
+
+      html[dir="rtl"] .drawer {
+        box-shadow: 18px 0 40px rgba(16, 32, 31, 0.16);
+      }
+
+      .drawer-head {
+        position: relative;
+        flex: none;
+        padding: 16px 16px 12px;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .drawer-title {
+        margin-inline-end: 40px;
+        font-size: 15px;
+        font-weight: 700;
+      }
+
+      .drawer-sub {
+        margin-top: 2px;
+        margin-inline-end: 40px;
+        font-size: 12px;
+        color: var(--ink-faint);
+      }
+
+      .drawer-close {
+        position: absolute;
+        top: 14px;
+        inset-inline-end: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 30px;
+        height: 30px;
+        border: 1px solid var(--line);
+        border-radius: 9px;
+        background: var(--surface);
+        color: var(--ink-soft);
+      }
+
+      .drawer-list {
+        flex: 1 1 auto;
+        min-height: 0;
+        overflow-y: auto;
+      }
+
+      .note {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        padding: 12px 16px;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .note-dot {
+        width: 8px;
+        height: 8px;
+        flex: none;
+        margin-top: 6px;
+        border-radius: 50%;
+        background: var(--accent);
+      }
+
+      .note-dot.is-read {
+        background: #cdd8d6;
+      }
+
+      .note-body {
+        flex: 1 1 auto;
+        min-width: 0;
+      }
+
+      .note-title {
+        font-size: 13px;
+        font-weight: 600;
+      }
+
+      .note-meta {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-top: 4px;
+      }
+
+      .note-time {
+        font-size: 11.5px;
+        color: var(--ink-faint);
+      }
+
+      .note-link {
+        color: var(--accent);
+        font-size: 11.5px;
+        font-weight: 700;
+      }
+
+      /* ---------- toast ---------- */
+
+      /* The sidebar owns the start edge, so the toast lines up with the start of the content instead. */
+      .toast {
+        position: fixed;
+        bottom: 18px;
+        inset-inline-start: 238px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 11px 14px;
+        border-radius: var(--radius);
+        background: var(--ink);
+        color: #fff;
+        box-shadow: 0 10px 26px rgba(16, 32, 31, 0.28);
+        z-index: 9;
+      }
+
+      .toast-title {
+        font-size: 13px;
+        font-weight: 700;
+      }
+
+      .toast-sub {
+        font-size: 11.5px;
+        color: #a9bbb9;
+      }
+    </style>
+  </head>
+
+  <body>
+    <svg width="0" height="0" style="position: absolute" aria-hidden="true">
+      <symbol id="i-anchor" viewBox="0 0 24 24">
+        <circle cx="12" cy="5" r="2.4" />
+        <path d="M12 7.6V21" />
+        <path d="M8 11h8" />
+        <path d="M4 14a8 8 0 0 0 16 0" />
+      </symbol>
+      <symbol id="i-home" viewBox="0 0 24 24">
+        <path d="M4 10.5 12 4l8 6.5V20H4z" />
+        <path d="M10 20v-5h4v5" />
+      </symbol>
+      <symbol id="i-wallet" viewBox="0 0 24 24">
+        <rect x="3" y="6" width="18" height="13" rx="3" />
+        <path d="M3 10h18" />
+        <circle cx="8" cy="14.5" r="1.2" />
+      </symbol>
+      <symbol id="i-chart" viewBox="0 0 24 24">
+        <path d="M4 20V4" />
+        <path d="M4 20h16" />
+        <path d="M8 17v-5M13 17V8M18 17v-7" />
+      </symbol>
+      <symbol id="i-transfer" viewBox="0 0 24 24">
+        <path d="M4 9h13l-3.5-3.5" />
+        <path d="M20 15H7l3.5 3.5" />
+      </symbol>
+      <symbol id="i-card" viewBox="0 0 24 24">
+        <rect x="3" y="5" width="18" height="14" rx="3" />
+        <path d="M3 10h18M7 15h4" />
+      </symbol>
+      <symbol id="i-doc" viewBox="0 0 24 24">
+        <path d="M6 3h8l4 4v14H6z" />
+        <path d="M14 3v4h4" />
+        <path d="M9 13h6M9 17h4" />
+      </symbol>
+      <symbol id="i-gear" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="3" />
+        <path d="M12 3v2.5M12 18.5V21M3 12h2.5M18.5 12H21M5.6 5.6l1.8 1.8M16.6 16.6l1.8 1.8M18.4 5.6l-1.8 1.8M7.4 16.6l-1.8 1.8" />
+      </symbol>
+      <symbol id="i-life" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="8.5" />
+        <circle cx="12" cy="12" r="3.5" />
+        <path d="M6 6l3.6 3.6M18 6l-3.6 3.6M6 18l3.6-3.6M18 18l-3.6-3.6" />
+      </symbol>
+      <symbol id="i-search" viewBox="0 0 24 24">
+        <circle cx="11" cy="11" r="6.5" />
+        <path d="M16 16l4 4" />
+      </symbol>
+      <symbol id="i-bell" viewBox="0 0 24 24">
+        <path d="M6 10a6 6 0 0 1 12 0c0 4 1.5 5.5 1.5 5.5h-15S6 14 6 10z" />
+        <path d="M10 18.5a2 2 0 0 0 4 0" />
+      </symbol>
+      <symbol id="i-close" viewBox="0 0 24 24">
+        <path d="M6 6l12 12M18 6L6 18" />
+      </symbol>
+      <symbol id="i-up" viewBox="0 0 24 24">
+        <path d="M12 19V6" />
+        <path d="M6 11l6-6 6 6" />
+      </symbol>
+      <symbol id="i-down" viewBox="0 0 24 24">
+        <path d="M12 5v13" />
+        <path d="M6 13l6 6 6-6" />
+      </symbol>
+      <symbol id="i-cal" viewBox="0 0 24 24">
+        <rect x="4" y="5" width="16" height="15" rx="3" />
+        <path d="M4 10h16M9 3v4M15 3v4" />
+      </symbol>
+      <symbol id="i-check" viewBox="0 0 24 24">
+        <path d="M5 12.5l4.5 4.5L19 7" />
+      </symbol>
+      <symbol id="i-cart" viewBox="0 0 24 24">
+        <path d="M3 5h2.5l2.5 10h9l2-7H7" />
+        <circle cx="9" cy="19" r="1.4" />
+        <circle cx="17" cy="19" r="1.4" />
+      </symbol>
+      <symbol id="i-coffee" viewBox="0 0 24 24">
+        <path d="M4 9h13v6a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4z" />
+        <path d="M17 11h2a2 2 0 0 1 0 4h-2" />
+        <path d="M7 5v2M11 4v3" />
+      </symbol>
+      <symbol id="i-bolt" viewBox="0 0 24 24">
+        <path d="M13 3 6 13h5l-1 8 7-10h-5z" />
+      </symbol>
+      <symbol id="i-plane" viewBox="0 0 24 24">
+        <path d="M20 4 4 11l6 2 2 6z" />
+      </symbol>
+    </svg>
+
+    <div class="app">
+      <!-- ================= top bar ================= -->
+      <header class="topbar">
+        <div class="brand">
+          <span class="brand-mark"><svg class="icon"><use href="#i-anchor" /></svg></span>
+          <span>
+            <span class="brand-name">مرسى</span>
+            <span class="brand-sub" style="display: block">إدارة الحسابات</span>
+          </span>
+        </div>
+
+        <label class="search">
+          <svg class="icon" style="width: 17px; height: 17px"><use href="#i-search" /></svg>
+          <input type="text" placeholder="ابحث عن عملية أو حساب أو تقرير" />
+        </label>
+
+        <div class="topbar-end">
+          <span class="bell">
+            <svg class="icon"><use href="#i-bell" /></svg>
+            <span class="bell-badge">5</span>
+          </span>
+
+          <span class="user">
+            <span class="avatar">ن</span>
+            <span>
+              <span class="user-name" style="display: block">نورة الحربي</span>
+              <span class="user-role" style="display: block">مديرة مالية</span>
+            </span>
+          </span>
+        </div>
+      </header>
+
+      <div class="body">
+        <!-- ================= sidebar ================= -->
+        <aside class="sidebar">
+          <nav class="nav">
+            <span class="nav-item is-active"><svg class="icon"><use href="#i-home" /></svg>الرئيسية</span>
+            <span class="nav-item"><svg class="icon"><use href="#i-wallet" /></svg>الحسابات</span>
+            <span class="nav-item"><svg class="icon"><use href="#i-transfer" /></svg>التحويلات</span>
+            <span class="nav-item"><svg class="icon"><use href="#i-card" /></svg>البطاقات</span>
+            <span class="nav-item"><svg class="icon"><use href="#i-chart" /></svg>التحليلات</span>
+            <span class="nav-item"><svg class="icon"><use href="#i-doc" /></svg>التقارير</span>
+            <span class="nav-item"><svg class="icon"><use href="#i-gear" /></svg>الإعدادات</span>
+          </nav>
+
+          <div class="help-card">
+            <span class="help-title"><svg class="icon" style="width: 16px; height: 16px"><use href="#i-life" /></svg>تحتاج مساعدة؟</span>
+            <span class="help-text" style="display: block">فريق الدعم متاح طوال أيام الأسبوع.</span>
+            <span class="help-link">ابدأ محادثة</span>
+          </div>
+        </aside>
+
+        <!-- ================= main ================= -->
+        <main class="main">
+          <div class="page-head">
+            <span>
+              <span class="greeting" style="display: block">صباح الخير، نورة</span>
+              <span class="greeting-sub" style="display: block">هذه نظرة سريعة على حركة حساباتك اليوم.</span>
+            </span>
+            <span class="today">
+              <svg class="icon" style="width: 15px; height: 15px"><use href="#i-cal" /></svg>
+              السبت، ٦ سبتمبر ٢٠٢٥
+            </span>
+          </div>
+
+          <!-- stat cards -->
+          <div class="stats">
+            <div class="stat">
+              <span class="pill pill-up"><svg class="icon"><use href="#i-up" /></svg>٤٫٢٪</span>
+              <div class="stat-label">الرصيد الإجمالي</div>
+              <div class="stat-value">١٨٤٬٣٢٠ ر.س</div>
+              <div class="stat-foot">عبر أربعة حسابات</div>
+            </div>
+
+            <div class="stat">
+              <span class="pill pill-up"><svg class="icon"><use href="#i-up" /></svg>١٫٨٪</span>
+              <div class="stat-label">الإيرادات</div>
+              <div class="stat-value">٦٢٬٩٤٠ ر.س</div>
+              <div class="stat-foot">هذا الشهر</div>
+            </div>
+
+            <div class="stat">
+              <span class="pill pill-down"><svg class="icon"><use href="#i-down" /></svg>٢٫٦٪</span>
+              <div class="stat-label">المصروفات</div>
+              <div class="stat-value">٢٧٬٥١٠ ر.س</div>
+              <div class="stat-foot">هذا الشهر</div>
+            </div>
+
+            <div class="stat">
+              <span class="pill pill-up"><svg class="icon"><use href="#i-up" /></svg>٠٫٩٪</span>
+              <div class="stat-label">المدخرات</div>
+              <div class="stat-value">٣٥٬٤٣٠ ر.س</div>
+              <div class="stat-foot">هدف السنة ٦٠٪</div>
+            </div>
+          </div>
+
+          <!-- panels -->
+          <div class="panels">
+            <section class="panel">
+              <div class="panel-head">
+                <span class="panel-title">التدفق النقدي الشهري</span>
+                <span class="panel-note">آخر ١٢ شهرًا</span>
+              </div>
+              <div class="chart">
+                <div class="chart-col">
+                  <div class="chart-track"><div class="chart-bar" style="height: 42%"></div></div>
+                  <div class="chart-month">يناير</div>
+                </div>
+                <div class="chart-col">
+                  <div class="chart-track"><div class="chart-bar" style="height: 55%"></div></div>
+                  <div class="chart-month">فبراير</div>
+                </div>
+                <div class="chart-col">
+                  <div class="chart-track"><div class="chart-bar" style="height: 38%"></div></div>
+                  <div class="chart-month">مارس</div>
+                </div>
+                <div class="chart-col">
+                  <div class="chart-track"><div class="chart-bar" style="height: 64%"></div></div>
+                  <div class="chart-month">أبريل</div>
+                </div>
+                <div class="chart-col">
+                  <div class="chart-track"><div class="chart-bar" style="height: 72%"></div></div>
+                  <div class="chart-month">مايو</div>
+                </div>
+                <div class="chart-col">
+                  <div class="chart-track"><div class="chart-bar" style="height: 50%"></div></div>
+                  <div class="chart-month">يونيو</div>
+                </div>
+                <div class="chart-col">
+                  <div class="chart-track"><div class="chart-bar" style="height: 81%"></div></div>
+                  <div class="chart-month">يوليو</div>
+                </div>
+                <div class="chart-col">
+                  <div class="chart-track"><div class="chart-bar" style="height: 68%"></div></div>
+                  <div class="chart-month">أغسطس</div>
+                </div>
+                <div class="chart-col">
+                  <div class="chart-track"><div class="chart-bar is-muted" style="height: 34%"></div></div>
+                  <div class="chart-month">سبتمبر</div>
+                </div>
+                <div class="chart-col">
+                  <div class="chart-track"><div class="chart-bar is-muted" style="height: 46%"></div></div>
+                  <div class="chart-month">أكتوبر</div>
+                </div>
+                <div class="chart-col">
+                  <div class="chart-track"><div class="chart-bar is-muted" style="height: 58%"></div></div>
+                  <div class="chart-month">نوفمبر</div>
+                </div>
+                <div class="chart-col">
+                  <div class="chart-track"><div class="chart-bar is-muted" style="height: 76%"></div></div>
+                  <div class="chart-month">ديسمبر</div>
+                </div>
+              </div>
+            </section>
+
+            <section class="panel">
+              <div class="panel-head">
+                <span class="panel-title">أحدث العمليات</span>
+                <span class="panel-note">اليوم</span>
+              </div>
+              <div class="txn-list">
+                <div class="txn">
+                  <span class="txn-icon"><svg class="icon" style="width: 18px; height: 18px"><use href="#i-cart" /></svg></span>
+                  <span class="txn-text">
+                    <span class="txn-name" style="display: block">أسواق التميمي</span>
+                    <span class="txn-cat" style="display: block">تسوق</span>
+                  </span>
+                  <span class="txn-amount amount-out">‎-٣٤٢٫٥٠</span>
+                </div>
+                <div class="txn">
+                  <span class="txn-icon"><svg class="icon" style="width: 18px; height: 18px"><use href="#i-transfer" /></svg></span>
+                  <span class="txn-text">
+                    <span class="txn-name" style="display: block">تحويل من خالد</span>
+                    <span class="txn-cat" style="display: block">تحويل داخلي</span>
+                  </span>
+                  <span class="txn-amount amount-in">‎+١٬٢٠٠٫٠٠</span>
+                </div>
+                <div class="txn">
+                  <span class="txn-icon"><svg class="icon" style="width: 18px; height: 18px"><use href="#i-coffee" /></svg></span>
+                  <span class="txn-text">
+                    <span class="txn-name" style="display: block">مقهى الرصيف</span>
+                    <span class="txn-cat" style="display: block">مطاعم ومقاهي</span>
+                  </span>
+                  <span class="txn-amount amount-out">‎-٢٨٫٠٠</span>
+                </div>
+                <div class="txn">
+                  <span class="txn-icon"><svg class="icon" style="width: 18px; height: 18px"><use href="#i-bolt" /></svg></span>
+                  <span class="txn-text">
+                    <span class="txn-name" style="display: block">فاتورة الكهرباء</span>
+                    <span class="txn-cat" style="display: block">خدمات</span>
+                  </span>
+                  <span class="txn-amount amount-out">‎-٤٨٦٫٢٥</span>
+                </div>
+                <div class="txn">
+                  <span class="txn-icon"><svg class="icon" style="width: 18px; height: 18px"><use href="#i-doc" /></svg></span>
+                  <span class="txn-text">
+                    <span class="txn-name" style="display: block">راتب شهر أغسطس</span>
+                    <span class="txn-cat" style="display: block">دخل</span>
+                  </span>
+                  <span class="txn-amount amount-in">‎+١٨٬٥٠٠٫٠٠</span>
+                </div>
+                <div class="txn">
+                  <span class="txn-icon"><svg class="icon" style="width: 18px; height: 18px"><use href="#i-plane" /></svg></span>
+                  <span class="txn-text">
+                    <span class="txn-name" style="display: block">الخطوط السعودية</span>
+                    <span class="txn-cat" style="display: block">سفر</span>
+                  </span>
+                  <span class="txn-amount amount-out">‎-١٬٠٧٥٫٠٠</span>
+                </div>
+              </div>
+            </section>
+          </div>
+
+          <!-- table -->
+          <div class="table-wrap">
+            <div class="panel-head">
+              <span class="panel-title">سجل العمليات</span>
+              <span class="panel-note">٨ من ١٤٢ عملية</span>
+            </div>
+            <div class="table-scroll">
+              <table>
+                <thead>
+                  <tr>
+                    <th>المرجع</th>
+                    <th>الجهة</th>
+                    <th>الحساب</th>
+                    <th>التاريخ</th>
+                    <th class="num">المبلغ</th>
+                    <th class="num">الرصيد بعدها</th>
+                    <th>الحالة</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>‎#٩٤١٢٠</td>
+                    <td>شركة الأفق للتقنية</td>
+                    <td>الجاري ‎••٤٤٠٢</td>
+                    <td>٦ سبتمبر</td>
+                    <td class="num amount-in">‎+٧٬٢٥٠٫٠٠</td>
+                    <td class="num">١٨٤٬٣٢٠٫١٠</td>
+                    <td><span class="status status-done">مكتملة</span></td>
+                  </tr>
+                  <tr>
+                    <td>‎#٩٤١١٨</td>
+                    <td>مؤسسة نجد للتوريدات</td>
+                    <td>الجاري ‎••٤٤٠٢</td>
+                    <td>٦ سبتمبر</td>
+                    <td class="num amount-out">‎-١٬٩٤٠٫٠٠</td>
+                    <td class="num">١٧٧٬٠٧٠٫١٠</td>
+                    <td><span class="status status-wait">قيد المعالجة</span></td>
+                  </tr>
+                  <tr>
+                    <td>‎#٩٤١١٥</td>
+                    <td>الهيئة العامة للزكاة</td>
+                    <td>التوفير ‎••٨٧١٣</td>
+                    <td>٥ سبتمبر</td>
+                    <td class="num amount-out">‎-٤٬٣٠٠٫٠٠</td>
+                    <td class="num">١٧٩٬٠١٠٫١٠</td>
+                    <td><span class="status status-done">مكتملة</span></td>
+                  </tr>
+                  <tr>
+                    <td>‎#٩٤١٠٩</td>
+                    <td>خالد العتيبي</td>
+                    <td>الجاري ‎••٤٤٠٢</td>
+                    <td>٥ سبتمبر</td>
+                    <td class="num amount-in">‎+١٬٢٠٠٫٠٠</td>
+                    <td class="num">١٨٣٬٣١٠٫١٠</td>
+                    <td><span class="status status-done">مكتملة</span></td>
+                  </tr>
+                  <tr>
+                    <td>‎#٩٤١٠٣</td>
+                    <td>منصة سحابة للاستضافة</td>
+                    <td>البطاقة ‎••٢١٩٠</td>
+                    <td>٤ سبتمبر</td>
+                    <td class="num amount-out">‎-٦٨٩٫٠٠</td>
+                    <td class="num">١٨٢٬١١٠٫١٠</td>
+                    <td><span class="status status-fail">ملغاة</span></td>
+                  </tr>
+                  <tr>
+                    <td>‎#٩٤٠٩٨</td>
+                    <td>شركة الواحة اللوجستية</td>
+                    <td>الجاري ‎••٤٤٠٢</td>
+                    <td>٣ سبتمبر</td>
+                    <td class="num amount-out">‎-٢٬٤٧٥٫٥٠</td>
+                    <td class="num">١٨٢٬٧٩٩٫١٠</td>
+                    <td><span class="status status-done">مكتملة</span></td>
+                  </tr>
+                  <tr>
+                    <td>‎#٩٤٠٩١</td>
+                    <td>متجر الديار الرقمي</td>
+                    <td>البطاقة ‎••٢١٩٠</td>
+                    <td>٢ سبتمبر</td>
+                    <td class="num amount-out">‎-٣١٥٫٧٥</td>
+                    <td class="num">١٨٥٬٢٧٤٫٦٠</td>
+                    <td><span class="status status-wait">قيد المعالجة</span></td>
+                  </tr>
+                  <tr>
+                    <td>‎#٩٤٠٨٦</td>
+                    <td>صندوق الاستثمار الأهلي</td>
+                    <td>التوفير ‎••٨٧١٣</td>
+                    <td>١ سبتمبر</td>
+                    <td class="num amount-in">‎+٩٬٠٠٠٫٠٠</td>
+                    <td class="num">١٨٥٬٥٩٠٫٣٥</td>
+                    <td><span class="status status-done">مكتملة</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </main>
+
+        <!-- ================= drawer ================= -->
+        <aside class="drawer">
+          <div class="drawer-head">
+            <div class="drawer-title">الإشعارات</div>
+            <div class="drawer-sub">لديك ٥ إشعارات غير مقروءة</div>
+            <span class="drawer-close"><svg class="icon" style="width: 16px; height: 16px"><use href="#i-close" /></svg></span>
+          </div>
+
+          <div class="drawer-list">
+            <div class="note">
+              <span class="note-dot"></span>
+              <span class="note-body">
+                <span class="note-title" style="display: block">وصل حوالة بقيمة ٧٬٢٥٠ ر.س من شركة الأفق</span>
+                <span class="note-meta">
+                  <span class="note-time">قبل ٤ دقائق</span>
+                  <span class="note-link">تعليم كمقروء</span>
+                </span>
+              </span>
+            </div>
+            <div class="note">
+              <span class="note-dot"></span>
+              <span class="note-body">
+                <span class="note-title" style="display: block">عملية بطاقة مرفوضة لدى منصة سحابة</span>
+                <span class="note-meta">
+                  <span class="note-time">قبل ٢٦ دقيقة</span>
+                  <span class="note-link">تعليم كمقروء</span>
+                </span>
+              </span>
+            </div>
+            <div class="note">
+              <span class="note-dot"></span>
+              <span class="note-body">
+                <span class="note-title" style="display: block">تقرير المصروفات الشهري جاهز للتنزيل</span>
+                <span class="note-meta">
+                  <span class="note-time">قبل ساعتين</span>
+                  <span class="note-link">تعليم كمقروء</span>
+                </span>
+              </span>
+            </div>
+            <div class="note">
+              <span class="note-dot"></span>
+              <span class="note-body">
+                <span class="note-title" style="display: block">اقتربت من حد المصروفات في بند السفر</span>
+                <span class="note-meta">
+                  <span class="note-time">أمس ٦:١٤ م</span>
+                  <span class="note-link">تعليم كمقروء</span>
+                </span>
+              </span>
+            </div>
+            <div class="note">
+              <span class="note-dot is-read"></span>
+              <span class="note-body">
+                <span class="note-title" style="display: block">تم تفعيل التحقق بخطوتين على حسابك</span>
+                <span class="note-meta">
+                  <span class="note-time">أمس ٩:٠٢ ص</span>
+                  <span class="note-link">تعليم كمقروء</span>
+                </span>
+              </span>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </div>
+
+    <!-- ================= toast ================= -->
+    <div class="toast">
+      <svg class="icon" style="width: 18px; height: 18px; color: #6ee7b7"><use href="#i-check" /></svg>
+      <span>
+        <span class="toast-title" style="display: block">تم حفظ التغييرات</span>
+        <span class="toast-sub" style="display: block">حُدِّثت إعدادات التنبيهات بنجاح.</span>
+      </span>
+    </div>
+  </body>
+</html>

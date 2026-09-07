@@ -1,0 +1,59 @@
+<!doctype html>
+<html dir="rtl" lang="ar">
+<head>
+<meta charset="utf-8">
+<title>كشف حساب</title>
+<style>
+  body { margin: 0; background: #ffffff; color: #111827;
+         font-family: -apple-system, "Segoe UI", Arial, sans-serif; }
+
+  .wrap { max-width: 700px; margin: 0 auto; padding: 48px 24px; }
+  .wrap h1 { margin: 0 0 20px; font-size: 24px; line-height: 32px; }
+
+  table { table-layout: fixed; width: 310px; border-collapse: collapse; }
+
+  th { text-align: right; font-size: 12px; line-height: 16px; color: #6b7280;
+       font-weight: 600; padding: 8px 0; border-bottom: 1px solid #e5e7eb; }
+  th.month { width: 180px; }
+
+  td { font-size: 14px; line-height: 20px; padding: 8px 0;
+       border-bottom: 1px solid #f3f4f6; }
+  td.month { width: 180px; }
+
+  /* the amounts hug the start edge of the column, which is the right in rtl */
+  td.amount { width: 130px; text-align: right; }
+  th.amount { width: 130px; }
+
+  .amount-val { display: inline-block; width: 118px;
+                font-family: ui-monospace, Menlo, Consolas, monospace; }
+
+  /* the planted defect: this cell was written with a left alignment, which in an
+     rtl page throws the number onto the end edge of the column */
+  #cell-april { text-align: left; }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <h1>كشف حساب</h1>
+
+  <table>
+    <thead>
+      <tr><th class="month">الشهر</th><th class="amount">المستحق</th></tr>
+    </thead>
+    <tbody>
+      <tr><td class="month">يناير</td>
+          <td class="amount"><span class="amount-val">1,240.00</span></td></tr>
+      <tr><td class="month">فبراير</td>
+          <td class="amount"><span class="amount-val">3,180.00</span></td></tr>
+      <tr><td class="month">مارس</td>
+          <td class="amount"><span class="amount-val">2,905.00</span></td></tr>
+      <tr><td class="month">أبريل</td>
+          <td class="amount" id="cell-april">
+            <span class="amount-val" id="amt-april">4,012.00</span></td></tr>
+    </tbody>
+  </table>
+</div>
+
+</body>
+</html>

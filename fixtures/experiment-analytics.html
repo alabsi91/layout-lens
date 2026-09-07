@@ -1,0 +1,954 @@
+<title>Northlight Analytics</title>
+<style>
+  :root {
+    color-scheme: dark;
+
+    --page-bg: #0d1117;
+    --surface: #161b22;
+    --surface-sunken: #0f141a;
+    --border: #262d38;
+    --border-strong: #333b47;
+    --text: #e6edf3;
+    --text-muted: #9aa5b1;
+    --text-faint: #8b95a1;
+    --up: #3fb950;
+    --down: #f85149;
+    --track: #363d47;
+
+    --series-organic: #58a6ff;
+    --series-paid: #2dd4bf;
+    --series-referral: #f0b429;
+
+    --pill-search-bg: #16304d;
+    --pill-search-fg: #9ecbff;
+    --pill-social-bg: #2d2350;
+    --pill-social-fg: #d2b4ff;
+    --pill-email-bg: #103934;
+    --pill-email-fg: #6ee7d5;
+    --pill-display-bg: #3b2d10;
+    --pill-display-fg: #f3ca6b;
+    --pill-video-bg: #401f2e;
+    --pill-video-fg: #ff9fbb;
+  }
+
+  @media (prefers-color-scheme: light) {
+    :root {
+      color-scheme: light;
+
+      --page-bg: #f2f4f7;
+      --surface: #ffffff;
+      --surface-sunken: #f7f8fa;
+      --border: #e3e7ec;
+      --border-strong: #d3d9e0;
+      --text: #16202c;
+      --text-muted: #5a6672;
+      --text-faint: #6b7682;
+      --up: #1a7f37;
+      --down: #b42318;
+      --track: #d0d5db;
+
+      --series-organic: #1f6feb;
+      --series-paid: #0f7b6c;
+      --series-referral: #b45309;
+
+      --pill-search-bg: #e4efff;
+      --pill-search-fg: #0b4f9e;
+      --pill-social-bg: #f0e8ff;
+      --pill-social-fg: #5b2ea6;
+      --pill-email-bg: #ddf3ee;
+      --pill-email-fg: #0d5f54;
+      --pill-display-bg: #fbeed3;
+      --pill-display-fg: #7a4e07;
+      --pill-video-bg: #ffe7ee;
+      --pill-video-fg: #9d1f47;
+    }
+  }
+
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  body {
+    margin: 0;
+    background: var(--page-bg);
+    color: var(--text);
+    font: 400 13px/1.4 -apple-system, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .topbar {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    height: 60px;
+    padding: 0 20px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .workspace {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .workspace-mark {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 26px;
+    height: 26px;
+    border-radius: 7px;
+    background: var(--series-organic);
+    color: var(--surface);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+  }
+
+  .workspace-name {
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  .workspace-plan {
+    padding: 2px 6px;
+    border: 1px solid var(--border-strong);
+    border-radius: 5px;
+    color: var(--text-muted);
+    font-size: 11px;
+  }
+
+  .date-range {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .date-field {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    height: 30px;
+    padding: 0 10px;
+    border: 1px solid var(--border-strong);
+    border-radius: 7px;
+    background: var(--surface-sunken);
+    color: var(--text);
+    font: inherit;
+    font-size: 12.5px;
+  }
+
+  .date-caret {
+    width: 0;
+    height: 0;
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-top: 5px solid var(--text-muted);
+  }
+
+  .range-steps {
+    display: flex;
+    align-items: stretch;
+    height: 30px;
+    padding: 3px;
+    border: 1px solid var(--border-strong);
+    border-radius: 7px;
+    background: var(--surface-sunken);
+  }
+
+  .range-step {
+    display: flex;
+    align-items: center;
+    padding: 0 10px;
+    border: 0;
+    border-radius: 5px;
+    background: transparent;
+    color: var(--text-muted);
+    font: inherit;
+    font-size: 12px;
+  }
+
+  .range-step.is-active {
+    background: var(--surface);
+    border: 1px solid var(--border-strong);
+    color: var(--text);
+    font-weight: 600;
+  }
+
+  .topbar-end {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 12px;
+  }
+
+  .export-button {
+    display: flex;
+    align-items: center;
+    height: 30px;
+    padding: 0 12px;
+    border: 1px solid var(--border-strong);
+    border-radius: 7px;
+    background: var(--surface-sunken);
+    color: var(--text);
+    font: inherit;
+    font-size: 12.5px;
+    font-weight: 500;
+  }
+
+  .avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: var(--pill-social-bg);
+    color: var(--pill-social-fg);
+    font-size: 11.5px;
+    font-weight: 600;
+  }
+
+  main {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 16px 20px 20px;
+  }
+
+  .card {
+    padding: 14px 16px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: var(--surface);
+  }
+
+  .card-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 14px;
+  }
+
+  .card-title {
+    font-size: 13.5px;
+    font-weight: 600;
+  }
+
+  .card-note {
+    color: var(--text-muted);
+    font-size: 12px;
+  }
+
+  .kpi-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+  }
+
+  .kpi {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 12px 14px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: var(--surface);
+  }
+
+  .kpi-label {
+    color: var(--text-muted);
+    font-size: 11.5px;
+    font-weight: 500;
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+  }
+
+  .kpi-value {
+    font-size: 26px;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.4px;
+  }
+
+  .kpi-delta {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 12px;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .kpi-delta.is-up {
+    color: var(--up);
+  }
+
+  .kpi-delta.is-down {
+    color: var(--down);
+  }
+
+  .kpi-delta-since {
+    color: var(--text-muted);
+  }
+
+  .panels {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 16px;
+  }
+
+  .legend {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--text-muted);
+    font-size: 12px;
+  }
+
+  .legend-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+  }
+
+  .legend-dot.is-organic {
+    background: var(--series-organic);
+  }
+
+  .legend-dot.is-paid {
+    background: var(--series-paid);
+  }
+
+  .legend-dot.is-referral {
+    background: var(--series-referral);
+  }
+
+  .plot {
+    position: relative;
+    height: 196px;
+    padding-right: 56px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .bar-groups {
+    display: flex;
+    align-items: flex-end;
+    gap: 14px;
+    height: 100%;
+  }
+
+  .bar-group {
+    display: flex;
+    align-items: flex-end;
+    gap: 4px;
+    flex: 1;
+    height: 100%;
+  }
+
+  .bar {
+    flex: 1;
+    border-radius: 2px 2px 0 0;
+  }
+
+  .bar.is-organic {
+    background: var(--series-organic);
+  }
+
+  .bar.is-paid {
+    background: var(--series-paid);
+  }
+
+  .bar.is-referral {
+    background: var(--series-referral);
+  }
+
+  .average-line {
+    position: absolute;
+    left: 0;
+    right: 56px;
+    bottom: 46%;
+    border-top: 1px dashed var(--border-strong);
+  }
+
+  .average-label {
+    position: absolute;
+    right: 0;
+    bottom: 46%;
+    width: 52px;
+    padding-bottom: 3px;
+    color: var(--text-muted);
+    font-size: 11px;
+    font-variant-numeric: tabular-nums;
+    text-align: end;
+  }
+
+  .month-row {
+    display: flex;
+    gap: 14px;
+    padding: 8px 56px 0 0;
+  }
+
+  .month-label {
+    flex: 1;
+    color: var(--text-faint);
+    font-size: 11px;
+    text-align: center;
+  }
+
+  .source-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .source-row {
+    display: grid;
+    grid-template-columns: 16px minmax(0, 1fr) 84px 42px;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .source-rank {
+    color: var(--text-faint);
+    font-size: 11px;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .source-name {
+    overflow: hidden;
+    font-size: 12.5px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .source-track {
+    height: 6px;
+    border-radius: 3px;
+    background: var(--track);
+  }
+
+  .source-fill {
+    height: 6px;
+    border-radius: 3px;
+    background: var(--series-organic);
+  }
+
+  .source-share {
+    color: var(--text-muted);
+    font-size: 12px;
+    font-variant-numeric: tabular-nums;
+    text-align: end;
+  }
+
+  .campaign-table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+  }
+
+  .campaign-table th {
+    padding: 0 0 8px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text-muted);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.4px;
+    text-align: start;
+    text-transform: uppercase;
+    vertical-align: bottom;
+  }
+
+  .campaign-table td {
+    height: 34px;
+    padding: 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 12.5px;
+  }
+
+  .campaign-table tr:last-child td {
+    border-bottom: 0;
+  }
+
+  .is-numeric {
+    font-variant-numeric: tabular-nums;
+    text-align: end;
+  }
+
+  .campaign-name {
+    overflow: hidden;
+    padding-right: 16px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    height: 20px;
+    padding: 0 8px;
+    border-radius: 10px;
+    font-size: 11px;
+    font-weight: 500;
+  }
+
+  .pill.is-search {
+    background: var(--pill-search-bg);
+    color: var(--pill-search-fg);
+  }
+
+  .pill.is-social {
+    background: var(--pill-social-bg);
+    color: var(--pill-social-fg);
+  }
+
+  .pill.is-email {
+    background: var(--pill-email-bg);
+    color: var(--pill-email-fg);
+  }
+
+  .pill.is-display {
+    background: var(--pill-display-bg);
+    color: var(--pill-display-fg);
+  }
+
+  .pill.is-video {
+    background: var(--pill-video-bg);
+    color: var(--pill-video-fg);
+  }
+
+  .sparkline {
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-end;
+    gap: 3px;
+    height: 18px;
+  }
+
+  .spark-bar {
+    width: 4px;
+    border-radius: 1px;
+    background: var(--series-organic);
+  }
+</style>
+
+<header class="topbar">
+  <div class="workspace">
+    <span class="workspace-mark">NL</span>
+    <span class="workspace-name">Northlight Media</span>
+    <span class="workspace-plan">Growth</span>
+  </div>
+
+  <div class="date-range">
+    <button class="date-field">
+      <span>Aug 8 &ndash; Sep 6, 2026</span>
+      <span class="date-caret"></span>
+    </button>
+    <div class="range-steps">
+      <button class="range-step">7D</button>
+      <button class="range-step is-active">30D</button>
+      <button class="range-step">90D</button>
+    </div>
+  </div>
+
+  <div class="topbar-end">
+    <button class="export-button">Export CSV</button>
+    <span class="avatar">DK</span>
+  </div>
+</header>
+
+<main>
+  <section class="kpi-row">
+    <article class="kpi">
+      <span class="kpi-label">Sessions</span>
+      <span class="kpi-value">1,284,930</span>
+      <span class="kpi-delta is-up">&#9650; 12.4%<span class="kpi-delta-since">vs prev 30d</span></span>
+    </article>
+    <article class="kpi">
+      <span class="kpi-label">Conversion rate</span>
+      <span class="kpi-value">3.82%</span>
+      <span class="kpi-delta is-up">&#9650; 0.34 pt<span class="kpi-delta-since">vs prev 30d</span></span>
+    </article>
+    <article class="kpi">
+      <span class="kpi-label">Revenue</span>
+      <span class="kpi-value">$482,610</span>
+      <span class="kpi-delta is-down">&#9660; 3.1%<span class="kpi-delta-since">vs prev 30d</span></span>
+    </article>
+    <article class="kpi">
+      <span class="kpi-label">Cost per conv.</span>
+      <span class="kpi-value">$28.40</span>
+      <span class="kpi-delta is-up">&#9660; 6.2%<span class="kpi-delta-since">vs prev 30d</span></span>
+    </article>
+  </section>
+
+  <section class="panels">
+    <section class="card chart-card">
+      <div class="card-head">
+        <span class="card-title">Sessions by channel</span>
+        <div class="legend">
+          <span class="legend-item"><span class="legend-dot is-organic"></span>Organic</span>
+          <span class="legend-item"><span class="legend-dot is-paid"></span>Paid</span>
+          <span class="legend-item"><span class="legend-dot is-referral"></span>Referral</span>
+        </div>
+      </div>
+
+      <div class="plot">
+        <div class="bar-groups">
+          <div class="bar-group">
+            <div class="bar is-organic" style="height: 58%"></div>
+            <div class="bar is-paid" style="height: 34%"></div>
+            <div class="bar is-referral" style="height: 18%"></div>
+          </div>
+          <div class="bar-group">
+            <div class="bar is-organic" style="height: 62%"></div>
+            <div class="bar is-paid" style="height: 40%"></div>
+            <div class="bar is-referral" style="height: 20%"></div>
+          </div>
+          <div class="bar-group">
+            <div class="bar is-organic" style="height: 71%"></div>
+            <div class="bar is-paid" style="height: 52%"></div>
+            <div class="bar is-referral" style="height: 26%"></div>
+          </div>
+          <div class="bar-group">
+            <div class="bar is-organic" style="height: 54%"></div>
+            <div class="bar is-paid" style="height: 31%"></div>
+            <div class="bar is-referral" style="height: 15%"></div>
+          </div>
+          <div class="bar-group">
+            <div class="bar is-organic" style="height: 60%"></div>
+            <div class="bar is-paid" style="height: 36%"></div>
+            <div class="bar is-referral" style="height: 17%"></div>
+          </div>
+          <div class="bar-group">
+            <div class="bar is-organic" style="height: 66%"></div>
+            <div class="bar is-paid" style="height: 42%"></div>
+            <div class="bar is-referral" style="height: 22%"></div>
+          </div>
+          <div class="bar-group">
+            <div class="bar is-organic" style="height: 72%"></div>
+            <div class="bar is-paid" style="height: 39%"></div>
+            <div class="bar is-referral" style="height: 24%"></div>
+          </div>
+          <div class="bar-group">
+            <div class="bar is-organic" style="height: 69%"></div>
+            <div class="bar is-paid" style="height: 45%"></div>
+            <div class="bar is-referral" style="height: 21%"></div>
+          </div>
+          <div class="bar-group">
+            <div class="bar is-organic" style="height: 75%"></div>
+            <div class="bar is-paid" style="height: 48%"></div>
+            <div class="bar is-referral" style="height: 26%"></div>
+          </div>
+          <div class="bar-group">
+            <div class="bar is-organic" style="height: 81%"></div>
+            <div class="bar is-paid" style="height: 44%"></div>
+            <div class="bar is-referral" style="height: 29%"></div>
+          </div>
+          <div class="bar-group">
+            <div class="bar is-organic" style="height: 78%"></div>
+            <div class="bar is-paid" style="height: 52%"></div>
+            <div class="bar is-referral" style="height: 27%"></div>
+          </div>
+          <div class="bar-group">
+            <div class="bar is-organic" style="height: 86%"></div>
+            <div class="bar is-paid" style="height: 57%"></div>
+            <div class="bar is-referral" style="height: 33%"></div>
+          </div>
+        </div>
+        <div class="average-line"></div>
+        <span class="average-label">avg 46.8k</span>
+      </div>
+
+      <div class="month-row">
+        <span class="month-label">Oct</span>
+        <span class="month-label">Nov</span>
+        <span class="month-label">Dec</span>
+        <span class="month-label">Jan</span>
+        <span class="month-label">Feb</span>
+        <span class="month-label">Mar</span>
+        <span class="month-label">Apr</span>
+        <span class="month-label">May</span>
+        <span class="month-label">Jun</span>
+        <span class="month-label">Jul</span>
+        <span class="month-label">Aug</span>
+        <span class="month-label">Sep</span>
+      </div>
+    </section>
+
+    <section class="card sources-card">
+      <div class="card-head">
+        <span class="card-title">Top sources</span>
+        <span class="card-note">share of sessions</span>
+      </div>
+
+      <div class="source-list">
+        <div class="source-row">
+          <span class="source-rank">01</span>
+          <span class="source-name">google / organic</span>
+          <span class="source-track"><span class="source-fill" style="width: 100%"></span></span>
+          <span class="source-share">34.2%</span>
+        </div>
+        <div class="source-row">
+          <span class="source-rank">02</span>
+          <span class="source-name">(direct) / none</span>
+          <span class="source-track"><span class="source-fill" style="width: 54%"></span></span>
+          <span class="source-share">18.6%</span>
+        </div>
+        <div class="source-row">
+          <span class="source-rank">03</span>
+          <span class="source-name">facebook.com / paid</span>
+          <span class="source-track"><span class="source-fill" style="width: 33%"></span></span>
+          <span class="source-share">11.4%</span>
+        </div>
+        <div class="source-row">
+          <span class="source-rank">04</span>
+          <span class="source-name">newsletter / email</span>
+          <span class="source-track"><span class="source-fill" style="width: 29%"></span></span>
+          <span class="source-share">9.8%</span>
+        </div>
+        <div class="source-row">
+          <span class="source-rank">05</span>
+          <span class="source-name">bing / organic</span>
+          <span class="source-track"><span class="source-fill" style="width: 21%"></span></span>
+          <span class="source-share">7.3%</span>
+        </div>
+        <div class="source-row">
+          <span class="source-rank">06</span>
+          <span class="source-name">youtube.com / referral</span>
+          <span class="source-track"><span class="source-fill" style="width: 18%"></span></span>
+          <span class="source-share">6.1%</span>
+        </div>
+        <div class="source-row">
+          <span class="source-rank">07</span>
+          <span class="source-name">reddit.com / referral</span>
+          <span class="source-track"><span class="source-fill" style="width: 14%"></span></span>
+          <span class="source-share">4.9%</span>
+        </div>
+        <div class="source-row">
+          <span class="source-rank">08</span>
+          <span class="source-name">partners.acme.io / referral</span>
+          <span class="source-track"><span class="source-fill" style="width: 10%"></span></span>
+          <span class="source-share">3.4%</span>
+        </div>
+      </div>
+    </section>
+  </section>
+
+  <section class="card table-card">
+    <div class="card-head">
+      <span class="card-title">Campaigns</span>
+      <span class="card-note">10 of 34 active</span>
+    </div>
+
+    <table class="campaign-table">
+      <colgroup>
+        <col style="width: 300px">
+        <col style="width: 110px">
+        <col style="width: 120px">
+        <col style="width: 130px">
+        <col style="width: 150px">
+        <col>
+      </colgroup>
+      <thead>
+        <tr>
+          <th>Campaign</th>
+          <th>Channel</th>
+          <th class="is-numeric">Spend</th>
+          <th class="is-numeric">Conversions</th>
+          <th class="is-numeric">Cost / conv.</th>
+          <th class="is-numeric">Last 7 days</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="campaign-name">Brand Search &mdash; Exact</td>
+          <td><span class="pill is-search">Search</span></td>
+          <td class="is-numeric">$18,420</td>
+          <td class="is-numeric">1,284</td>
+          <td class="is-numeric">$14.35</td>
+          <td>
+            <div class="sparkline">
+              <span class="spark-bar" style="height: 44%"></span>
+              <span class="spark-bar" style="height: 52%"></span>
+              <span class="spark-bar" style="height: 48%"></span>
+              <span class="spark-bar" style="height: 66%"></span>
+              <span class="spark-bar" style="height: 61%"></span>
+              <span class="spark-bar" style="height: 78%"></span>
+              <span class="spark-bar" style="height: 92%"></span>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td class="campaign-name">Q3 Retargeting &mdash; Cart Abandoners, 14 Day Window, All Regions</td>
+          <td><span class="pill is-social">Social</span></td>
+          <td class="is-numeric">$12,960</td>
+          <td class="is-numeric">742</td>
+          <td class="is-numeric">$17.47</td>
+          <td>
+            <div class="sparkline">
+              <span class="spark-bar" style="height: 72%"></span>
+              <span class="spark-bar" style="height: 64%"></span>
+              <span class="spark-bar" style="height: 70%"></span>
+              <span class="spark-bar" style="height: 55%"></span>
+              <span class="spark-bar" style="height: 49%"></span>
+              <span class="spark-bar" style="height: 58%"></span>
+              <span class="spark-bar" style="height: 46%"></span>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td class="campaign-name">Lookalike 1% &mdash; Prospecting</td>
+          <td><span class="pill is-social">Social</span></td>
+          <td class="is-numeric">$24,180</td>
+          <td class="is-numeric">611</td>
+          <td class="is-numeric">$39.57</td>
+          <td>
+            <div class="sparkline">
+              <span class="spark-bar" style="height: 38%"></span>
+              <span class="spark-bar" style="height: 45%"></span>
+              <span class="spark-bar" style="height: 41%"></span>
+              <span class="spark-bar" style="height: 52%"></span>
+              <span class="spark-bar" style="height: 60%"></span>
+              <span class="spark-bar" style="height: 57%"></span>
+              <span class="spark-bar" style="height: 68%"></span>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td class="campaign-name">Newsletter &mdash; Weekly Digest</td>
+          <td><span class="pill is-email">Email</span></td>
+          <td class="is-numeric">$1,240</td>
+          <td class="is-numeric">388</td>
+          <td class="is-numeric">$3.20</td>
+          <td>
+            <div class="sparkline">
+              <span class="spark-bar" style="height: 88%"></span>
+              <span class="spark-bar" style="height: 34%"></span>
+              <span class="spark-bar" style="height: 30%"></span>
+              <span class="spark-bar" style="height: 28%"></span>
+              <span class="spark-bar" style="height: 90%"></span>
+              <span class="spark-bar" style="height: 42%"></span>
+              <span class="spark-bar" style="height: 36%"></span>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td class="campaign-name">Competitor Conquest</td>
+          <td><span class="pill is-search">Search</span></td>
+          <td class="is-numeric">$9,730</td>
+          <td class="is-numeric">214</td>
+          <td class="is-numeric">$45.47</td>
+          <td>
+            <div class="sparkline">
+              <span class="spark-bar" style="height: 62%"></span>
+              <span class="spark-bar" style="height: 58%"></span>
+              <span class="spark-bar" style="height: 66%"></span>
+              <span class="spark-bar" style="height: 51%"></span>
+              <span class="spark-bar" style="height: 47%"></span>
+              <span class="spark-bar" style="height: 43%"></span>
+              <span class="spark-bar" style="height: 39%"></span>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td class="campaign-name">Display Remarketing &mdash; 30d</td>
+          <td><span class="pill is-display">Display</span></td>
+          <td class="is-numeric">$6,410</td>
+          <td class="is-numeric">297</td>
+          <td class="is-numeric">$21.58</td>
+          <td>
+            <div class="sparkline">
+              <span class="spark-bar" style="height: 40%"></span>
+              <span class="spark-bar" style="height: 44%"></span>
+              <span class="spark-bar" style="height: 50%"></span>
+              <span class="spark-bar" style="height: 46%"></span>
+              <span class="spark-bar" style="height: 54%"></span>
+              <span class="spark-bar" style="height: 60%"></span>
+              <span class="spark-bar" style="height: 56%"></span>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td class="campaign-name">Shopping &mdash; High Margin SKUs</td>
+          <td><span class="pill is-search">Search</span></td>
+          <td class="is-numeric">$31,850</td>
+          <td class="is-numeric">1,102</td>
+          <td class="is-numeric">$28.90</td>
+          <td>
+            <div class="sparkline">
+              <span class="spark-bar" style="height: 55%"></span>
+              <span class="spark-bar" style="height: 63%"></span>
+              <span class="spark-bar" style="height: 71%"></span>
+              <span class="spark-bar" style="height: 68%"></span>
+              <span class="spark-bar" style="height: 76%"></span>
+              <span class="spark-bar" style="height: 84%"></span>
+              <span class="spark-bar" style="height: 80%"></span>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td class="campaign-name">YouTube Pre-Roll &mdash; Launch</td>
+          <td><span class="pill is-video">Video</span></td>
+          <td class="is-numeric">$15,600</td>
+          <td class="is-numeric">268</td>
+          <td class="is-numeric">$58.21</td>
+          <td>
+            <div class="sparkline">
+              <span class="spark-bar" style="height: 90%"></span>
+              <span class="spark-bar" style="height: 82%"></span>
+              <span class="spark-bar" style="height: 70%"></span>
+              <span class="spark-bar" style="height: 58%"></span>
+              <span class="spark-bar" style="height: 49%"></span>
+              <span class="spark-bar" style="height: 41%"></span>
+              <span class="spark-bar" style="height: 35%"></span>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td class="campaign-name">Lifecycle &mdash; Winback 90d</td>
+          <td><span class="pill is-email">Email</span></td>
+          <td class="is-numeric">$980</td>
+          <td class="is-numeric">156</td>
+          <td class="is-numeric">$6.28</td>
+          <td>
+            <div class="sparkline">
+              <span class="spark-bar" style="height: 32%"></span>
+              <span class="spark-bar" style="height: 36%"></span>
+              <span class="spark-bar" style="height: 30%"></span>
+              <span class="spark-bar" style="height: 44%"></span>
+              <span class="spark-bar" style="height: 38%"></span>
+              <span class="spark-bar" style="height: 48%"></span>
+              <span class="spark-bar" style="height: 52%"></span>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td class="campaign-name">Performance Max &mdash; Core</td>
+          <td><span class="pill is-display">Display</span></td>
+          <td class="is-numeric">$22,470</td>
+          <td class="is-numeric">803</td>
+          <td class="is-numeric">$27.98</td>
+          <td>
+            <div class="sparkline">
+              <span class="spark-bar" style="height: 48%"></span>
+              <span class="spark-bar" style="height: 56%"></span>
+              <span class="spark-bar" style="height: 64%"></span>
+              <span class="spark-bar" style="height: 59%"></span>
+              <span class="spark-bar" style="height: 67%"></span>
+              <span class="spark-bar" style="height: 74%"></span>
+              <span class="spark-bar" style="height: 88%"></span>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+</main>

@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Notifications</title>
+<style>
+  body { margin: 0; background: #ffffff; color: #111827;
+         font-family: -apple-system, "Segoe UI", Arial, sans-serif; }
+
+  .wrap { max-width: 620px; margin: 0 auto; padding: 48px 24px; }
+  .wrap h1 { margin: 0 0 20px; font-size: 24px; line-height: 32px; }
+
+  .pref { display: flex; align-items: center; justify-content: space-between; gap: 24px;
+          padding: 14px 0; border-bottom: 1px solid #f3f4f6; }
+  .pref h2 { margin: 0 0 2px; font-size: 15px; line-height: 20px; }
+  .pref p { margin: 0; font-size: 13px; line-height: 18px; color: #6b7280; }
+
+  .switch { position: relative; flex: 0 0 44px; width: 44px; height: 22px;
+            border-radius: 11px; background: #d1d5db; }
+  .switch.is-on { background: #16a34a; }
+
+  /* the knob rests against one end of the track, that is what on and off look like */
+  .knob { position: absolute; top: 2px; width: 18px; height: 18px; border-radius: 9px;
+          background: #ffffff; box-shadow: 0 1px 3px rgba(0,0,0,.3); }
+  .switch .knob { left: 2px; }
+  .switch.is-on .knob { left: 24px; }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <h1>Notifications</h1>
+
+  <div class="pref">
+    <div><h2>Weekly digest</h2><p>Every Monday at 08:00</p></div>
+    <span class="switch is-on" id="digest-switch" role="switch" aria-checked="true">
+      <span class="knob" id="digest-knob"></span>
+    </span>
+  </div>
+
+  <div class="pref">
+    <div><h2>Failed payments</h2><p>As soon as a charge is declined</p></div>
+    <span class="switch is-on" role="switch" aria-checked="true">
+      <span class="knob"></span>
+    </span>
+  </div>
+
+  <div class="pref">
+    <div><h2>Product news</h2><p>Roughly once a month</p></div>
+    <span class="switch" role="switch" aria-checked="false">
+      <span class="knob"></span>
+    </span>
+  </div>
+</div>
+
+</body>
+</html>

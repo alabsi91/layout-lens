@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Repository files</title>
+<style>
+  body { margin: 0; background: #ffffff; color: #1a1a1a; font-family: Arial, Helvetica, sans-serif; }
+
+  .file-card { width: 360px; margin: 80px auto 0; padding: 16px;
+               border: 1px solid #e5e7eb; border-radius: 10px; }
+
+  .file-head { display: flex; align-items: center; gap: 10px; }
+  .file-icon { width: 28px; height: 28px; border-radius: 6px; background: linear-gradient(135deg, #bfdbfe, #a5b4fc); }
+
+  .file-name { margin: 0; font-family: monospace; font-size: 15px; line-height: 22px;
+               white-space: nowrap; overflow: hidden; }
+
+  /* the planted defect: the name needs 13ch, the box gives it 4 less */
+  #file-name { width: calc(13ch - 4px); }
+
+  .file-meta { margin: 10px 0 0; font-size: 13px; line-height: 20px; color: #4b5563; }
+</style>
+</head>
+<body>
+
+<article class="file-card">
+  <div class="file-head">
+    <div class="file-icon"></div>
+    <h3 class="file-name" id="file-name">tokens.config</h3>
+  </div>
+  <p class="file-meta">Edited 4 days ago by Priya</p>
+</article>
+
+</body>
+</html>

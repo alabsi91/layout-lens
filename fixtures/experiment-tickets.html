@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>حجز تذاكر — الرحلة الأخيرة</title>
+    <style>
+      :root {
+        --page-background: #0d0e12;
+        --surface: #171921;
+        --surface-raised: #1f222c;
+        --seat-available: #414a5e;
+        --seat-taken: #2b303c;
+        --accent: #f2c45a;
+        --accent-ink: #17181d;
+        --text-primary: #f4f5f8;
+        --text-muted: #a7adbb;
+        --hairline: #262a35;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      button {
+        font-family: inherit;
+        color: inherit;
+      }
+
+      body {
+        margin: 0;
+        background: var(--page-background);
+        color: var(--text-primary);
+        font-family: "SF Arabic", "Geeza Pro", "Noto Naskh Arabic", system-ui, sans-serif;
+        font-size: 14px;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      .screen-frame {
+        display: flex;
+        flex-direction: column;
+        min-height: 844px;
+        padding-bottom: 72px;
+      }
+
+      /* top bar */
+
+      .top-bar {
+        display: grid;
+        grid-template-columns: 40px 1fr 40px;
+        align-items: center;
+        height: 56px;
+        padding: 0 12px;
+        border-bottom: 1px solid var(--hairline);
+      }
+
+      .icon-button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        padding: 0;
+        border: 0;
+        border-radius: 12px;
+        background: var(--surface);
+        color: var(--text-primary);
+        cursor: pointer;
+      }
+
+      .icon-button svg {
+        width: 20px;
+        height: 20px;
+      }
+
+      .top-bar-title {
+        margin: 0;
+        font-size: 17px;
+        font-weight: 600;
+        text-align: center;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      /* days */
+
+      .day-strip {
+        display: flex;
+        gap: 8px;
+        overflow-x: auto;
+        padding: 14px 16px;
+        scrollbar-width: none;
+      }
+
+      .day-strip::-webkit-scrollbar {
+        display: none;
+      }
+
+      .day-chip {
+        display: flex;
+        flex: 0 0 auto;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 3px;
+        width: 56px;
+        height: 62px;
+        border: 1px solid var(--hairline);
+        border-radius: 14px;
+        background: var(--surface);
+      }
+
+      .day-chip-name {
+        font-size: 12px;
+        color: var(--text-muted);
+      }
+
+      .day-chip-number {
+        font-size: 17px;
+        font-weight: 600;
+        line-height: 1;
+      }
+
+      .day-chip.is-selected {
+        border-color: var(--accent);
+        background: var(--accent);
+        color: var(--accent-ink);
+      }
+
+      .day-chip.is-selected .day-chip-name {
+        color: var(--accent-ink);
+      }
+
+      /* showtimes */
+
+      .time-row {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 8px;
+        padding: 0 16px;
+      }
+
+      .time-pill {
+        height: 38px;
+        border: 1px solid var(--hairline);
+        border-radius: 19px;
+        background: var(--surface);
+        color: var(--text-primary);
+        font-family: inherit;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+      }
+
+      .time-pill.is-selected {
+        border-color: var(--accent);
+        background: var(--accent);
+        color: var(--accent-ink);
+      }
+
+      /* seat map */
+
+      .seat-map {
+        display: flex;
+        flex: 1 1 auto;
+        flex-direction: column;
+        justify-content: center;
+        gap: 24px;
+        margin: 16px;
+        padding: 20px 12px;
+        border: 1px solid var(--hairline);
+        border-radius: 22px;
+        background: var(--surface);
+      }
+
+      .screen-label {
+        display: flex;
+        align-items: flex-start;
+        justify-content: center;
+        width: 230px;
+        height: 42px;
+        flex: 0 0 auto;
+        margin: 0 auto;
+        border-top: 2px solid var(--accent);
+        border-radius: 60% 60% 0 0 / 26px 26px 0 0;
+        background: linear-gradient(to bottom, rgba(242, 196, 90, 0.16), rgba(242, 196, 90, 0));
+        color: var(--text-muted);
+        font-size: 12px;
+        letter-spacing: 0.04em;
+        padding-top: 20px;
+      }
+
+      .seat-grid {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        width: 332px;
+        margin: 0 auto;
+      }
+
+      .seat-row {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .seat-row > * {
+        flex: 0 0 auto;
+      }
+
+      .row-letter {
+        width: 16px;
+        margin-inline-end: 8px;
+        color: var(--text-muted);
+        font-size: 11px;
+        text-align: center;
+      }
+
+      .aisle {
+        width: 14px;
+      }
+
+      .seat {
+        width: 18px;
+        height: 18px;
+        padding: 0;
+        border: 0;
+        border-radius: 6px;
+        background: var(--seat-available);
+        cursor: pointer;
+      }
+
+      .seat.is-taken {
+        background: var(--seat-taken);
+        cursor: not-allowed;
+      }
+
+      .seat.is-selected {
+        background: var(--accent);
+      }
+
+      /* legend */
+
+      .legend {
+        display: flex;
+        justify-content: center;
+        gap: 18px;
+        padding: 0 16px 22px;
+      }
+
+      .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        color: var(--text-muted);
+        font-size: 12px;
+      }
+
+      .legend-swatch {
+        width: 12px;
+        height: 12px;
+        border-radius: 4px;
+        background: var(--seat-available);
+      }
+
+      .legend-swatch.is-taken {
+        background: var(--seat-taken);
+      }
+
+      .legend-swatch.is-selected {
+        background: var(--accent);
+      }
+
+      /* summary */
+
+      .summary-card {
+        margin: 0 16px 16px;
+        padding: 12px;
+        border: 1px solid var(--hairline);
+        border-radius: 18px;
+        background: var(--surface);
+      }
+
+      .summary-head {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .poster-thumb {
+        flex: 0 0 auto;
+        width: 52px;
+        height: 68px;
+        border-radius: 10px;
+        background: linear-gradient(150deg, #3b3050, #7a4a3a 55%, #d8a15c);
+      }
+
+      .summary-lines {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+        min-width: 0;
+      }
+
+      .summary-film {
+        font-size: 15px;
+        font-weight: 600;
+      }
+
+      .summary-meta,
+      .summary-seats {
+        color: var(--text-muted);
+        font-size: 12px;
+      }
+
+      .summary-seats strong {
+        color: var(--text-primary);
+        font-weight: 600;
+      }
+
+      .summary-total {
+        display: flex;
+        align-items: baseline;
+        justify-content: flex-end;
+        gap: 8px;
+        margin-top: 12px;
+        padding-top: 10px;
+        border-top: 1px solid var(--hairline);
+      }
+
+      .summary-total-label {
+        color: var(--text-muted);
+        font-size: 12px;
+      }
+
+      .summary-total-value {
+        font-size: 17px;
+        font-weight: 700;
+      }
+
+      /* pay bar */
+
+      .pay-bar {
+        position: fixed;
+        inset-inline: 0;
+        bottom: 0;
+        display: flex;
+        align-items: center;
+        height: 72px;
+        padding: 0 16px;
+        border-top: 1px solid var(--hairline);
+        background: var(--page-background);
+      }
+
+      .pay-button {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
+        height: 50px;
+        padding: 0 18px;
+        border: 0;
+        border-radius: 14px;
+        background: var(--accent);
+        color: var(--accent-ink);
+        font-family: inherit;
+        font-size: 16px;
+        font-weight: 700;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="screen-frame">
+      <header class="top-bar">
+        <button class="icon-button" type="button" aria-label="رجوع">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 5l7 7-7 7" />
+          </svg>
+        </button>
+
+        <h1 class="top-bar-title">الرحلة الأخيرة</h1>
+
+        <button class="icon-button" type="button" aria-label="مشاركة">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 3v13" />
+            <path d="M8 7l4-4 4 4" />
+            <path d="M5 13v6h14v-6" />
+          </svg>
+        </button>
+      </header>
+
+      <nav class="day-strip">
+        <button class="day-chip" type="button">
+          <span class="day-chip-name">السبت</span>
+          <span class="day-chip-number">١٤</span>
+        </button>
+        <button class="day-chip" type="button">
+          <span class="day-chip-name">الأحد</span>
+          <span class="day-chip-number">١٥</span>
+        </button>
+        <button class="day-chip is-selected" type="button" aria-pressed="true">
+          <span class="day-chip-name">الاثنين</span>
+          <span class="day-chip-number">١٦</span>
+        </button>
+        <button class="day-chip" type="button">
+          <span class="day-chip-name">الثلاثاء</span>
+          <span class="day-chip-number">١٧</span>
+        </button>
+        <button class="day-chip" type="button">
+          <span class="day-chip-name">الأربعاء</span>
+          <span class="day-chip-number">١٨</span>
+        </button>
+        <button class="day-chip" type="button">
+          <span class="day-chip-name">الخميس</span>
+          <span class="day-chip-number">١٩</span>
+        </button>
+        <button class="day-chip" type="button">
+          <span class="day-chip-name">الجمعة</span>
+          <span class="day-chip-number">٢٠</span>
+        </button>
+      </nav>
+
+      <div class="time-row">
+        <button class="time-pill" type="button">١٢:٣٠</button>
+        <button class="time-pill" type="button">٣:٠٠</button>
+        <button class="time-pill is-selected" type="button" aria-pressed="true">٦:١٥</button>
+        <button class="time-pill" type="button">٩:٤٥</button>
+      </div>
+
+      <section class="seat-map">
+        <div class="screen-label">الشاشة</div>
+
+        <div class="seat-grid">
+          <div class="seat-row">
+            <span class="row-letter">أ</span>
+            <button class="seat" type="button"></button>
+            <button class="seat" type="button"></button>
+            <button class="seat" type="button"></button>
+            <button class="seat" type="button"></button>
+            <button class="seat" type="button"></button>
+            <button class="seat" type="button"></button>
+            <span class="aisle"></span>
+            <button class="seat" type="button"></button>
+            <button class="seat" type="button"></button>
+            <button class="seat" type="button"></button>
+            <button class="seat" type="button"></button>
+            <button class="seat" type="button"></button>
+            <button class="seat" type="button"></button>
+          </div>
+
+          <div class="seat-row">
+            <span class="row-letter">ب</span>
+            <button class="seat" type="button"></button>
+            <button class="seat" type="button"></button>
+            <button class="seat is-taken" type="button" disabled></button>
+            <button class="seat" type="button"></button>
+            <button class="seat" type="button"></button>
+            <button class="seat" type="button"></button>
+            <span class="aisle"></span>
+            <button class="seat" type="button"></button>
+            <button class="seat" type="button"></button>
+            <button class="seat" type="button"></button>
+            <button class="seat" type="button"></button>
+            <button class="seat" type="button"></button>
+            <button class="seat" type="button"></button>
+          </div>
+
+          <div class="seat-row">
+            <span class="row-letter">ج</span>
+            <button class="seat" type="button"></button>
+            <button class="seat" type="button"></button>
+            <button class="seat" type="button"></button>
+            <button class="seat" type="button"></button>
+            <button class="seat" type="button"></button>
+            <button class="seat" type="button"></button>
+            <span class="aisle"></span>
+            <button class="seat" type="button"></button>
+            <button class="seat is-taken" type="button" disabled></button>
+            <button class="seat is-taken" type="button" disabled></button>
+            <button class="seat" type="button"></button>
+            <button class="seat" type="button"></button>
+            <button class="seat" type="button"></button>
+          </div>
+
+          <div class="seat-row">
+            <span class="row-letter">د</span>
+            <button class="seat" type="button"></button>
+            <button class="seat" type="button"></button>
+            <button class="seat" type="button"></button>
+            <button class="seat is-selected" type="button" aria-pressed="true"></button>
+            <button class="seat is-selected" type="button" aria-pressed="true"></button>
+            <button class="seat" type="button"></button>
+            <span class="aisle"></span>
+            <button class="seat" type="button"></button>
+            <button class="seat" type="button"></button>
+            <button class="seat" type="button"></button>
+            <button class="seat" type="button"></button>
+            <button class="seat" type="button"></button>
+            <button class="seat" type="button"></button>
+          </div>
+
+          <div class="seat-row">
+            <span class="row-letter">هـ</span>
+            <button class="seat" type="button"></button>
+            <button class="seat" type="button"></button>
+            <button class="seat" type="button"></button>
+            <button class="seat" type="button"></button>
+            <button class="seat" type="button"></button>
+            <button class="seat" type="button"></button>
+            <span class="aisle"></span>
+            <button class="seat" type="button"></button>
+            <button class="seat" type="button"></button>
+            <button class="seat" type="button"></button>
+            <button class="seat" type="button"></button>
+            <button class="seat" type="button"></button>
+            <button class="seat" type="button"></button>
+          </div>
+
+          <div class="seat-row">
+            <span class="row-letter">و</span>
+            <button class="seat" type="button"></button>
+            <button class="seat" type="button"></button>
+            <button class="seat" type="button"></button>
+            <button class="seat" type="button"></button>
+            <button class="seat" type="button"></button>
+            <button class="seat" type="button"></button>
+            <span class="aisle"></span>
+            <button class="seat" type="button"></button>
+            <button class="seat" type="button"></button>
+            <button class="seat" type="button"></button>
+            <button class="seat" type="button"></button>
+            <button class="seat" type="button"></button>
+            <button class="seat" type="button"></button>
+          </div>
+
+          <div class="seat-row">
+            <span class="row-letter">ز</span>
+            <button class="seat" type="button"></button>
+            <button class="seat" type="button"></button>
+            <button class="seat" type="button"></button>
+            <button class="seat" type="button"></button>
+            <button class="seat" type="button"></button>
+            <button class="seat" type="button"></button>
+            <span class="aisle"></span>
+            <button class="seat" type="button"></button>
+            <button class="seat" type="button"></button>
+            <button class="seat" type="button"></button>
+            <button class="seat" type="button"></button>
+            <button class="seat" type="button"></button>
+            <button class="seat" type="button"></button>
+          </div>
+
+          <div class="seat-row">
+            <span class="row-letter">ح</span>
+            <button class="seat" type="button"></button>
+            <button class="seat" type="button"></button>
+            <button class="seat" type="button"></button>
+            <button class="seat" type="button"></button>
+            <button class="seat" type="button"></button>
+            <button class="seat" type="button"></button>
+            <span class="aisle"></span>
+            <button class="seat" type="button"></button>
+            <button class="seat" type="button"></button>
+            <button class="seat" type="button"></button>
+            <button class="seat" type="button"></button>
+            <button class="seat" type="button"></button>
+            <button class="seat" type="button"></button>
+          </div>
+        </div>
+      </section>
+
+      <div class="legend">
+        <span class="legend-item"><span class="legend-swatch"></span>متاح</span>
+        <span class="legend-item"><span class="legend-swatch is-taken"></span>محجوز</span>
+        <span class="legend-item"><span class="legend-swatch is-selected"></span>اختيارك</span>
+      </div>
+
+      <section class="summary-card">
+        <div class="summary-head">
+          <div class="poster-thumb"></div>
+
+          <div class="summary-lines">
+            <span class="summary-film">الرحلة الأخيرة</span>
+            <span class="summary-meta">القاعة ٤ · الاثنين ٦:١٥ مساءً</span>
+            <span class="summary-seats">المقاعد <strong>د٤، د٥</strong></span>
+          </div>
+        </div>
+
+        <div class="summary-total">
+          <span class="summary-total-label">الإجمالي</span>
+          <span class="summary-total-value">٩٠ ر.س</span>
+        </div>
+      </section>
+    </div>
+
+    <div class="pay-bar">
+      <button class="pay-button" type="button">
+        <span>ادفع الآن</span>
+        <span>٩٠ ر.س</span>
+      </button>
+    </div>
+  </body>
+</html>

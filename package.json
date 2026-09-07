@@ -1,0 +1,58 @@
+{
+  "name": "layout-lens",
+  "version": "0.1.0",
+  "description": "Turns a rendered web page into layout facts a model can reason about",
+  "license": "MIT",
+  "author": "Ahmed Alabsi",
+  "homepage": "https://github.com/alabsi91/layout-lens#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alabsi91/layout-lens.git"
+  },
+  "bugs": {
+    "url": "https://github.com/alabsi91/layout-lens/issues"
+  },
+  "keywords": [
+    "mcp",
+    "playwright",
+    "css",
+    "layout",
+    "testing",
+    "agent",
+    "headless",
+    "chromium",
+    "accessibility",
+    "contrast"
+  ],
+  "type": "module",
+  "bin": {
+    "layout-lens": "./dist/cli.js",
+    "layout-lens-mcp": "./dist/mcp.js"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "start": "node src/cli.ts",
+    "mcp": "node src/mcp.ts",
+    "test": "node scripts/check.ts",
+    "score": "node scripts/score.ts",
+    "clean": "node -e \"require('node:fs').rmSync('dist', { recursive: true, force: true })\"",
+    "build": "npm run clean && tsc -p tsconfig.build.json",
+    "prepublishOnly": "npm run build"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.30.0",
+    "playwright": "^1.55.0",
+    "zod": "^4.5.4"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "typescript": "^5.9.0"
+  }
+}

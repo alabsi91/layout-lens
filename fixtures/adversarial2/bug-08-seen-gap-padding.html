@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Activity</title>
+<style>
+  body { margin: 0; background: #ffffff; color: #111827;
+         font-family: -apple-system, "Segoe UI", Arial, sans-serif; }
+
+  .head { padding: 20px 16px 8px; }
+  .head h1 { margin: 0; font-size: 22px; line-height: 28px; }
+
+  .log-list { list-style: none; margin: 0; padding: 0 16px 24px; }
+
+  /* rows paint nothing, the words are the only thing seen, so the spacing
+     between them is the padding above and below */
+  .log-row { padding: 10px 0 2px; font-size: 14px; line-height: 20px; color: #374151; }
+
+  /* the planted defect: this row lost most of its top padding */
+  #row-retry { padding-top: 3px; }
+</style>
+</head>
+<body>
+
+<header class="head">
+  <h1>Activity</h1>
+</header>
+
+<ul class="log-list">
+  <li class="log-row">Backup finished, 4.2 GB written</li>
+  <li class="log-row">Nadia invited three people to the workspace</li>
+  <li class="log-row">Billing card ending 4417 was updated</li>
+  <li class="log-row" id="row-retry">Sync failed, retrying in 30 seconds</li>
+  <li class="log-row">Export of March journal is ready to download</li>
+</ul>
+
+</body>
+</html>

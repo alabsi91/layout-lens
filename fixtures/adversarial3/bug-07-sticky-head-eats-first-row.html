@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Payouts</title>
+<style>
+  body { margin: 0; background: #ffffff; color: #111827;
+         font-family: -apple-system, "Segoe UI", Arial, sans-serif; }
+
+  .intro { height: 440px; box-sizing: border-box; padding: 48px 40px 0; }
+  .intro h1 { margin: 0 0 12px; font-size: 28px; line-height: 36px; }
+  .intro p { margin: 0 0 16px; max-width: 640px; font-size: 15px; line-height: 24px;
+             color: #4b5563; }
+
+  .report { padding: 0 40px 40px; }
+
+  .table-head { display: flex; justify-content: space-between; align-items: center;
+                height: 40px; box-sizing: border-box; padding: 0 16px;
+                background: #f3f4f6; font-size: 12px; font-weight: 600; color: #4b5563;
+                text-transform: uppercase; letter-spacing: .04em;
+
+                /* the planted defect: top 64 is left over from a nav bar that was
+                   removed, so the head parks 64 down and sits on the first row */
+                position: sticky; top: 64px; }
+
+  .table-row { padding: 30px 16px 10px; font-size: 14px; line-height: 18px; }
+  .table-row:nth-child(even) { background: #fafafa; }
+  .amt { font-family: ui-monospace, Menlo, Consolas, monospace; }
+
+  .foot { height: 60px; line-height: 60px; font-size: 13px; color: #6b7280; }
+</style>
+</head>
+<body>
+
+<div class="intro">
+  <h1>Payouts</h1>
+  <p>Every payout that left the platform account in the last quarter, newest first. Amounts
+     are net of platform fees and of any refund that landed in the same window.</p>
+  <p>Bank files are generated at 02:00 UTC and are usually visible here within the hour.</p>
+</div>
+
+<section class="report">
+  <div class="table">
+    <div class="table-head" id="table-head"><span>Payout</span><span>Amount</span></div>
+
+    <div class="table-body">
+      <div class="table-row" id="row-first">Northwind renewal <span class="amt">12,400.00</span></div>
+      <div class="table-row">Fabrikam expansion <span class="amt">8,900.00</span></div>
+      <div class="table-row">Contoso pilot <span class="amt">3,150.00</span></div>
+      <div class="table-row">Tailspin upgrade <span class="amt">6,720.00</span></div>
+      <div class="table-row">Litware seats <span class="amt">2,480.00</span></div>
+      <div class="table-row">Proseware add-on <span class="amt">1,905.00</span></div>
+      <div class="table-row">Wingtip migration <span class="amt">7,340.00</span></div>
+      <div class="table-row">Adventure Works <span class="amt">4,015.00</span></div>
+      <div class="table-row">Coho refund offset <span class="amt">960.00</span></div>
+      <div class="table-row">Lucerne retainer <span class="amt">5,600.00</span></div>
+      <div class="table-row">Alpine seats <span class="amt">2,120.00</span></div>
+      <div class="table-row">Trey research <span class="amt">3,880.00</span></div>
+    </div>
+  </div>
+
+  <div class="foot">12 payouts</div>
+</section>
+
+</body>
+</html>

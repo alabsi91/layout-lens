@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Import</title>
+<style>
+  body { margin: 0; background: #ffffff; color: #111827;
+         font-family: -apple-system, "Segoe UI", Arial, sans-serif; }
+
+  .card { width: 420px; margin: 72px auto; border: 1px solid #e5e7eb; border-radius: 12px;
+          padding: 22px 24px; }
+  .card h1 { margin: 0 0 4px; font-size: 17px; line-height: 24px; }
+  .card p { margin: 0 0 16px; font-size: 13px; line-height: 18px; color: #6b7280; }
+
+  /* the fill is as wide as the work that is done, the rest of the track shows through */
+  .progress-track { width: 372px; height: 8px; border-radius: 4px; background: #e5e7eb; }
+  .progress-fill { width: 249px; height: 8px; border-radius: 4px; background: #2563eb; }
+
+  .legend { display: flex; justify-content: space-between; margin-top: 10px;
+            font-size: 12px; line-height: 16px; color: #6b7280; }
+</style>
+</head>
+<body>
+
+<section class="card">
+  <h1>Importing bank statements</h1>
+  <p>Nordea · 4 accounts</p>
+
+  <div class="progress-track" id="import-track">
+    <div class="progress-fill" id="import-fill"></div>
+  </div>
+
+  <div class="legend">
+    <span>67%</span>
+    <span>1,340 of 2,000 lines</span>
+  </div>
+</section>
+
+</body>
+</html>

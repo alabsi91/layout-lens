@@ -1,0 +1,218 @@
+[
+  {
+    "file": "bug-01-nav-link-offset.html",
+    "kind": "bug",
+    "width": 1280,
+    "height": 720,
+    "scroll": 0,
+    "expect": "a#nav-settings.nav-link sits 2 below the other nav links and must carry a finding saying so, either `2 lower than a.nav-link` or `off-center-block 2 down`.",
+    "mustNotReport": null
+  },
+  {
+    "file": "bug-02-button-label-high.html",
+    "kind": "bug",
+    "width": 1280,
+    "height": 720,
+    "scroll": 0,
+    "expect": "button#place-order.btn.btn-primary must report `text off-center-block 3 up`, its label riding 3 high inside the padded box.",
+    "mustNotReport": null
+  },
+  {
+    "file": "bug-03-icon-off-center.html",
+    "kind": "bug",
+    "width": 1280,
+    "height": 720,
+    "scroll": 0,
+    "expect": "span#play-glyph.play-glyph must report `off-center-inline 2 toward start` inside the round button.play.",
+    "mustNotReport": null
+  },
+  {
+    "file": "bug-04-title-truncated.html",
+    "kind": "bug",
+    "width": 1280,
+    "height": 720,
+    "scroll": 0,
+    "expect": "h3#file-name.file-name must report `text truncated 4 hidden at end, no ellipsis` (about 4, the box is 4 short of the 13ch name).",
+    "mustNotReport": null
+  },
+  {
+    "file": "bug-05-badge-clipped.html",
+    "kind": "bug",
+    "width": 1280,
+    "height": 720,
+    "scroll": 0,
+    "expect": "span#stock-badge.badge must report `clipped right 3 by article.card`.",
+    "mustNotReport": null
+  },
+  {
+    "file": "bug-06-header-covers-heading.html",
+    "kind": "bug",
+    "width": 1280,
+    "height": 720,
+    "scroll": 0,
+    "expect": "h1#report-title must report its words hidden by the fixed bar, `text \"Quarterly report\" ... hidden by header.site-header`, which sits over the top 6 of the heading.",
+    "mustNotReport": null
+  },
+  {
+    "file": "bug-07-card-bottoms-differ.html",
+    "kind": "bug",
+    "width": 1280,
+    "height": 720,
+    "scroll": 0,
+    "expect": "div#dz-back.dropzone must report `4 shorter than div.dropzone`, so the two dropzones end 4 apart at the bottom.",
+    "mustNotReport": null
+  },
+  {
+    "file": "bug-08-uneven-list-gap.html",
+    "kind": "bug",
+    "width": 1280,
+    "height": 720,
+    "scroll": 0,
+    "expect": "ul.feed-list must report `uneven spacing, 6 between li.feed-item and li#row-refund.feed-item, others 20`.",
+    "mustNotReport": null
+  },
+  {
+    "file": "bug-09-low-contrast-help.html",
+    "kind": "bug",
+    "width": 1280,
+    "height": 720,
+    "scroll": 0,
+    "expect": "p#email-help.field-help must report `contrast 4.3 under 4.5, #7a7a7a on #ffffff`.",
+    "mustNotReport": null
+  },
+  {
+    "file": "bug-10-tooltip-covers-label.html",
+    "kind": "bug",
+    "width": 1280,
+    "height": 720,
+    "scroll": 0,
+    "expect": "label#limit-label.field-label must report `text \"Monthly spend limit\" ... hidden by div#limit-tip.tooltip`, the bubble sitting over the last word.",
+    "mustNotReport": null
+  },
+  {
+    "file": "bug-11-stat-card-width.html",
+    "kind": "bug",
+    "width": 1280,
+    "height": 720,
+    "scroll": 0,
+    "expect": "div#card-b.stat-card must report `3 wider than div.stat-card`, the two cards holding the same children and the same words.",
+    "mustNotReport": null
+  },
+  {
+    "file": "bug-12-input-start-offset.html",
+    "kind": "bug",
+    "width": 1280,
+    "height": 720,
+    "scroll": 0,
+    "expect": "input#zip.field must report `start edge 3 further end than input.field`, it starts 3 right of the other inputs in the column.",
+    "mustNotReport": null
+  },
+  {
+    "file": "clean-01-badge-over-image.html",
+    "kind": "clean",
+    "width": 1280,
+    "height": 720,
+    "scroll": 0,
+    "expect": "Nothing on span#sale-badge.badge: it lies wholly inside div.card-media, so at most a `covered by span.badge (overlay)` line on the media, which the reader can skip.",
+    "mustNotReport": "`overlaps` on span#sale-badge.badge (one box inside another is layering, not a collision), and any `clipped` on it."
+  },
+  {
+    "file": "clean-02-full-bleed-hero.html",
+    "kind": "clean",
+    "width": 1280,
+    "height": 720,
+    "scroll": 0,
+    "expect": "div#hero-media.hero-media must be tagged `[bleed 240]` and carry no finding, it pokes 240 past main.page on both sides on purpose.",
+    "mustNotReport": "`clipped`, `outside viewport` or `content overflows` on div#hero-media.hero-media, and any content overflow blamed on main.page or body for it."
+  },
+  {
+    "file": "clean-03-float-text-wrap.html",
+    "kind": "clean",
+    "width": 1280,
+    "height": 720,
+    "scroll": 0,
+    "expect": "Nothing on p.article-body or figure.side-figure, the text is meant to run around the float.",
+    "mustNotReport": "`overlaps figure.side-figure` on either p.article-body."
+  },
+  {
+    "file": "clean-04-avatar-stack.html",
+    "kind": "clean",
+    "width": 1280,
+    "height": 720,
+    "scroll": 0,
+    "expect": "Nothing on the four span.avatar circles, the -10 margin stacking them is the design.",
+    "mustNotReport": "`overlaps` or `covered by` between the span.avatar siblings."
+  },
+  {
+    "file": "clean-05-modal-backdrop.html",
+    "kind": "clean",
+    "width": 1280,
+    "height": 720,
+    "scroll": 0,
+    "expect": "The first line must say `scroll locked by div.modal`, and the tint over the page reads as a plain box finding with `(translucent)`.",
+    "mustNotReport": "`text ... hidden by` or `control ... hidden by` from the translucent div#export-modal.modal, and any `hidden by body` / `hidden by html` on the page content under it."
+  },
+  {
+    "file": "clean-06-sticky-table-head.html",
+    "kind": "clean",
+    "width": 1280,
+    "height": 720,
+    "scroll": 300,
+    "expect": "Nothing on div#rows-head.table-head, it is stuck at the top of the viewport over the rows on purpose, and div.table's gaps must leave it out.",
+    "mustNotReport": "`overlaps` on div#rows-head.table-head or on any div.table-row, and any `uneven spacing` or odd gap on div.table caused by the stuck head."
+  },
+  {
+    "file": "clean-07-chip-scroller.html",
+    "kind": "clean",
+    "width": 1280,
+    "height": 720,
+    "scroll": 0,
+    "expect": "div#tag-row.chip-row must carry `[scroll: x ...]` and `N of 12 children out`, the chips themselves saying nothing.",
+    "mustNotReport": "`scrolled out right` or `clipped right` on any span.chip, the direct children of the scroll box."
+  },
+  {
+    "file": "clean-08-sr-only-heading.html",
+    "kind": "clean",
+    "width": 1280,
+    "height": 720,
+    "scroll": 0,
+    "expect": "h2#footer-heading.sr-only must be tagged `[sr-only]` with no other tag and no finding.",
+    "mustNotReport": "`text truncated`, `contrast`, `clipped` or `hidden by` on h2#footer-heading.sr-only, and any gap or overlap counting it in footer.site-footer."
+  },
+  {
+    "file": "clean-09-slider-thumb.html",
+    "kind": "clean",
+    "width": 1280,
+    "height": 720,
+    "scroll": 0,
+    "expect": "Nothing on div#speed-track.slider-track, div#speed-fill.slider-fill or div#speed-thumb.slider-thumb, a knob sitting on its bar is the control.",
+    "mustNotReport": "`empty painted box` on div#speed-track.slider-track or div#speed-fill.slider-fill (both 6 tall, under the 24 floor), and `covered by` on the track from the thumb."
+  },
+  {
+    "file": "clean-10-dialog-close-pinned.html",
+    "kind": "clean",
+    "width": 1280,
+    "height": 720,
+    "scroll": 0,
+    "expect": "Nothing on button#dialog-close.dialog-close, a 28 button pinned 12 from the corner was put there.",
+    "mustNotReport": "`off-center-block` or `off-center-inline` on button#dialog-close.dialog-close."
+  },
+  {
+    "file": "clean-11-scaled-featured-plan.html",
+    "kind": "clean",
+    "width": 1280,
+    "height": 720,
+    "scroll": 0,
+    "expect": "div#plan-pro.plan-card must be tagged `[scaled 1.05]` and carry no alignment or size finding, and neither neighbour may be measured against it.",
+    "mustNotReport": "`lower than`, `higher than`, `wider than`, `shorter than` or `edge ... further` findings naming div#plan-pro.plan-card or comparing a div.plan-card with it."
+  },
+  {
+    "file": "clean-12-right-aligned-prices.html",
+    "kind": "clean",
+    "width": 1280,
+    "height": 720,
+    "scroll": 0,
+    "expect": "Nothing on the span.price values, they end on one line and so start in four places by design.",
+    "mustNotReport": "`start edge N further ...` between the span.price siblings across div.price-row."
+  }
+]

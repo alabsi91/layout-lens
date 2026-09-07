@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Guides</title>
+<style>
+  body { margin: 0; background: #ffffff; color: #111827;
+         font-family: -apple-system, "Segoe UI", Arial, sans-serif; }
+
+  .wrap { max-width: 960px; margin: 0 auto; padding: 48px 24px; }
+  .wrap h1 { margin: 0 0 24px; font-size: 26px; line-height: 34px; }
+
+  .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; align-items: start; }
+
+  .card { border: 1px solid #e5e7eb; border-radius: 12px; overflow: hidden; }
+
+  .card-thumb { height: 140px;
+                background-image: linear-gradient(135deg, #bfdbfe, #a5b4fc); }
+
+  /* the planted defect: this one image box is 2 short */
+  #thumb-c { height: 138px; }
+
+  .card-body { padding: 14px 16px 18px; }
+  .card-body h2 { margin: 0 0 6px; font-size: 15px; line-height: 20px; }
+  .card-body p { margin: 0; font-size: 13px; line-height: 20px; color: #6b7280; }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <h1>Guides</h1>
+
+  <div class="grid">
+    <article class="card">
+      <div class="card-thumb"></div>
+      <div class="card-body">
+        <h2>Import a bank feed</h2>
+        <p>Connect an account and map the first statement.</p>
+      </div>
+    </article>
+
+    <article class="card">
+      <div class="card-thumb"></div>
+      <div class="card-body">
+        <h2>Split a transaction</h2>
+        <p>Break one line into several categories.</p>
+      </div>
+    </article>
+
+    <article class="card">
+      <div class="card-thumb" id="thumb-c"></div>
+      <div class="card-body">
+        <h2>Close a month</h2>
+        <p>Lock the period and export the journal.</p>
+      </div>
+    </article>
+  </div>
+</div>
+
+</body>
+</html>

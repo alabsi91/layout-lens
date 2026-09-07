@@ -1,0 +1,871 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Tidewater — notes for people who sail</title>
+    <style>
+      :root {
+        --deep: #0b2135;
+        --deep-soft: #143752;
+        --sea: #1f7a8c;
+        --sea-bright: #2ea3b8;
+        --sand: #f4efe6;
+        --paper: #ffffff;
+        --ink: #12212e;
+        --ink-soft: #4c6072;
+        --line: #dfe5ea;
+        --shadow: 0 24px 60px rgba(11, 33, 53, 0.18);
+        --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        margin: 0;
+        font-family: var(--font);
+        color: var(--ink);
+        background: var(--paper);
+        line-height: 1.6;
+        overflow-x: hidden;
+      }
+
+      h1,
+      h2,
+      h3 {
+        margin: 0;
+        line-height: 1.2;
+        letter-spacing: -0.02em;
+      }
+
+      p {
+        margin: 0;
+      }
+
+      ul {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+      }
+
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      .page-width {
+        width: 100%;
+        max-width: 1080px;
+        margin: 0 auto;
+        padding: 0 24px;
+      }
+
+      /* ---------- top bar ---------- */
+
+      .top-bar {
+        position: sticky;
+        top: 0;
+        z-index: 20;
+        background: rgba(255, 255, 255, 0.92);
+        backdrop-filter: blur(10px);
+        border-bottom: 1px solid var(--line);
+      }
+
+      .top-bar-inner {
+        display: flex;
+        align-items: center;
+        gap: 32px;
+        height: 68px;
+      }
+
+      .logo {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-weight: 700;
+        font-size: 18px;
+        letter-spacing: -0.01em;
+        margin-right: auto;
+      }
+
+      .logo-mark {
+        width: 28px;
+        height: 28px;
+        border-radius: 9px;
+        background: linear-gradient(140deg, var(--sea-bright), var(--deep));
+        flex: none;
+      }
+
+      .top-links {
+        display: flex;
+        align-items: center;
+        gap: 32px;
+      }
+
+      .top-links a {
+        font-size: 15px;
+        color: var(--ink-soft);
+        font-weight: 500;
+      }
+
+      .top-links a:hover {
+        color: var(--ink);
+      }
+
+      .button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 10px;
+        font-size: 15px;
+        font-weight: 600;
+        padding: 0 18px;
+        height: 42px;
+        border: 1px solid transparent;
+        cursor: pointer;
+        white-space: nowrap;
+      }
+
+      .button-filled {
+        background: var(--deep);
+        color: #fff;
+      }
+
+      .button-filled:hover {
+        background: var(--deep-soft);
+      }
+
+      .button-outline {
+        background: transparent;
+        color: var(--ink);
+        border-color: var(--line);
+      }
+
+      .button-outline:hover {
+        border-color: var(--ink-soft);
+      }
+
+      .button-sea {
+        background: var(--sea);
+        color: #fff;
+      }
+
+      .button-wide {
+        width: 100%;
+      }
+
+      /* ---------- hero ---------- */
+
+      .hero {
+        background: linear-gradient(180deg, var(--sand), var(--paper) 70%);
+        padding: 88px 0 96px;
+        overflow: hidden;
+      }
+
+      .hero-text {
+        max-width: 700px;
+        margin: 0 auto;
+        text-align: center;
+      }
+
+      .hero h1 {
+        font-size: 54px;
+        margin-bottom: 18px;
+      }
+
+      .hero-subtitle {
+        font-size: 19px;
+        color: var(--ink-soft);
+        margin-bottom: 28px;
+      }
+
+      .hero-buttons {
+        display: flex;
+        justify-content: center;
+        gap: 14px;
+      }
+
+      .hero-shot {
+        margin: 64px auto 0;
+        max-width: 880px;
+        border-radius: 20px;
+        background: var(--paper);
+        border: 1px solid var(--line);
+        box-shadow: var(--shadow);
+        transform: rotate(-1.2deg);
+        overflow: hidden;
+      }
+
+      .shot-bar {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        height: 40px;
+        padding: 0 16px;
+        background: #eef2f5;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .shot-dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: #c6d0d8;
+        flex: none;
+      }
+
+      .shot-body {
+        display: flex;
+        min-height: 300px;
+      }
+
+      .shot-side {
+        width: 200px;
+        flex: none;
+        padding: 20px 16px;
+        background: #f7f9fb;
+        border-right: 1px solid var(--line);
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .shot-row {
+        height: 12px;
+        border-radius: 6px;
+        background: #dbe3ea;
+      }
+
+      .shot-row-active {
+        background: linear-gradient(90deg, var(--sea-bright), #9fd8e2);
+      }
+
+      .shot-main {
+        flex: 1;
+        padding: 24px;
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+        min-width: 0;
+      }
+
+      .shot-title {
+        height: 20px;
+        width: 45%;
+        border-radius: 8px;
+        background: #c3ced7;
+      }
+
+      .shot-line {
+        height: 11px;
+        border-radius: 6px;
+        background: #e3e9ee;
+      }
+
+      .shot-chart {
+        margin-top: 6px;
+        height: 110px;
+        border-radius: 12px;
+        background: linear-gradient(150deg, #dff1f4, #f4efe6);
+        border: 1px solid #e2ecef;
+        display: flex;
+        align-items: flex-end;
+        gap: 10px;
+        padding: 12px;
+      }
+
+      .shot-bar-item {
+        flex: 1;
+        border-radius: 6px 6px 3px 3px;
+        background: linear-gradient(180deg, var(--sea-bright), var(--sea));
+      }
+
+      /* ---------- features ---------- */
+
+      .section {
+        padding: 88px 0;
+      }
+
+      .section-head {
+        max-width: 620px;
+        margin: 0 auto 48px;
+        text-align: center;
+      }
+
+      .section-head h2 {
+        font-size: 34px;
+        margin-bottom: 12px;
+      }
+
+      .section-head p {
+        color: var(--ink-soft);
+        font-size: 17px;
+      }
+
+      .feature-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 28px;
+      }
+
+      .feature-card {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+        padding: 28px;
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        background: var(--paper);
+      }
+
+      .feature-icon {
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        background: linear-gradient(140deg, #d8eef2, #eef6f8);
+        border: 1px solid #cfe6ea;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--sea);
+        flex: none;
+      }
+
+      .feature-icon svg {
+        width: 22px;
+        height: 22px;
+        display: block;
+      }
+
+      .feature-card h3 {
+        font-size: 19px;
+      }
+
+      .feature-card p {
+        color: var(--ink-soft);
+        font-size: 15px;
+      }
+
+      /* ---------- testimonial ---------- */
+
+      .testimonial {
+        background: var(--deep);
+        color: #fff;
+        padding: 88px 0;
+      }
+
+      .testimonial-inner {
+        max-width: 760px;
+        margin: 0 auto;
+        text-align: center;
+      }
+
+      .testimonial blockquote {
+        margin: 0 0 32px;
+        font-size: 30px;
+        line-height: 1.4;
+        letter-spacing: -0.02em;
+      }
+
+      .testimonial-person {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .avatar {
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        background: linear-gradient(140deg, var(--sea-bright), #7fc9d6);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        color: var(--deep);
+        font-size: 18px;
+      }
+
+      .testimonial-name {
+        font-weight: 600;
+        font-size: 16px;
+      }
+
+      .testimonial-role {
+        font-size: 14px;
+        color: #9fb6c7;
+      }
+
+      /* ---------- pricing ---------- */
+
+      .pricing-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 28px;
+        align-items: stretch;
+        max-width: 780px;
+        margin: 0 auto;
+        padding-top: 18px;
+      }
+
+      .price-card {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        background: var(--paper);
+        padding: 32px 28px;
+      }
+
+      .price-card-featured {
+        border-color: var(--sea);
+        box-shadow: 0 18px 44px rgba(31, 122, 140, 0.16);
+        margin-top: -18px;
+        padding-top: 44px;
+      }
+
+      .recommended-pill {
+        position: absolute;
+        top: 0;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: var(--sea);
+        color: #fff;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        padding: 7px 16px;
+        border-radius: 999px;
+        white-space: nowrap;
+      }
+
+      .price-name {
+        font-size: 17px;
+        font-weight: 600;
+      }
+
+      .price-amount {
+        display: flex;
+        align-items: baseline;
+        gap: 6px;
+        margin: 10px 0 4px;
+      }
+
+      .price-amount strong {
+        font-size: 44px;
+        font-weight: 700;
+        letter-spacing: -0.03em;
+        line-height: 1.1;
+      }
+
+      .price-amount span {
+        color: var(--ink-soft);
+        font-size: 15px;
+      }
+
+      .price-note {
+        color: var(--ink-soft);
+        font-size: 14px;
+      }
+
+      .price-list {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        margin: 26px 0 32px;
+      }
+
+      .price-list li {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        font-size: 15px;
+        color: var(--ink-soft);
+      }
+
+      .check {
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background: #dff1f4;
+        color: #14606f;
+        font-size: 12px;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex: none;
+        margin-top: 2px;
+      }
+
+      .price-card .button {
+        margin-top: auto;
+      }
+
+      /* ---------- faq ---------- */
+
+      .faq-list {
+        max-width: 720px;
+        margin: 0 auto;
+        border-top: 1px solid var(--line);
+      }
+
+      .faq-item {
+        border-bottom: 1px solid var(--line);
+        padding: 20px 0;
+      }
+
+      .faq-item summary {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+        cursor: pointer;
+        font-size: 17px;
+        font-weight: 600;
+        list-style: none;
+      }
+
+      .faq-item summary::-webkit-details-marker {
+        display: none;
+      }
+
+      .faq-sign {
+        flex: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 24px;
+        height: 24px;
+        color: #17697a;
+        font-size: 20px;
+        line-height: 1;
+      }
+
+      /* the glyph turns, the box stays put, so nothing grows past the row */
+      .faq-item[open] .faq-sign::before {
+        transform: rotate(45deg);
+      }
+
+      .faq-sign::before {
+        content: "+";
+        display: block;
+      }
+
+      .faq-answer {
+        color: var(--ink-soft);
+        font-size: 15px;
+        margin-top: 12px;
+        max-width: 620px;
+      }
+
+      /* ---------- footer ---------- */
+
+      .footer {
+        background: var(--sand);
+        border-top: 1px solid var(--line);
+        padding: 64px 0 32px;
+      }
+
+      .footer-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 28px;
+      }
+
+      .footer-column h4 {
+        margin: 0 0 14px;
+        font-size: 14px;
+        font-weight: 700;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: var(--ink);
+      }
+
+      .footer-column li + li {
+        margin-top: 10px;
+      }
+
+      .footer-column a {
+        font-size: 15px;
+        color: var(--ink-soft);
+      }
+
+      .footer-column a:hover {
+        color: var(--ink);
+      }
+
+      .footer-bottom {
+        margin-top: 48px;
+        padding-top: 24px;
+        border-top: 1px solid var(--line);
+        text-align: center;
+        font-size: 14px;
+        color: var(--ink-soft);
+      }
+    </style>
+  </head>
+  <body>
+    <header class="top-bar">
+      <div class="page-width top-bar-inner">
+        <a class="logo" href="#top">
+          <span class="logo-mark"></span>
+          <span>Tidewater</span>
+        </a>
+        <nav class="top-links">
+          <a href="#features">Features</a>
+          <a href="#pricing">Pricing</a>
+          <a href="#stories">Stories</a>
+        </nav>
+        <a class="button button-filled" href="#pricing">Get the app</a>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero" id="top">
+        <div class="page-width">
+          <div class="hero-text">
+            <h1>Notes that hold up in a wet cockpit</h1>
+            <p class="hero-subtitle">
+              Tidewater keeps your passage plans, engine hours and harbour notes in one place, and
+              it works with no signal at all.
+            </p>
+            <div class="hero-buttons">
+              <a class="button button-filled" href="#pricing">Start free</a>
+              <a class="button button-outline" href="#features">See how it works</a>
+            </div>
+          </div>
+
+          <div class="hero-shot">
+            <div class="shot-bar">
+              <span class="shot-dot"></span>
+              <span class="shot-dot"></span>
+              <span class="shot-dot"></span>
+            </div>
+            <div class="shot-body">
+              <div class="shot-side">
+                <div class="shot-row shot-row-active"></div>
+                <div class="shot-row"></div>
+                <div class="shot-row"></div>
+                <div class="shot-row"></div>
+                <div class="shot-row"></div>
+              </div>
+              <div class="shot-main">
+                <div class="shot-title"></div>
+                <div class="shot-line"></div>
+                <div class="shot-line"></div>
+                <div class="shot-line"></div>
+                <div class="shot-chart">
+                  <div class="shot-bar-item" style="height: 40%"></div>
+                  <div class="shot-bar-item" style="height: 68%"></div>
+                  <div class="shot-bar-item" style="height: 52%"></div>
+                  <div class="shot-bar-item" style="height: 84%"></div>
+                  <div class="shot-bar-item" style="height: 61%"></div>
+                  <div class="shot-bar-item" style="height: 92%"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="features">
+        <div class="page-width">
+          <div class="section-head">
+            <h2>Built for the way a boat actually works</h2>
+            <p>Three things every logbook app gets wrong, and what we did instead.</p>
+          </div>
+          <div class="feature-grid">
+            <article class="feature-card">
+              <div class="feature-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+                  <circle cx="12" cy="4" r="2.2" />
+                  <path d="M12 6.5V21" />
+                  <path d="M8 9h8" />
+                  <path d="M4 14a8 8 0 0 0 16 0" />
+                </svg>
+              </div>
+              <h3>Offline first</h3>
+              <p>
+                Everything is written to the phone before it is written anywhere else. Six days out
+                of range and nothing is lost.
+              </p>
+            </article>
+            <article class="feature-card">
+              <div class="feature-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true">
+                  <circle cx="12" cy="12" r="9" />
+                  <path d="M15.5 8.5 13.5 13.5 8.5 15.5 10.5 10.5Z" />
+                </svg>
+              </div>
+              <h3>Positions attached</h3>
+              <p>
+                Every note carries the fix it was taken at. Search a harbour and read what you wrote
+                last time you were there.
+              </p>
+            </article>
+            <article class="feature-card">
+              <div class="feature-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+                  <path d="M2 9c2.7 0 2.7 2.4 5.3 2.4S10 9 12.7 9s2.6 2.4 5.3 2.4S20.6 9 22 9" />
+                  <path d="M2 15c2.7 0 2.7 2.4 5.3 2.4S10 15 12.7 15s2.6 2.4 5.3 2.4S20.6 15 22 15" />
+                </svg>
+              </div>
+              <h3>Tides in line</h3>
+              <p>
+                Your passage notes sit next to the tide table for the day. No second app, no
+                screenshots of a website.
+              </p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="testimonial" id="stories">
+        <div class="page-width">
+          <div class="testimonial-inner">
+            <blockquote>
+              “I logged the whole Biscay crossing on a dead phone signal and it was all there when
+              we tied up in La Coruña.”
+            </blockquote>
+            <div class="testimonial-person">
+              <div class="avatar">MH</div>
+              <div class="testimonial-name">Maren Holt</div>
+              <div class="testimonial-role">Skipper, Bergen</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="pricing">
+        <div class="page-width">
+          <div class="section-head">
+            <h2>Two plans, both honest</h2>
+            <p>Pay once a year, cancel whenever. No trial that quietly bills you.</p>
+          </div>
+          <div class="pricing-grid">
+            <article class="price-card">
+              <div class="price-name">Coastal</div>
+              <div class="price-amount"><strong>$0</strong><span>forever</span></div>
+              <p class="price-note">Enough for weekend sailing.</p>
+              <ul class="price-list">
+                <li><span class="check">✓</span> Unlimited notes on one boat</li>
+                <li><span class="check">✓</span> Offline capture and search</li>
+                <li><span class="check">✓</span> Positions on every entry</li>
+                <li><span class="check">✓</span> Export to PDF</li>
+                <li><span class="check">✓</span> One device</li>
+              </ul>
+              <a class="button button-outline button-wide" href="#top">Start free</a>
+            </article>
+
+            <article class="price-card price-card-featured">
+              <div class="recommended-pill">Recommended</div>
+              <div class="price-name">Offshore</div>
+              <div class="price-amount"><strong>$48</strong><span>per year</span></div>
+              <p class="price-note">For boats that leave sight of land.</p>
+              <ul class="price-list">
+                <li><span class="check">✓</span> Everything in Coastal</li>
+                <li><span class="check">✓</span> Unlimited boats and crew</li>
+                <li><span class="check">✓</span> Tide tables built in</li>
+                <li><span class="check">✓</span> Engine and maintenance log</li>
+                <li><span class="check">✓</span> Sync across every device</li>
+              </ul>
+              <a class="button button-sea button-wide" href="#top">Get Offshore</a>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="page-width">
+          <div class="section-head">
+            <h2>Questions we get asked</h2>
+          </div>
+          <div class="faq-list">
+            <details class="faq-item" open>
+              <summary>Does it work with no signal?<span class="faq-sign" aria-hidden="true"></span></summary>
+              <p class="faq-answer">
+                Yes. Notes are stored on the device and sync later on their own when you come back
+                into range. Nothing waits on a connection.
+              </p>
+            </details>
+            <details class="faq-item">
+              <summary>Can the crew write in the same log?<span class="faq-sign" aria-hidden="true"></span></summary>
+              <p class="faq-answer">
+                On the Offshore plan, yes. Everyone aboard writes into one log and their entries
+                merge in order once a phone finds signal.
+              </p>
+            </details>
+            <details class="faq-item">
+              <summary>Where do the tide tables come from?<span class="faq-sign" aria-hidden="true"></span></summary>
+              <p class="faq-answer">
+                National hydrographic data, downloaded for the region you are sailing before you
+                leave, so it is on the phone when you need it.
+              </p>
+            </details>
+            <details class="faq-item">
+              <summary>Can I get my notes out again?<span class="faq-sign" aria-hidden="true"></span></summary>
+              <p class="faq-answer">
+                Any time, on either plan. Export the whole log as PDF or plain Markdown files, one
+                per entry, with the positions intact.
+              </p>
+            </details>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div class="page-width">
+        <div class="footer-grid">
+          <div class="footer-column">
+            <h4>Product</h4>
+            <ul>
+              <li><a href="#features">Features</a></li>
+              <li><a href="#pricing">Pricing</a></li>
+              <li><a href="#top">Download</a></li>
+              <li><a href="#top">Changelog</a></li>
+            </ul>
+          </div>
+          <div class="footer-column">
+            <h4>Sailing</h4>
+            <ul>
+              <li><a href="#top">Passage planning</a></li>
+              <li><a href="#top">Tide data</a></li>
+              <li><a href="#top">Engine log</a></li>
+              <li><a href="#stories">Stories</a></li>
+            </ul>
+          </div>
+          <div class="footer-column">
+            <h4>Company</h4>
+            <ul>
+              <li><a href="#top">About</a></li>
+              <li><a href="#top">Contact</a></li>
+              <li><a href="#top">Press kit</a></li>
+              <li><a href="#top">Jobs</a></li>
+            </ul>
+          </div>
+          <div class="footer-column">
+            <h4>Legal</h4>
+            <ul>
+              <li><a href="#top">Privacy</a></li>
+              <li><a href="#top">Terms</a></li>
+              <li><a href="#top">Licences</a></li>
+              <li><a href="#top">Security</a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="footer-bottom">© 2026 Tidewater. Made ashore, tested afloat.</div>
+      </div>
+    </footer>
+  </body>
+</html>

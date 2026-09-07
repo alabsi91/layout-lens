@@ -1,0 +1,842 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Fennel — Reservations</title>
+    <style>
+      :root {
+        --page: #f5f2ec;
+        --card: #ffffff;
+        --ink: #14181c;
+        --muted: #55606d;
+        --line: #d9d3c8;
+        --accent: #1f6a4a;
+        --accent-ink: #ffffff;
+        --dark: #14181c;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        background: var(--page);
+        color: var(--ink);
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        font-size: 15px;
+        line-height: 22px;
+        overflow-x: hidden;
+      }
+
+      /* ---------- top bar ---------- */
+
+      .topbar {
+        position: sticky;
+        top: 0;
+        z-index: 40;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        height: 56px;
+        padding: 0 24px;
+        background: var(--card);
+        border-bottom: 1px solid var(--line);
+      }
+
+      .topbar-title {
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 19px;
+        line-height: 24px;
+        font-weight: 700;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+      }
+
+      .topbar-link {
+        color: var(--ink);
+        font-size: 14px;
+        line-height: 20px;
+        text-decoration: none;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .button-filled {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        height: 34px;
+        padding: 0 18px;
+        border: 0;
+        border-radius: 6px;
+        background: var(--accent);
+        color: var(--accent-ink);
+        font-family: inherit;
+        font-size: 14px;
+        line-height: 20px;
+        font-weight: 600;
+        cursor: pointer;
+      }
+
+      /* ---------- hero ---------- */
+
+      .hero {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 224px;
+        padding: 0 24px;
+        background: linear-gradient(135deg, #0d2a20 0%, #1c3a2c 45%, #46372a 100%);
+        text-align: center;
+      }
+
+      .hero-title {
+        margin: 0;
+        color: #ffffff;
+        font-size: 44px;
+        line-height: 52px;
+        font-weight: 700;
+        letter-spacing: -0.5px;
+      }
+
+      .hero-subtitle {
+        margin: 12px 0 0 0;
+        color: #e4e9e3;
+        font-size: 16px;
+        line-height: 24px;
+      }
+
+      /* ---------- layout ---------- */
+
+      .page {
+        max-width: 960px;
+        margin: 0 auto;
+        padding: 32px 24px 40px 24px;
+      }
+
+      .body-grid {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 24px;
+        align-items: start;
+      }
+
+      .card {
+        padding: 24px;
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: 10px;
+      }
+
+      .card-heading {
+        margin: 0 0 4px 0;
+        font-size: 20px;
+        line-height: 26px;
+        font-weight: 700;
+      }
+
+      .card-sub {
+        margin: 0 0 20px 0;
+        color: var(--muted);
+        font-size: 14px;
+        line-height: 20px;
+      }
+
+      /* ---------- form ---------- */
+
+      .field-label {
+        display: block;
+        margin-bottom: 6px;
+        color: var(--muted);
+        font-size: 12px;
+        line-height: 16px;
+        font-weight: 600;
+        letter-spacing: 0.6px;
+        text-transform: uppercase;
+      }
+
+      .input {
+        width: 100%;
+        height: 40px;
+        padding: 0 12px;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        background: #ffffff;
+        color: var(--ink);
+        font-family: inherit;
+        font-size: 15px;
+        line-height: 22px;
+      }
+
+      .input::placeholder,
+      .textarea::placeholder {
+        color: #6b7684;
+      }
+
+      .row-three {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 16px;
+      }
+
+      .date-field {
+        position: relative;
+      }
+
+      .date-field .input {
+        padding-right: 38px;
+      }
+
+      .calendar-icon {
+        position: absolute;
+        top: 32px;
+        right: 11px;
+        width: 20px;
+        height: 20px;
+        color: var(--muted);
+        pointer-events: none;
+      }
+
+      /* ---------- segmented control ---------- */
+
+      .segmented {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 4px;
+        margin-top: 20px;
+        padding: 4px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: #f0ece4;
+      }
+
+      .segment {
+        height: 34px;
+        border: 0;
+        border-radius: 5px;
+        background: transparent;
+        color: var(--muted);
+        font-family: inherit;
+        font-size: 14px;
+        line-height: 20px;
+        font-weight: 600;
+        cursor: pointer;
+      }
+
+      .segment.is-selected {
+        background: var(--card);
+        color: var(--ink);
+        box-shadow: 0 1px 2px rgba(20, 24, 28, 0.18);
+      }
+
+      /* ---------- contact grid ---------- */
+
+      .row-two {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 16px;
+        margin-top: 20px;
+      }
+
+      .span-two {
+        grid-column: 1 / -1;
+      }
+
+      .textarea {
+        width: 100%;
+        height: 84px;
+        padding: 10px 12px;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        background: #ffffff;
+        color: var(--ink);
+        font-family: inherit;
+        font-size: 15px;
+        line-height: 22px;
+        resize: none;
+      }
+
+      .consent {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        margin-top: 20px;
+      }
+
+      .consent-box {
+        flex: 0 0 auto;
+        width: 16px;
+        height: 16px;
+        margin: 2px 0 0 0;
+        accent-color: var(--accent);
+      }
+
+      .consent-text {
+        margin: 0;
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 20px;
+      }
+
+      .submit {
+        width: 100%;
+        height: 46px;
+        margin-top: 20px;
+        font-size: 16px;
+      }
+
+      /* ---------- date picker popover ---------- */
+
+      .popover {
+        position: absolute;
+        top: 68px;
+        left: 0;
+        z-index: 30;
+        width: 266px;
+        padding: 12px;
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        box-shadow: 0 12px 28px rgba(20, 24, 28, 0.22);
+      }
+
+      .month-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 10px;
+      }
+
+      .month-arrow {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 28px;
+        height: 28px;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        background: var(--card);
+        color: var(--ink);
+        font-family: inherit;
+        font-size: 14px;
+        line-height: 20px;
+        cursor: pointer;
+      }
+
+      .month-name {
+        font-size: 14px;
+        line-height: 20px;
+        font-weight: 600;
+      }
+
+      .day-grid {
+        display: grid;
+        grid-template-columns: repeat(7, 34px);
+        gap: 2px;
+      }
+
+      .weekday {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 34px;
+        height: 24px;
+        color: var(--muted);
+        font-size: 11px;
+        line-height: 16px;
+        font-weight: 700;
+      }
+
+      .day {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 34px;
+        height: 34px;
+        padding: 0;
+        border: 1px solid transparent;
+        border-radius: 6px;
+        background: transparent;
+        color: var(--ink);
+        font-family: inherit;
+        font-size: 13px;
+        line-height: 18px;
+        cursor: pointer;
+      }
+
+      .day.is-outside {
+        color: #6b7581;
+      }
+
+      .day.is-today {
+        border-color: var(--accent);
+      }
+
+      .day.is-selected {
+        background: var(--accent);
+        color: var(--accent-ink);
+        border-color: var(--accent);
+        font-weight: 600;
+      }
+
+      /* ---------- summary card ---------- */
+
+      .summary {
+        position: sticky;
+        top: 80px;
+        padding: 20px;
+      }
+
+      .summary-image {
+        height: 120px;
+        margin-bottom: 16px;
+        border-radius: 8px;
+        background: linear-gradient(140deg, #22503c 0%, #3f6b4f 55%, #7d6a4a 100%);
+      }
+
+      .summary-title {
+        margin: 0 0 8px 0;
+        font-size: 16px;
+        line-height: 22px;
+        font-weight: 700;
+      }
+
+      .address {
+        margin: 0 0 16px 0;
+        color: var(--muted);
+        font-size: 14px;
+        line-height: 21px;
+        font-style: normal;
+      }
+
+      .hours {
+        width: 100%;
+        margin-bottom: 14px;
+        border-collapse: collapse;
+        font-size: 13px;
+        line-height: 20px;
+      }
+
+      .hours th {
+        padding: 0 0 6px 0;
+        color: var(--muted);
+        font-size: 11px;
+        line-height: 16px;
+        font-weight: 700;
+        letter-spacing: 0.6px;
+        text-align: left;
+        text-transform: uppercase;
+      }
+
+      .hours th.align-end,
+      .hours td.align-end {
+        text-align: right;
+      }
+
+      .hours td {
+        padding: 4px 6px;
+        color: var(--ink);
+      }
+
+      .hours td:first-child {
+        padding-left: 6px;
+      }
+
+      .hours tr.is-today td {
+        background: #e7f0ea;
+        font-weight: 700;
+      }
+
+      .hours tr.is-today td:first-child {
+        border-radius: 4px 0 0 4px;
+      }
+
+      .hours tr.is-today td:last-child {
+        border-radius: 0 4px 4px 0;
+      }
+
+      .summary-note {
+        margin: 0;
+        padding-top: 12px;
+        border-top: 1px solid var(--line);
+        color: var(--muted);
+        font-size: 12px;
+        line-height: 18px;
+      }
+
+      /* ---------- feature cards ---------- */
+
+      .feature-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+        margin-top: 24px;
+      }
+
+      .feature {
+        display: flex;
+        flex-direction: column;
+        padding: 20px;
+      }
+
+      .feature-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        margin-bottom: 14px;
+        border-radius: 20px;
+        color: #ffffff;
+      }
+
+      .feature-icon.tone-green {
+        background: #1f6a4a;
+      }
+
+      .feature-icon.tone-clay {
+        background: #a1522c;
+      }
+
+      .feature-icon.tone-plum {
+        background: #5a3f7a;
+      }
+
+      .feature-title {
+        margin: 0 0 6px 0;
+        font-size: 16px;
+        line-height: 22px;
+        font-weight: 700;
+      }
+
+      .feature-text {
+        height: 40px;
+        margin: 0 0 14px 0;
+        color: var(--muted);
+        font-size: 14px;
+        line-height: 20px;
+      }
+
+      .feature-link {
+        margin-top: auto;
+        color: var(--accent);
+        font-size: 14px;
+        line-height: 20px;
+        font-weight: 600;
+        text-decoration: none;
+        border-bottom: 1px solid #a8c6b6;
+        align-self: flex-start;
+      }
+
+      /* ---------- footer ---------- */
+
+      .footer {
+        background: var(--dark);
+        color: #ffffff;
+      }
+
+      .footer-inner {
+        max-width: 960px;
+        margin: 0 auto;
+        padding: 36px 24px 28px 24px;
+      }
+
+      .footer-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 24px;
+      }
+
+      .footer-heading {
+        margin: 0 0 12px 0;
+        font-size: 12px;
+        line-height: 16px;
+        font-weight: 700;
+        letter-spacing: 0.8px;
+        text-transform: uppercase;
+        color: #b9c2ad;
+      }
+
+      .footer-list {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+      }
+
+      .footer-list li {
+        margin-bottom: 8px;
+      }
+
+      .footer-list a {
+        color: #e6e9e4;
+        font-size: 14px;
+        line-height: 20px;
+        text-decoration: none;
+      }
+
+      .footer-copy {
+        margin: 28px 0 0 0;
+        padding-top: 18px;
+        border-top: 1px solid #303740;
+        color: #b9c2ad;
+        font-size: 13px;
+        line-height: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <header class="topbar">
+      <a class="topbar-link" href="#menu">Menu</a>
+      <span class="topbar-title">Fennel</span>
+      <button class="button-filled" type="button">Book</button>
+    </header>
+
+    <section class="hero">
+      <h1 class="hero-title">Reserve a table</h1>
+      <p class="hero-subtitle">Seasonal cooking on the harbour, served from noon until late.</p>
+    </section>
+
+    <main class="page">
+      <div class="body-grid">
+        <section class="card">
+          <h2 class="card-heading">Book your table</h2>
+          <p class="card-sub">Tables are held for 15 minutes past the booking time.</p>
+
+          <div class="row-three">
+            <div class="date-field">
+              <label class="field-label" for="date">Date</label>
+              <input class="input" id="date" type="text" value="Sat 12 Sep 2026" readonly />
+              <svg class="calendar-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+                <rect x="2.8" y="4" width="14.4" height="13.2" rx="2" />
+                <path d="M2.8 8h14.4M6.6 2.6v2.8M13.4 2.6v2.8" />
+              </svg>
+
+              <div class="popover">
+                <div class="month-header">
+                  <button class="month-arrow" type="button" aria-label="Previous month">&#8592;</button>
+                  <span class="month-name">September 2026</span>
+                  <button class="month-arrow" type="button" aria-label="Next month">&#8594;</button>
+                </div>
+                <div class="day-grid">
+                  <span class="weekday">M</span>
+                  <span class="weekday">T</span>
+                  <span class="weekday">W</span>
+                  <span class="weekday">T</span>
+                  <span class="weekday">F</span>
+                  <span class="weekday">S</span>
+                  <span class="weekday">S</span>
+
+                  <button class="day is-outside" type="button">31</button>
+                  <button class="day" type="button">1</button>
+                  <button class="day" type="button">2</button>
+                  <button class="day" type="button">3</button>
+                  <button class="day" type="button">4</button>
+                  <button class="day" type="button">5</button>
+                  <button class="day is-today" type="button">6</button>
+
+                  <button class="day" type="button">7</button>
+                  <button class="day" type="button">8</button>
+                  <button class="day" type="button">9</button>
+                  <button class="day" type="button">10</button>
+                  <button class="day" type="button">11</button>
+                  <button class="day is-selected" type="button">12</button>
+                  <button class="day" type="button">13</button>
+
+                  <button class="day" type="button">14</button>
+                  <button class="day" type="button">15</button>
+                  <button class="day" type="button">16</button>
+                  <button class="day" type="button">17</button>
+                  <button class="day" type="button">18</button>
+                  <button class="day" type="button">19</button>
+                  <button class="day" type="button">20</button>
+
+                  <button class="day" type="button">21</button>
+                  <button class="day" type="button">22</button>
+                  <button class="day" type="button">23</button>
+                  <button class="day" type="button">24</button>
+                  <button class="day" type="button">25</button>
+                  <button class="day" type="button">26</button>
+                  <button class="day" type="button">27</button>
+
+                  <button class="day" type="button">28</button>
+                  <button class="day" type="button">29</button>
+                  <button class="day" type="button">30</button>
+                  <button class="day is-outside" type="button">1</button>
+                  <button class="day is-outside" type="button">2</button>
+                  <button class="day is-outside" type="button">3</button>
+                  <button class="day is-outside" type="button">4</button>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <label class="field-label" for="time">Time</label>
+              <input class="input" id="time" type="text" value="19:30" />
+            </div>
+
+            <div>
+              <label class="field-label" for="guests">Guests</label>
+              <input class="input" id="guests" type="text" value="4 people" />
+            </div>
+          </div>
+
+          <div class="segmented">
+            <button class="segment" type="button">Inside</button>
+            <button class="segment is-selected" type="button">Terrace</button>
+            <button class="segment" type="button">Bar</button>
+          </div>
+
+          <div class="row-two">
+            <div>
+              <label class="field-label" for="name">Name</label>
+              <input class="input" id="name" type="text" placeholder="Ada Fenwick" />
+            </div>
+            <div>
+              <label class="field-label" for="email">Email</label>
+              <input class="input" id="email" type="email" placeholder="ada@example.com" />
+            </div>
+            <div class="span-two">
+              <label class="field-label" for="phone">Phone</label>
+              <input class="input" id="phone" type="tel" placeholder="+44 7700 900 118" />
+            </div>
+            <div class="span-two">
+              <label class="field-label" for="notes">Notes</label>
+              <textarea class="textarea" id="notes" placeholder="Allergies, a high chair, a window seat — tell us here."></textarea>
+            </div>
+          </div>
+
+          <div class="consent">
+            <input class="consent-box" id="consent" type="checkbox" />
+            <label class="consent-text" for="consent">
+              Send me a reminder the day before and let the kitchen keep my allergy notes on file.
+              I can ask you to delete them at any time.
+            </label>
+          </div>
+
+          <button class="button-filled submit" type="button">Reserve table</button>
+        </section>
+
+        <aside class="card summary">
+          <div class="summary-image"></div>
+          <h2 class="summary-title">Fennel, Harbour Row</h2>
+          <address class="address">
+            18 Harbour Row<br />
+            Old Town<br />
+            Bristol BS1 4QA
+          </address>
+
+          <table class="hours">
+            <thead>
+              <tr>
+                <th scope="col">Day</th>
+                <th class="align-end" scope="col">Hours</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>Monday</td><td class="align-end">Closed</td></tr>
+              <tr><td>Tuesday</td><td class="align-end">12:00 – 22:00</td></tr>
+              <tr><td>Wednesday</td><td class="align-end">12:00 – 22:00</td></tr>
+              <tr><td>Thursday</td><td class="align-end">12:00 – 23:00</td></tr>
+              <tr><td>Friday</td><td class="align-end">12:00 – 23:30</td></tr>
+              <tr><td>Saturday</td><td class="align-end">11:00 – 23:30</td></tr>
+              <tr class="is-today"><td>Sunday</td><td class="align-end">11:00 – 21:00</td></tr>
+            </tbody>
+          </table>
+
+          <p class="summary-note">
+            Last kitchen order is one hour before closing. Parties of eight or more are booked by phone.
+          </p>
+        </aside>
+      </div>
+
+      <div class="feature-grid">
+        <section class="card feature">
+          <span class="feature-icon tone-green">
+            <svg viewBox="0 0 20 20" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+              <path d="M3 16.5v-9l7-4 7 4v9" />
+              <path d="M7.5 16.5v-5h5v5" />
+            </svg>
+          </span>
+          <h3 class="feature-title">Private dining</h3>
+          <p class="feature-text">
+            A courtyard room for fourteen, with a set menu.
+          </p>
+          <a class="feature-link" href="#private">Learn more</a>
+        </section>
+
+        <section class="card feature">
+          <span class="feature-icon tone-clay">
+            <svg viewBox="0 0 20 20" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+              <rect x="3" y="4.5" width="14" height="12.5" rx="2" />
+              <path d="M3 8.5h14M6.8 2.8v3M13.2 2.8v3" />
+              <circle cx="10" cy="12.5" r="1.6" fill="currentColor" stroke="none" />
+            </svg>
+          </span>
+          <h3 class="feature-title">Events</h3>
+          <p class="feature-text">
+            Supper clubs, tastings and a winter cider night.
+          </p>
+          <a class="feature-link" href="#events">Learn more</a>
+        </section>
+
+        <section class="card feature">
+          <span class="feature-icon tone-plum">
+            <svg viewBox="0 0 20 20" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+              <path d="M3 7.5h14v9H3z" />
+              <path d="M10 7.5v9M3 11.5h14" />
+            </svg>
+          </span>
+          <h3 class="feature-title">Gift cards</h3>
+          <p class="feature-text">
+            Any amount, valid two years, posted or emailed.
+          </p>
+          <a class="feature-link" href="#gift">Learn more</a>
+        </section>
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        <div class="footer-grid">
+          <div>
+            <h2 class="footer-heading">Eat</h2>
+            <ul class="footer-list">
+              <li><a href="#lunch">Lunch menu</a></li>
+              <li><a href="#dinner">Dinner menu</a></li>
+              <li><a href="#wine">Wine list</a></li>
+              <li><a href="#suppliers">Our suppliers</a></li>
+            </ul>
+          </div>
+          <div>
+            <h2 class="footer-heading">Visit</h2>
+            <ul class="footer-list">
+              <li><a href="#find">Finding us</a></li>
+              <li><a href="#access">Accessibility</a></li>
+              <li><a href="#parking">Parking</a></li>
+              <li><a href="#groups">Large groups</a></li>
+            </ul>
+          </div>
+          <div>
+            <h2 class="footer-heading">More</h2>
+            <ul class="footer-list">
+              <li><a href="#jobs">Work with us</a></li>
+              <li><a href="#press">Press</a></li>
+              <li><a href="#privacy">Privacy</a></li>
+              <li><a href="#terms">Terms</a></li>
+            </ul>
+          </div>
+        </div>
+        <p class="footer-copy">© 2026 Fennel Restaurant Ltd. All rights reserved.</p>
+      </div>
+    </footer>
+  </body>
+</html>

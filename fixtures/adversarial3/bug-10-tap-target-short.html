@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ticket</title>
+<style>
+  body { margin: 0; background: #ffffff; color: #111827;
+         font-family: -apple-system, "Segoe UI", Arial, sans-serif; }
+
+  .ticket { padding: 16px; }
+  .ticket h1 { margin: 0 0 4px; font-size: 20px; line-height: 28px; }
+  .ticket p { margin: 0 0 16px; font-size: 14px; line-height: 20px; color: #6b7280; }
+
+  .stub { border: 1px dashed #d1d5db; border-radius: 12px; padding: 16px;
+          font-size: 14px; line-height: 22px; }
+
+  .actions { display: flex; align-items: center; gap: 12px; padding: 16px; }
+
+  .tap-target { display: flex; align-items: center; justify-content: center;
+                height: 44px; padding: 0 14px; border-radius: 10px;
+                background: #f3f4f6; color: #111827; font-size: 14px;
+                text-decoration: none; }
+
+  /* the planted defect: this one was sized from the line box and is 28 tall,
+     so the 44 tap target is only 28 of reachable height */
+  #tap-help { height: 28px; }
+</style>
+</head>
+<body>
+
+<main class="ticket">
+  <h1>Seat 14C</h1>
+  <p>Boarding closes 40 minutes before departure.</p>
+
+  <div class="stub">
+    Flight BA 348<br>
+    Paris CDG &rarr; London LHR<br>
+    Gate B24 &middot; 18:35
+  </div>
+</main>
+
+<nav class="actions">
+  <a class="tap-target" href="#share">Share</a>
+  <a class="tap-target" href="#wallet">Wallet</a>
+  <a class="tap-target" href="#print">Print</a>
+  <a class="tap-target" href="#help" id="tap-help">Help</a>
+</nav>
+
+</body>
+</html>

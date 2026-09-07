@@ -1,0 +1,55 @@
+<!doctype html>
+<!--
+planted bugs:
+1. grid gap between card 2 and card 3 is 32px, the others are 24px
+2. card 2 title is truncated with ellipsis
+3. card 3 badge pokes out of the card's top-right corner and is clipped
+4. card 1 image is 4px narrower than the card, leaving a gap on the right
+5. footer text is 2px off horizontal center
+6. card 3 price is 6px lower than the price in the other cards
+-->
+<html>
+<head>
+  <style>
+    body { margin: 0; font-family: Helvetica, Arial, sans-serif; background: #f5f5f5; }
+    .grid { display: flex; padding: 40px; }
+    .card { width: 280px; background: #fff; border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden; position: relative; }
+    .card + .card { margin-left: 24px; }
+    .card.c3 { margin-left: 32px; }
+    .card img, .card .img { display: block; width: 100%; height: 160px; background: #cbd5e1; }
+    .card.c1 .img { width: calc(100% - 4px); }
+    .card h3 { margin: 16px 16px 8px; font-size: 18px; line-height: 24px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .card p { margin: 0 16px 16px; color: #555; font-size: 14px; line-height: 20px; }
+    .price { display: flex; justify-content: space-between; align-items: center; padding: 0 16px 16px; }
+    .price strong { font-size: 16px; }
+    .card.c3 .price strong { position: relative; top: 6px; }
+    .badge { position: absolute; top: -6px; right: -10px; background: #ef4444; color: #fff; font-size: 12px; padding: 2px 8px; border-radius: 4px; }
+    footer { text-align: center; padding: 24px; color: #777; }
+    footer span { position: relative; left: 2px; }
+  </style>
+</head>
+<body>
+  <div class="grid">
+    <div class="card c1">
+      <div class="img"></div>
+      <h3>Starter</h3>
+      <p>Everything you need to get going.</p>
+      <div class="price"><strong>$9</strong><span>/ month</span></div>
+    </div>
+    <div class="card c2">
+      <div class="img"></div>
+      <h3>Professional plan for growing teams</h3>
+      <p>More seats, more storage, more everything.</p>
+      <div class="price"><strong>$29</strong><span>/ month</span></div>
+    </div>
+    <div class="card c3">
+      <span class="badge">Popular</span>
+      <div class="img"></div>
+      <h3>Enterprise</h3>
+      <p>Call us, we will figure it out.</p>
+      <div class="price"><strong>$99</strong><span>/ month</span></div>
+    </div>
+  </div>
+  <footer><span>© 2026 Cards Inc</span></footer>
+</body>
+</html>

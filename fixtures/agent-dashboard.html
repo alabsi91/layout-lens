@@ -1,0 +1,969 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Northwind Analytics</title>
+<style>
+  :root {
+    --bg: #0b0f16;
+    --panel: #121826;
+    --panel-2: #172033;
+    --line: #243149;
+    --text: #e6ecf5;
+    --muted: #8b9bb4;
+    --accent: #5b8cff;
+    --good: #35d0a5;
+    --bad: #ff6b6b;
+    --warn: #ffb020;
+    --sidebar-width: 232px;
+    --sidebar-width-collapsed: 68px;
+    --topbar-height: 60px;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font: 14px/1.45 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .app-shell {
+    display: grid;
+    grid-template-columns: var(--sidebar-width) 1fr;
+    min-height: 100vh;
+    transition: grid-template-columns .18s ease;
+  }
+  .app-shell.is-collapsed { grid-template-columns: var(--sidebar-width-collapsed) 1fr; }
+
+  /* sidebar */
+  .sidebar {
+    background: var(--panel);
+    border-right: 1px solid var(--line);
+    display: flex;
+    flex-direction: column;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow: hidden;
+  }
+  .sidebar-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    height: var(--topbar-height);
+    padding: 0 16px;
+    border-bottom: 1px solid var(--line);
+    flex: 0 0 auto;
+  }
+  .brand-mark {
+    width: 28px;
+    height: 28px;
+    flex: 0 0 auto;
+    border-radius: 8px;
+    background: linear-gradient(135deg, var(--accent), #9b5bff);
+    display: grid;
+    place-items: center;
+    font-weight: 700;
+    font-size: 13px;
+  }
+  .brand-name { font-weight: 650; letter-spacing: .2px; white-space: nowrap; }
+
+  .sidebar-nav { padding: 12px 10px; overflow-y: auto; flex: 1 1 auto; }
+  .nav-section-label {
+    color: var(--muted);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: .8px;
+    margin: 14px 8px 6px;
+    white-space: nowrap;
+  }
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 9px 10px;
+    border-radius: 9px;
+    color: var(--muted);
+    text-decoration: none;
+    white-space: nowrap;
+    position: relative;
+  }
+  .nav-item:hover { background: var(--panel-2); color: var(--text); }
+  .nav-item.is-active { background: rgba(91,140,255,.14); color: var(--text); }
+  .nav-item.is-active::before {
+    content: "";
+    position: absolute;
+    left: -10px;
+    top: 8px;
+    bottom: 8px;
+    width: 3px;
+    border-radius: 0 3px 3px 0;
+    background: var(--accent);
+  }
+  .nav-icon { width: 18px; height: 18px; flex: 0 0 auto; stroke: currentColor; fill: none; stroke-width: 1.7; }
+  .nav-badge {
+    margin-left: auto;
+    background: var(--accent);
+    color: #06101f;
+    font-size: 11px;
+    font-weight: 700;
+    border-radius: 999px;
+    padding: 1px 7px;
+  }
+  .sidebar-footer {
+    border-top: 1px solid var(--line);
+    padding: 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 0 0 auto;
+  }
+  .plan-meter { flex: 1 1 auto; min-width: 0; }
+  .plan-meter-label { font-size: 11px; color: var(--muted); white-space: nowrap; }
+  .plan-meter-track { height: 5px; border-radius: 4px; background: var(--panel-2); margin-top: 6px; }
+  .plan-meter-fill { height: 100%; width: 68%; border-radius: 4px; background: var(--warn); }
+
+  .app-shell.is-collapsed .brand-name,
+  .app-shell.is-collapsed .nav-label,
+  .app-shell.is-collapsed .nav-badge,
+  .app-shell.is-collapsed .nav-section-label,
+  .app-shell.is-collapsed .plan-meter { display: none; }
+  .app-shell.is-collapsed .nav-item { justify-content: center; }
+
+  /* main column */
+  .main-column { display: flex; flex-direction: column; min-width: 0; }
+
+  .topbar {
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    height: var(--topbar-height);
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 0 20px;
+    background: rgba(18,24,38,.92);
+    border-bottom: 1px solid var(--line);
+    backdrop-filter: blur(6px);
+  }
+  .icon-button {
+    width: 34px;
+    height: 34px;
+    display: grid;
+    place-items: center;
+    border-radius: 9px;
+    border: 1px solid var(--line);
+    background: var(--panel-2);
+    color: var(--muted);
+    cursor: pointer;
+    padding: 0;
+  }
+  .icon-button:hover { color: var(--text); }
+  .icon-button svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 1.8; }
+
+  .search-field { position: relative; flex: 1 1 420px; max-width: 460px; }
+  .search-field svg {
+    position: absolute;
+    left: 11px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 15px;
+    height: 15px;
+    stroke: var(--muted);
+    fill: none;
+    stroke-width: 1.8;
+  }
+  .search-input {
+    width: 100%;
+    height: 36px;
+    border-radius: 9px;
+    border: 1px solid var(--line);
+    background: var(--panel-2);
+    color: var(--text);
+    padding: 0 62px 0 34px;
+    font: inherit;
+    outline: none;
+  }
+  .search-input:focus { border-color: var(--accent); }
+  .search-shortcut {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 11px;
+    color: var(--muted);
+    border: 1px solid var(--line);
+    border-radius: 5px;
+    padding: 1px 6px;
+  }
+
+  .topbar-spacer { flex: 1 1 auto; }
+
+  .env-pill {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 12px;
+    color: var(--muted);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 5px 11px;
+  }
+  .status-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--good); }
+
+  .bell-wrap { position: relative; }
+  .bell-count {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    min-width: 17px;
+    height: 17px;
+    border-radius: 999px;
+    background: var(--bad);
+    color: #fff;
+    font-size: 10px;
+    font-weight: 700;
+    display: grid;
+    place-items: center;
+    padding: 0 4px;
+  }
+
+  .notifications-panel {
+    position: absolute;
+    top: 44px;
+    right: 0;
+    width: 320px;
+    background: var(--panel-2);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    box-shadow: 0 18px 40px rgba(0,0,0,.55);
+    z-index: 60;
+    overflow: hidden;
+  }
+  .notifications-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 11px 14px;
+    border-bottom: 1px solid var(--line);
+    font-weight: 600;
+  }
+  .link-button {
+    background: none;
+    border: 0;
+    color: var(--accent);
+    font: inherit;
+    font-size: 12px;
+    cursor: pointer;
+    padding: 0;
+  }
+  .notification-row {
+    display: flex;
+    gap: 10px;
+    padding: 11px 14px;
+    border-bottom: 1px solid var(--line);
+  }
+  .notification-row:last-child { border-bottom: 0; }
+  .notification-dot { width: 8px; height: 8px; border-radius: 50%; margin-top: 6px; flex: 0 0 auto; }
+  .notification-title { font-size: 13px; }
+  .notification-time { color: var(--muted); font-size: 11px; margin-top: 3px; }
+
+  .avatar-menu-wrap { position: relative; }
+  .avatar-trigger {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    border: 1px solid var(--line);
+    background: var(--panel-2);
+    border-radius: 999px;
+    padding: 4px 10px 4px 4px;
+    color: var(--text);
+    cursor: pointer;
+    font: inherit;
+  }
+  .avatar {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #35d0a5, #2f7cff);
+    display: grid;
+    place-items: center;
+    font-size: 12px;
+    font-weight: 700;
+    color: #061018;
+  }
+  .avatar-name { font-size: 13px; }
+  .avatar-menu {
+    position: absolute;
+    top: 46px;
+    right: 0;
+    width: 208px;
+    background: var(--panel-2);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 6px;
+    box-shadow: 0 18px 40px rgba(0,0,0,.55);
+    z-index: 60;
+  }
+  .avatar-menu[hidden] { display: none; }
+  .menu-item {
+    display: block;
+    padding: 8px 10px;
+    border-radius: 8px;
+    color: var(--text);
+    text-decoration: none;
+    font-size: 13px;
+  }
+  .menu-item:hover { background: var(--panel); }
+  .menu-separator { height: 1px; background: var(--line); margin: 6px 4px; }
+
+  /* content */
+  .content { padding: 22px 20px 60px; display: flex; flex-direction: column; gap: 20px; }
+
+  .page-head { display: flex; align-items: flex-end; gap: 16px; flex-wrap: wrap; }
+  .page-title { margin: 0; font-size: 21px; font-weight: 650; }
+  .page-subtitle { margin: 4px 0 0; color: var(--muted); font-size: 13px; }
+  .page-head-actions { margin-left: auto; display: flex; gap: 8px; }
+  .button {
+    border: 1px solid var(--line);
+    background: var(--panel-2);
+    color: var(--text);
+    border-radius: 9px;
+    padding: 8px 13px;
+    font: inherit;
+    font-size: 13px;
+    cursor: pointer;
+  }
+  .button.is-primary { background: var(--accent); border-color: var(--accent); color: #06101f; font-weight: 600; }
+
+  .stat-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(224px, 1fr));
+    gap: 14px;
+  }
+  .card {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 13px;
+    padding: 15px;
+  }
+  .stat-card-head { display: flex; align-items: center; justify-content: space-between; }
+  .stat-label { color: var(--muted); font-size: 12px; }
+  .stat-trend { font-size: 12px; font-weight: 600; }
+  .stat-trend.is-up { color: var(--good); }
+  .stat-trend.is-down { color: var(--bad); }
+  .stat-value { font-size: 25px; font-weight: 650; margin: 8px 0 2px; letter-spacing: -.3px; }
+  .stat-note { color: var(--muted); font-size: 11.5px; }
+  .sparkline { display: block; width: 100%; height: 38px; margin-top: 10px; overflow: visible; }
+
+  .chart-row { display: grid; grid-template-columns: minmax(0, 2.2fr) minmax(0, 1fr); gap: 14px; }
+  .card-head { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+  .card-title { font-weight: 600; font-size: 15px; }
+  .legend { margin-left: auto; display: flex; gap: 14px; }
+  .legend-item { display: flex; align-items: center; gap: 6px; color: var(--muted); font-size: 12px; }
+  .legend-swatch { width: 9px; height: 9px; border-radius: 3px; }
+  .line-chart { display: block; width: 100%; height: 260px; }
+  .chart-axis-label { fill: #6f809b; font-size: 10px; }
+
+  .breakdown-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .breakdown-row:last-child { border-bottom: 0; }
+  .breakdown-name { font-size: 13px; }
+  .breakdown-value { margin-left: auto; color: var(--muted); font-size: 12px; }
+  .breakdown-track { height: 6px; border-radius: 4px; background: var(--panel-2); margin-top: 6px; }
+  .breakdown-fill { height: 100%; border-radius: 4px; background: var(--accent); }
+
+  .table-card { padding: 0; overflow: hidden; }
+  .table-card-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 15px;
+    border-bottom: 1px solid var(--line);
+  }
+  .filter-chip {
+    border: 1px solid var(--line);
+    background: transparent;
+    color: var(--muted);
+    border-radius: 999px;
+    padding: 4px 11px;
+    font: inherit;
+    font-size: 12px;
+    cursor: pointer;
+  }
+  .filter-chip.is-selected { background: rgba(91,140,255,.16); border-color: var(--accent); color: var(--text); }
+  .table-scroll { max-height: 330px; overflow: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  thead th {
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    background: var(--panel-2);
+    color: var(--muted);
+    text-align: left;
+    font-weight: 600;
+    font-size: 11.5px;
+    text-transform: uppercase;
+    letter-spacing: .6px;
+    padding: 10px 15px;
+    border-bottom: 1px solid var(--line);
+    white-space: nowrap;
+  }
+  tbody tr:nth-child(even) { background: rgba(255,255,255,.022); }
+  tbody tr:hover { background: rgba(91,140,255,.08); }
+  tbody td { padding: 10px 15px; border-bottom: 1px solid rgba(36,49,73,.6); white-space: nowrap; }
+  .cell-numeric { text-align: right; font-variant-numeric: tabular-nums; }
+  .cell-user { display: flex; align-items: center; gap: 9px; }
+  .avatar.is-small { width: 24px; height: 24px; font-size: 10px; }
+  .tag {
+    display: inline-block;
+    border-radius: 999px;
+    padding: 2px 9px;
+    font-size: 11px;
+    font-weight: 600;
+  }
+  .tag.is-good { background: rgba(53,208,165,.15); color: var(--good); }
+  .tag.is-warn { background: rgba(255,176,32,.15); color: var(--warn); }
+  .tag.is-bad { background: rgba(255,107,107,.15); color: var(--bad); }
+  .tag.is-idle { background: rgba(139,155,180,.15); color: var(--muted); }
+  .table-footer {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 11px 15px;
+    color: var(--muted);
+    font-size: 12px;
+    border-top: 1px solid var(--line);
+  }
+
+  .toast {
+    position: fixed;
+    right: 22px;
+    bottom: 22px;
+    z-index: 80;
+    display: flex;
+    gap: 11px;
+    width: 320px;
+    padding: 13px 14px;
+    background: var(--panel-2);
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--good);
+    border-radius: 11px;
+    box-shadow: 0 18px 40px rgba(0,0,0,.6);
+  }
+  .toast[hidden] { display: none; }
+  .toast-icon {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: rgba(53,208,165,.16);
+    color: var(--good);
+    display: grid;
+    place-items: center;
+    flex: 0 0 auto;
+    font-size: 12px;
+  }
+  .toast-title { font-size: 13px; font-weight: 600; }
+  .toast-body { color: var(--muted); font-size: 12px; margin-top: 2px; }
+  .toast-close {
+    margin-left: auto;
+    background: none;
+    border: 0;
+    color: var(--muted);
+    cursor: pointer;
+    font-size: 15px;
+    line-height: 1;
+    padding: 0;
+  }
+
+  @media (max-width: 1000px) {
+    .chart-row { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="app-shell" id="appShell">
+
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-mark">N</div>
+      <span class="brand-name">Northwind</span>
+    </div>
+
+    <nav class="sidebar-nav">
+      <div class="nav-section-label">Overview</div>
+
+      <a class="nav-item is-active" href="#">
+        <svg class="nav-icon" viewBox="0 0 24 24"><path d="M3 10 12 3l9 7v10a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>
+        <span class="nav-label">Dashboard</span>
+      </a>
+      <a class="nav-item" href="#">
+        <svg class="nav-icon" viewBox="0 0 24 24"><path d="M4 19V9M10 19V5M16 19v-7M22 19H2"/></svg>
+        <span class="nav-label">Reports</span>
+      </a>
+      <a class="nav-item" href="#">
+        <svg class="nav-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 3v9l6 3"/></svg>
+        <span class="nav-label">Realtime</span>
+        <span class="nav-badge">live</span>
+      </a>
+
+      <div class="nav-section-label">Workspace</div>
+
+      <a class="nav-item" href="#">
+        <svg class="nav-icon" viewBox="0 0 24 24"><path d="M16 20v-2a4 4 0 0 0-8 0v2"/><circle cx="12" cy="8" r="4"/></svg>
+        <span class="nav-label">Customers</span>
+        <span class="nav-badge">24</span>
+      </a>
+      <a class="nav-item" href="#">
+        <svg class="nav-icon" viewBox="0 0 24 24"><path d="M3 7h18v13H3z"/><path d="M8 7V4h8v3"/></svg>
+        <span class="nav-label">Orders</span>
+      </a>
+      <a class="nav-item" href="#">
+        <svg class="nav-icon" viewBox="0 0 24 24"><path d="M4 4h16v6H4zM4 14h16v6H4z"/></svg>
+        <span class="nav-label">Inventory</span>
+      </a>
+      <a class="nav-item" href="#">
+        <svg class="nav-icon" viewBox="0 0 24 24"><path d="M12 2 3 6v6c0 5 4 9 9 10 5-1 9-5 9-10V6z"/></svg>
+        <span class="nav-label">Audit log</span>
+      </a>
+
+      <div class="nav-section-label">Settings</div>
+
+      <a class="nav-item" href="#">
+        <svg class="nav-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 0 0-.2-1.6l2-1.5-2-3.4-2.3 1a7 7 0 0 0-2.7-1.6L13.5 2h-3l-.3 2.9a7 7 0 0 0-2.7 1.6l-2.3-1-2 3.4 2 1.5a7 7 0 0 0 0 3.2l-2 1.5 2 3.4 2.3-1a7 7 0 0 0 2.7 1.6l.3 2.9h3l.3-2.9a7 7 0 0 0 2.7-1.6l2.3 1 2-3.4-2-1.5c.13-.5.2-1.05.2-1.6z"/></svg>
+        <span class="nav-label">Preferences</span>
+      </a>
+      <a class="nav-item" href="#">
+        <svg class="nav-icon" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h10"/></svg>
+        <span class="nav-label">API keys</span>
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="plan-meter">
+        <div class="plan-meter-label">Team plan &middot; 68% of events used</div>
+        <div class="plan-meter-track"><div class="plan-meter-fill"></div></div>
+      </div>
+    </div>
+  </aside>
+
+  <div class="main-column">
+
+    <header class="topbar">
+      <button class="icon-button" id="sidebarToggle" title="Collapse sidebar">
+        <svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+      </button>
+
+      <div class="search-field">
+        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        <input class="search-input" type="search" placeholder="Search orders, customers, SKUs" value="checkout funnel">
+        <span class="search-shortcut">&#8984;K</span>
+      </div>
+
+      <div class="topbar-spacer"></div>
+
+      <div class="env-pill">
+        <span class="status-dot"></span>
+        <span>production &middot; eu-west-1</span>
+      </div>
+
+      <div class="bell-wrap">
+        <button class="icon-button" title="Notifications">
+          <svg viewBox="0 0 24 24"><path d="M18 16V11a6 6 0 1 0-12 0v5l-2 3h16z"/><path d="M10 22h4"/></svg>
+        </button>
+        <span class="bell-count">4</span>
+
+        <div class="notifications-panel">
+          <div class="notifications-header">
+            <span>Notifications</span>
+            <button class="link-button">Mark all read</button>
+          </div>
+          <div class="notification-row">
+            <span class="notification-dot" style="background:var(--bad)"></span>
+            <div>
+              <div class="notification-title">Checkout error rate above 2%</div>
+              <div class="notification-time">3 minutes ago &middot; alerts</div>
+            </div>
+          </div>
+          <div class="notification-row">
+            <span class="notification-dot" style="background:var(--warn)"></span>
+            <div>
+              <div class="notification-title">Stripe webhook retried 12 times</div>
+              <div class="notification-time">27 minutes ago &middot; billing</div>
+            </div>
+          </div>
+          <div class="notification-row">
+            <span class="notification-dot" style="background:var(--good)"></span>
+            <div>
+              <div class="notification-title">Weekly revenue report is ready</div>
+              <div class="notification-time">2 hours ago &middot; reports</div>
+            </div>
+          </div>
+          <div class="notification-row">
+            <span class="notification-dot" style="background:var(--accent)"></span>
+            <div>
+              <div class="notification-title">Priya invited 3 people to the workspace</div>
+              <div class="notification-time">Yesterday &middot; team</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="avatar-menu-wrap">
+        <button class="avatar-trigger" id="avatarTrigger">
+          <span class="avatar">DR</span>
+          <span class="avatar-name">Dana R.</span>
+        </button>
+        <div class="avatar-menu" id="avatarMenu" hidden>
+          <a class="menu-item" href="#">Profile</a>
+          <a class="menu-item" href="#">Workspace settings</a>
+          <a class="menu-item" href="#">Billing &amp; invoices</a>
+          <div class="menu-separator"></div>
+          <a class="menu-item" href="#">Keyboard shortcuts</a>
+          <a class="menu-item" href="#">Sign out</a>
+        </div>
+      </div>
+    </header>
+
+    <main class="content">
+
+      <div class="page-head">
+        <div>
+          <h1 class="page-title">Revenue overview</h1>
+          <p class="page-subtitle">Last 30 days compared with the previous period &middot; updated 4 min ago</p>
+        </div>
+        <div class="page-head-actions">
+          <button class="button">Last 30 days</button>
+          <button class="button">Export CSV</button>
+          <button class="button is-primary">New report</button>
+        </div>
+      </div>
+
+      <section class="stat-grid">
+        <div class="card">
+          <div class="stat-card-head">
+            <span class="stat-label">Gross revenue</span>
+            <span class="stat-trend is-up">+12.4%</span>
+          </div>
+          <div class="stat-value">$418,209</div>
+          <div class="stat-note">$372,110 previous period</div>
+          <svg class="sparkline" viewBox="0 0 120 38" preserveAspectRatio="none">
+            <polyline fill="none" stroke="#35d0a5" stroke-width="2" points="0,30 12,27 24,29 36,22 48,24 60,17 72,19 84,12 96,14 108,7 120,5"/>
+            <circle cx="120" cy="5" r="2.5" fill="#35d0a5"/>
+          </svg>
+        </div>
+
+        <div class="card">
+          <div class="stat-card-head">
+            <span class="stat-label">Paid orders</span>
+            <span class="stat-trend is-up">+5.1%</span>
+          </div>
+          <div class="stat-value">9,431</div>
+          <div class="stat-note">312 orders per day on average</div>
+          <svg class="sparkline" viewBox="0 0 120 38" preserveAspectRatio="none">
+            <polyline fill="none" stroke="#5b8cff" stroke-width="2" points="0,24 12,26 24,20 36,23 48,18 60,21 72,15 84,18 96,13 108,15 120,10"/>
+            <circle cx="120" cy="10" r="2.5" fill="#5b8cff"/>
+          </svg>
+        </div>
+
+        <div class="card">
+          <div class="stat-card-head">
+            <span class="stat-label">Refund rate</span>
+            <span class="stat-trend is-down">+0.8pt</span>
+          </div>
+          <div class="stat-value">3.2%</div>
+          <div class="stat-note">302 refunds, mostly size returns</div>
+          <svg class="sparkline" viewBox="0 0 120 38" preserveAspectRatio="none">
+            <polyline fill="none" stroke="#ff6b6b" stroke-width="2" points="0,12 12,15 24,13 36,18 48,16 60,22 72,20 84,26 96,24 108,29 120,31"/>
+            <circle cx="120" cy="31" r="2.5" fill="#ff6b6b"/>
+          </svg>
+        </div>
+
+        <div class="card">
+          <div class="stat-card-head">
+            <span class="stat-label">Avg order value</span>
+            <span class="stat-trend is-up">+3.7%</span>
+          </div>
+          <div class="stat-value">$44.34</div>
+          <div class="stat-note">Bundles lifted it by $1.60</div>
+          <svg class="sparkline" viewBox="0 0 120 38" preserveAspectRatio="none">
+            <polyline fill="none" stroke="#ffb020" stroke-width="2" points="0,26 12,22 24,25 36,20 48,22 60,19 72,21 84,16 96,18 108,13 120,11"/>
+            <circle cx="120" cy="11" r="2.5" fill="#ffb020"/>
+          </svg>
+        </div>
+      </section>
+
+      <section class="chart-row">
+        <div class="card">
+          <div class="card-head">
+            <span class="card-title">Revenue vs. previous period</span>
+            <div class="legend">
+              <span class="legend-item"><span class="legend-swatch" style="background:#5b8cff"></span>This period</span>
+              <span class="legend-item"><span class="legend-swatch" style="background:#4b5b78"></span>Previous</span>
+            </div>
+          </div>
+
+          <svg class="line-chart" viewBox="0 0 640 260" preserveAspectRatio="none">
+            <defs>
+              <linearGradient id="areaFill" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#5b8cff" stop-opacity=".34"/>
+                <stop offset="100%" stop-color="#5b8cff" stop-opacity="0"/>
+              </linearGradient>
+            </defs>
+
+            <line x1="46" y1="30" x2="620" y2="30" stroke="#243149"/>
+            <line x1="46" y1="80" x2="620" y2="80" stroke="#243149"/>
+            <line x1="46" y1="130" x2="620" y2="130" stroke="#243149"/>
+            <line x1="46" y1="180" x2="620" y2="180" stroke="#243149"/>
+            <line x1="46" y1="220" x2="620" y2="220" stroke="#2e3d59"/>
+
+            <text class="chart-axis-label" x="10" y="34">$20k</text>
+            <text class="chart-axis-label" x="10" y="84">$15k</text>
+            <text class="chart-axis-label" x="10" y="134">$10k</text>
+            <text class="chart-axis-label" x="14" y="184">$5k</text>
+            <text class="chart-axis-label" x="26" y="224">$0</text>
+
+            <polyline fill="none" stroke="#4b5b78" stroke-width="2" stroke-dasharray="5 4"
+              points="46,168 94,160 142,172 190,150 238,158 286,140 334,148 382,128 430,136 478,120 526,128 574,112 620,118"/>
+
+            <path fill="url(#areaFill)"
+              d="M46,150 L94,138 L142,146 L190,120 L238,130 L286,104 L334,112 L382,88 L430,96 L478,72 L526,84 L574,58 L620,64 L620,220 L46,220 Z"/>
+            <polyline fill="none" stroke="#5b8cff" stroke-width="2.5" stroke-linejoin="round"
+              points="46,150 94,138 142,146 190,120 238,130 286,104 334,112 382,88 430,96 478,72 526,84 574,58 620,64"/>
+
+            <circle cx="574" cy="58" r="4" fill="#0b0f16" stroke="#5b8cff" stroke-width="2.5"/>
+
+            <text class="chart-axis-label" x="46" y="242">Aug 08</text>
+            <text class="chart-axis-label" x="182" y="242">Aug 15</text>
+            <text class="chart-axis-label" x="326" y="242">Aug 22</text>
+            <text class="chart-axis-label" x="470" y="242">Aug 29</text>
+            <text class="chart-axis-label" x="586" y="242">Sep 05</text>
+          </svg>
+        </div>
+
+        <div class="card">
+          <div class="card-head">
+            <span class="card-title">Traffic sources</span>
+          </div>
+
+          <div class="breakdown-row">
+            <div style="flex:1 1 auto;min-width:0">
+              <div class="breakdown-name">Organic search</div>
+              <div class="breakdown-track"><div class="breakdown-fill" style="width:74%"></div></div>
+            </div>
+            <span class="breakdown-value">38.2k</span>
+          </div>
+          <div class="breakdown-row">
+            <div style="flex:1 1 auto;min-width:0">
+              <div class="breakdown-name">Paid social</div>
+              <div class="breakdown-track"><div class="breakdown-fill" style="width:52%;background:#9b5bff"></div></div>
+            </div>
+            <span class="breakdown-value">26.9k</span>
+          </div>
+          <div class="breakdown-row">
+            <div style="flex:1 1 auto;min-width:0">
+              <div class="breakdown-name">Email campaigns</div>
+              <div class="breakdown-track"><div class="breakdown-fill" style="width:36%;background:#35d0a5"></div></div>
+            </div>
+            <span class="breakdown-value">18.4k</span>
+          </div>
+          <div class="breakdown-row">
+            <div style="flex:1 1 auto;min-width:0">
+              <div class="breakdown-name">Referral partners</div>
+              <div class="breakdown-track"><div class="breakdown-fill" style="width:21%;background:#ffb020"></div></div>
+            </div>
+            <span class="breakdown-value">10.7k</span>
+          </div>
+          <div class="breakdown-row">
+            <div style="flex:1 1 auto;min-width:0">
+              <div class="breakdown-name">Direct</div>
+              <div class="breakdown-track"><div class="breakdown-fill" style="width:14%;background:#8b9bb4"></div></div>
+            </div>
+            <span class="breakdown-value">7.1k</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="card table-card">
+        <div class="table-card-head">
+          <span class="card-title">Recent orders</span>
+          <button class="filter-chip is-selected">All</button>
+          <button class="filter-chip">Paid</button>
+          <button class="filter-chip">Refunded</button>
+          <button class="filter-chip">Disputed</button>
+          <button class="button" style="margin-left:auto">Columns</button>
+        </div>
+
+        <div class="table-scroll">
+          <table>
+            <thead>
+              <tr>
+                <th>Order</th>
+                <th>Customer</th>
+                <th>Channel</th>
+                <th>Status</th>
+                <th class="cell-numeric">Items</th>
+                <th class="cell-numeric">Total</th>
+                <th>Placed</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>#NW-48213</td>
+                <td><span class="cell-user"><span class="avatar is-small">MK</span>Marta Kowalski</span></td>
+                <td>Paid social</td>
+                <td><span class="tag is-good">Paid</span></td>
+                <td class="cell-numeric">3</td>
+                <td class="cell-numeric">$128.40</td>
+                <td>Sep 06, 09:12</td>
+              </tr>
+              <tr>
+                <td>#NW-48212</td>
+                <td><span class="cell-user"><span class="avatar is-small">JO</span>Jonas Ortega</span></td>
+                <td>Organic search</td>
+                <td><span class="tag is-warn">Pending</span></td>
+                <td class="cell-numeric">1</td>
+                <td class="cell-numeric">$34.00</td>
+                <td>Sep 06, 08:57</td>
+              </tr>
+              <tr>
+                <td>#NW-48210</td>
+                <td><span class="cell-user"><span class="avatar is-small">AH</span>Amara Hassan</span></td>
+                <td>Email campaign</td>
+                <td><span class="tag is-good">Paid</span></td>
+                <td class="cell-numeric">6</td>
+                <td class="cell-numeric">$291.75</td>
+                <td>Sep 06, 08:31</td>
+              </tr>
+              <tr>
+                <td>#NW-48207</td>
+                <td><span class="cell-user"><span class="avatar is-small">LB</span>Luc Bernard</span></td>
+                <td>Direct</td>
+                <td><span class="tag is-bad">Refunded</span></td>
+                <td class="cell-numeric">2</td>
+                <td class="cell-numeric">$62.20</td>
+                <td>Sep 06, 07:48</td>
+              </tr>
+              <tr>
+                <td>#NW-48205</td>
+                <td><span class="cell-user"><span class="avatar is-small">SN</span>Sofia Nakamura</span></td>
+                <td>Referral</td>
+                <td><span class="tag is-good">Paid</span></td>
+                <td class="cell-numeric">4</td>
+                <td class="cell-numeric">$156.90</td>
+                <td>Sep 06, 07:20</td>
+              </tr>
+              <tr>
+                <td>#NW-48201</td>
+                <td><span class="cell-user"><span class="avatar is-small">DP</span>Daniel Petrov</span></td>
+                <td>Paid social</td>
+                <td><span class="tag is-idle">Draft</span></td>
+                <td class="cell-numeric">1</td>
+                <td class="cell-numeric">$18.00</td>
+                <td>Sep 06, 06:55</td>
+              </tr>
+              <tr>
+                <td>#NW-48198</td>
+                <td><span class="cell-user"><span class="avatar is-small">EW</span>Elena Wu</span></td>
+                <td>Organic search</td>
+                <td><span class="tag is-good">Paid</span></td>
+                <td class="cell-numeric">8</td>
+                <td class="cell-numeric">$402.15</td>
+                <td>Sep 05, 22:04</td>
+              </tr>
+              <tr>
+                <td>#NW-48194</td>
+                <td><span class="cell-user"><span class="avatar is-small">TA</span>Tomas Andersen</span></td>
+                <td>Email campaign</td>
+                <td><span class="tag is-bad">Disputed</span></td>
+                <td class="cell-numeric">2</td>
+                <td class="cell-numeric">$89.50</td>
+                <td>Sep 05, 21:37</td>
+              </tr>
+              <tr>
+                <td>#NW-48190</td>
+                <td><span class="cell-user"><span class="avatar is-small">RG</span>Rosa Gutierrez</span></td>
+                <td>Direct</td>
+                <td><span class="tag is-good">Paid</span></td>
+                <td class="cell-numeric">3</td>
+                <td class="cell-numeric">$114.60</td>
+                <td>Sep 05, 20:12</td>
+              </tr>
+              <tr>
+                <td>#NW-48187</td>
+                <td><span class="cell-user"><span class="avatar is-small">KO</span>Kwame Osei</span></td>
+                <td>Referral</td>
+                <td><span class="tag is-warn">Pending</span></td>
+                <td class="cell-numeric">5</td>
+                <td class="cell-numeric">$233.05</td>
+                <td>Sep 05, 19:48</td>
+              </tr>
+              <tr>
+                <td>#NW-48183</td>
+                <td><span class="cell-user"><span class="avatar is-small">HN</span>Hana Novak</span></td>
+                <td>Paid social</td>
+                <td><span class="tag is-good">Paid</span></td>
+                <td class="cell-numeric">2</td>
+                <td class="cell-numeric">$71.80</td>
+                <td>Sep 05, 18:22</td>
+              </tr>
+              <tr>
+                <td>#NW-48179</td>
+                <td><span class="cell-user"><span class="avatar is-small">BM</span>Ben Mitchell</span></td>
+                <td>Organic search</td>
+                <td><span class="tag is-good">Paid</span></td>
+                <td class="cell-numeric">1</td>
+                <td class="cell-numeric">$42.00</td>
+                <td>Sep 05, 17:09</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="table-footer">
+          <span>Showing 12 of 9,431 orders</span>
+          <button class="button" style="margin-left:auto">Previous</button>
+          <button class="button">Next</button>
+        </div>
+      </section>
+
+    </main>
+  </div>
+</div>
+
+<div class="toast" id="toast">
+  <span class="toast-icon">&#10003;</span>
+  <div>
+    <div class="toast-title">Export finished</div>
+    <div class="toast-body">revenue-aug-2026.csv is ready to download.</div>
+  </div>
+  <button class="toast-close" id="toastClose">&times;</button>
+</div>
+
+<script>
+  document.getElementById("sidebarToggle").addEventListener("click", function () {
+    document.getElementById("appShell").classList.toggle("is-collapsed");
+  });
+
+  document.getElementById("avatarTrigger").addEventListener("click", function () {
+    var menu = document.getElementById("avatarMenu");
+    menu.hidden = !menu.hidden;
+  });
+
+  document.getElementById("toastClose").addEventListener("click", function () {
+    document.getElementById("toast").hidden = true;
+  });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Reports</title>
+<style>
+  body { margin: 0; background: #ffffff; color: #111827;
+         font-family: -apple-system, "Segoe UI", Arial, sans-serif; }
+
+  .shell { display: flex; gap: 24px; padding: 32px; }
+
+  /* the rail collapses to 40 and kept the 48 of padding it had while open, so the
+     list is laid out past the right edge of the box that hides it */
+  .rail { position: relative; box-sizing: border-box; width: 40px; padding-left: 48px;
+          height: 320px; overflow: hidden; border-radius: 8px; background: #f3f4f6; }
+
+  .rail-toggle { position: absolute; left: 8px; top: 8px; width: 24px; height: 24px;
+                 border-radius: 6px; background: #4b5563; color: #ffffff;
+                 font-size: 13px; line-height: 24px; text-align: center; }
+
+  .filter-list { width: 240px; margin: 0; padding: 48px 0 0; list-style: none; }
+  .filter-list li { height: 32px; font-size: 14px; line-height: 32px; color: #1f2937; }
+
+  .results h1 { margin: 0 0 8px; font-size: 22px; line-height: 30px; }
+  .results p { margin: 0 0 16px; font-size: 14px; line-height: 20px; color: #4b5563; }
+  .row { height: 44px; border-bottom: 1px solid #e5e7eb; font-size: 14px; line-height: 44px; }
+</style>
+</head>
+<body>
+
+<div class="shell">
+  <aside class="rail" id="rail">
+    <div class="rail-toggle">&#9776;</div>
+
+    <ul class="filter-list" id="filter-list">
+      <li>Paid invoices</li>
+      <li>Overdue</li>
+      <li>Refunded</li>
+      <li>Disputed</li>
+      <li>Draft</li>
+    </ul>
+  </aside>
+
+  <section class="results">
+    <h1>Invoices</h1>
+    <p>412 invoices, five filters active</p>
+
+    <div class="row">INV-4471 &middot; Northwind &middot; $12,400.00</div>
+    <div class="row">INV-4470 &middot; Fabrikam &middot; $8,900.00</div>
+    <div class="row">INV-4469 &middot; Contoso &middot; $3,150.00</div>
+    <div class="row">INV-4468 &middot; Tailspin &middot; $6,720.00</div>
+  </section>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Reports — export</title>
+<style>
+  /* on purpose: the page behind is frozen while the dialog is open */
+  body { margin: 0; overflow: hidden; background: #ffffff; color: #1a1a1a;
+         font-family: Arial, Helvetica, sans-serif; }
+
+  .page { padding: 32px 40px 60px; }
+  .page h1 { margin: 0 0 8px; font-size: 26px; }
+  .page .lede { margin: 0 0 20px; max-width: 560px; font-size: 14px; line-height: 22px; color: #4b5563; }
+  .chart { height: 900px; border-radius: 12px; background: linear-gradient(160deg, #e0e7ff, #cffafe); }
+
+  /* on purpose: a tint, not a cover */
+  .modal { position: fixed; inset: 0; z-index: 40; display: flex; align-items: center; justify-content: center;
+           background: rgba(17, 17, 17, 0.45); }
+
+  .modal-panel { width: 420px; padding: 24px; border-radius: 12px; background: #ffffff;
+                 box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25); }
+  .modal-panel h2 { margin: 0 0 8px; font-size: 19px; }
+  .modal-panel p { margin: 0 0 20px; font-size: 14px; line-height: 22px; color: #4b5563; }
+
+  .modal-actions { display: flex; justify-content: flex-end; gap: 10px; }
+  .btn { padding: 10px 18px; border: 0; border-radius: 6px; font-family: inherit; font-size: 14px; line-height: 20px; }
+  .btn-primary { background: #1a56db; color: #ffffff; }
+  .btn-quiet { background: #eef2ff; color: #1a1a1a; }
+</style>
+</head>
+<body>
+
+<main class="page">
+  <h1>Revenue by region</h1>
+  <p class="lede">Twelve months to March, split by billing country.</p>
+  <div class="chart"></div>
+</main>
+
+<div class="modal" id="export-modal">
+  <div class="modal-panel">
+    <h2>Export this report</h2>
+    <p>A CSV lands in your inbox in a minute or two.</p>
+    <div class="modal-actions">
+      <button class="btn btn-quiet" type="button">Cancel</button>
+      <button class="btn btn-primary" type="button">Send it</button>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

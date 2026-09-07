@@ -1,0 +1,40 @@
+<!doctype html>
+<html dir="rtl" lang="ar">
+<head>
+<meta charset="utf-8">
+<title>السجل</title>
+<style>
+  body { margin: 0; background: #ffffff; color: #111827;
+         font-family: -apple-system, "Segoe UI", Arial, sans-serif; }
+
+  .page { width: 600px; margin: 0 auto; padding: 56px 0; }
+  .page h1 { margin: 0 0 20px; font-size: 22px; line-height: 30px; }
+
+  .timeline { list-style: none; margin: 0; padding: 0; }
+
+  /* the rail runs down the end side of the list, which is the left in rtl,
+     and every marker sits on it */
+  .event { position: relative; padding: 10px 0 10px 0; padding-inline-end: 28px;
+           border-inline-end: 2px solid #e5e7eb;
+           font-size: 14px; line-height: 20px; }
+
+  .dot { position: absolute; top: 14px; inset-inline-end: -6px;
+         width: 12px; height: 12px; border-radius: 6px; background: #2563eb; }
+</style>
+</head>
+<body>
+
+<div class="page">
+  <h1>السجل</h1>
+
+  <ul class="timeline" id="history">
+    <li class="event"><span class="dot" id="dot-created"></span>أنشئ الطلب</li>
+    <li class="event"><span class="dot"></span>تم الدفع</li>
+    <li class="event"><span class="dot"></span>غادر المستودع</li>
+    <li class="event"><span class="dot"></span>وصل إلى الفرع</li>
+    <li class="event"><span class="dot"></span>سُلّم للعميل</li>
+  </ul>
+</div>
+
+</body>
+</html>

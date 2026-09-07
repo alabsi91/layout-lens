@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Northwind</title>
+<style>
+  body { margin: 0; background: #ffffff; color: #111827;
+         font-family: -apple-system, "Segoe UI", Arial, sans-serif; }
+
+  .app-bar { position: sticky; top: 0; z-index: 2; display: flex; align-items: flex-start;
+             gap: 24px; height: 88px; box-sizing: border-box; padding: 16px 32px;
+             background: #ffffff; overflow: hidden; }
+
+  /* the shrink-on-scroll header drops to 48 and keeps its 16 of padding, so the
+     56 tall mark no longer fits in it */
+  .app-bar.is-compact { height: 48px; }
+
+  .logo { width: 168px; height: 56px; border-radius: 8px; background: #111827;
+          color: #ffffff; font-size: 15px; font-weight: 600; line-height: 56px;
+          text-align: center; }
+
+  .bar-link { height: 24px; font-size: 14px; line-height: 24px; color: #374151;
+              text-decoration: none; }
+
+  .band { padding: 40px 32px; }
+  .band h2 { margin: 0 0 8px; font-size: 20px; line-height: 28px; }
+  .band p { margin: 0; max-width: 640px; font-size: 15px; line-height: 24px; color: #4b5563; }
+  .tall { height: 520px; }
+</style>
+</head>
+<body>
+
+<header class="app-bar" id="app-bar">
+  <div class="logo" id="brand-logo">Northwind</div>
+  <a class="bar-link" href="#a">Fleet</a>
+  <a class="bar-link" href="#b">Routes</a>
+  <a class="bar-link" href="#c">Drivers</a>
+</header>
+
+<section class="band tall">
+  <h2>Fleet overview</h2>
+  <p>Every vehicle on the road today, with the depot it left from and the run it is on.</p>
+</section>
+
+<section class="band tall">
+  <h2>Routes</h2>
+  <p>Runs are planned the evening before and locked at 05:00.</p>
+</section>
+
+<section class="band tall">
+  <h2>Drivers</h2>
+  <p>Hours are counted from the first door open to the last depot scan.</p>
+</section>
+
+<script>
+  const bar = document.getElementById('app-bar');
+  const update = () => bar.classList.toggle('is-compact', window.scrollY > 120);
+  addEventListener('scroll', update, { passive: true });
+  update();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Draft</title>
+<style>
+  body { margin: 0; background: #ffffff; color: #111827;
+         font-family: -apple-system, "Segoe UI", Arial, sans-serif; }
+
+  .page { max-width: 720px; margin: 0 auto; padding: 40px 24px; }
+  .page h1 { margin: 0 0 12px; font-size: 24px; line-height: 32px; }
+  .page p { margin: 0 0 16px; font-size: 15px; line-height: 24px; color: #374151; }
+
+  /* the toast is pinned to the bottom of the screen, 24 up from the edge */
+  .toast { position: fixed; left: 0; right: 0; bottom: 24px; margin: 0 auto;
+           width: 360px; height: 52px; box-sizing: border-box; padding: 0 16px;
+           display: flex; align-items: center; justify-content: space-between;
+           border-radius: 10px; background: #111827; color: #ffffff;
+           font-size: 14px; }
+  .toast button { border: 0; border-radius: 6px; padding: 6px 12px;
+                  background: #374151; color: #ffffff; font-size: 13px; }
+</style>
+</head>
+<body>
+
+<article class="page">
+  <h1>Notes from the site visit</h1>
+  <p>The riser cupboard on the second floor is still holding the old switch, and the
+     contractor wants it gone before the ceiling grid goes back up.</p>
+  <p>Power to the east wing is on one circuit, which the landlord had not mentioned.</p>
+  <p>Next visit is booked for the 14th.</p>
+</article>
+
+<div class="toast" id="saved-toast">
+  <span>Draft saved</span>
+  <button type="button">Undo</button>
+</div>
+
+</body>
+</html>

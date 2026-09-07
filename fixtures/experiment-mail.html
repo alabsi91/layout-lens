@@ -1,0 +1,1567 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Postmark Lite — Inbox</title>
+    <style>
+      :root {
+        --bg: #f6f7f9;
+        --surface: #ffffff;
+        --line: #e3e6ea;
+        --line-strong: #d3d8de;
+        --text: #14181d;
+        --text-soft: #5b6470;
+        --text-mute: #616b78;
+        --accent: #2563eb;
+        --accent-soft: #eaf0fe;
+        --shadow: 0 10px 30px rgba(16, 22, 32, 0.14);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        height: 100%;
+      }
+
+      body {
+        margin: 0;
+        overflow: hidden;
+        background: var(--bg);
+        color: var(--text);
+        font: 13px/1.45 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      .app {
+        display: flex;
+        flex-direction: column;
+        height: 100vh;
+      }
+
+      .icon {
+        width: 16px;
+        height: 16px;
+        display: block;
+        flex: none;
+        stroke: currentColor;
+        stroke-width: 1.7;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        fill: none;
+      }
+
+      .icon-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 30px;
+        height: 30px;
+        padding: 0;
+        border: 1px solid transparent;
+        border-radius: 7px;
+        background: transparent;
+        color: var(--text-soft);
+        cursor: pointer;
+      }
+
+      .icon-btn:hover {
+        background: #eef1f5;
+        color: var(--text);
+      }
+
+      /* ---------- top bar ---------- */
+
+      .topbar {
+        display: grid;
+        grid-template-columns: 1fr auto 1fr;
+        align-items: center;
+        flex: none;
+        height: 52px;
+        padding: 0 16px;
+        border-bottom: 1px solid var(--line);
+        background: var(--surface);
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+      }
+
+      .brand-mark {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 26px;
+        height: 26px;
+        border-radius: 8px;
+        background: var(--accent);
+        color: #fff;
+      }
+
+      .brand-name {
+        font-size: 14px;
+        font-weight: 650;
+        letter-spacing: -0.01em;
+      }
+
+      .topbar-search {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        width: 420px;
+        height: 32px;
+        padding: 0 11px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: #f2f4f7;
+        color: var(--text-mute);
+      }
+
+      .topbar-search input {
+        flex: 1;
+        min-width: 0;
+        border: 0;
+        background: transparent;
+        color: var(--text);
+        font: inherit;
+        outline: none;
+      }
+
+      .topbar-right {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 10px;
+      }
+
+      .avatar {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex: none;
+        border-radius: 50%;
+        color: #fff;
+        font-weight: 650;
+        letter-spacing: 0.01em;
+      }
+
+      .avatar-sm {
+        width: 28px;
+        height: 28px;
+        font-size: 11px;
+      }
+
+      .avatar-md {
+        width: 36px;
+        height: 36px;
+        font-size: 12px;
+      }
+
+      .avatar-lg {
+        width: 42px;
+        height: 42px;
+        font-size: 14px;
+      }
+
+      /* ---------- panes ---------- */
+
+      .panes {
+        display: flex;
+        flex: 1;
+        min-height: 0;
+      }
+
+      .divider {
+        flex: none;
+        width: 1px;
+        background: var(--line);
+      }
+
+      /* ---------- left pane ---------- */
+
+      .sidebar {
+        display: flex;
+        flex-direction: column;
+        flex: none;
+        width: 240px;
+        padding: 14px 12px;
+        overflow-y: auto;
+        background: var(--surface);
+      }
+
+      .compose-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        width: 100%;
+        height: 40px;
+        margin-bottom: 18px;
+        border: 0;
+        border-radius: 10px;
+        background: var(--accent);
+        color: #fff;
+        font: inherit;
+        font-size: 13.5px;
+        font-weight: 600;
+        cursor: pointer;
+      }
+
+      .nav-heading {
+        margin: 0 0 8px 8px;
+        color: var(--text-mute);
+        font-size: 11px;
+        font-weight: 650;
+        letter-spacing: 0.07em;
+        text-transform: uppercase;
+      }
+
+      .nav-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        height: 32px;
+        padding: 0 9px;
+        border-radius: 8px;
+        color: var(--text-soft);
+        text-decoration: none;
+      }
+
+      .nav-item + .nav-item {
+        margin-top: 2px;
+      }
+
+      .nav-item:hover {
+        background: #f2f4f7;
+      }
+
+      .nav-item.is-active {
+        background: var(--accent-soft);
+        color: var(--accent);
+        font-weight: 600;
+      }
+
+      .nav-label {
+        flex: 1;
+        min-width: 0;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+      }
+
+      .nav-count {
+        flex: none;
+        color: var(--text-mute);
+        font-size: 11.5px;
+        font-variant-numeric: tabular-nums;
+      }
+
+      .nav-item.is-active .nav-count {
+        color: var(--accent);
+        font-weight: 650;
+      }
+
+      .nav-section {
+        margin-top: 20px;
+      }
+
+      .label-dot {
+        flex: none;
+        width: 9px;
+        height: 9px;
+        border-radius: 50%;
+      }
+
+      /* ---------- middle pane ---------- */
+
+      .list-pane {
+        display: flex;
+        flex-direction: column;
+        flex: none;
+        width: 380px;
+        min-height: 0;
+        background: var(--surface);
+      }
+
+      .list-head {
+        flex: none;
+        padding: 12px 12px 0;
+      }
+
+      .list-search {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        height: 34px;
+        padding: 0 11px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: #f6f7f9;
+        color: var(--text-mute);
+      }
+
+      .list-search input {
+        flex: 1;
+        min-width: 0;
+        border: 0;
+        background: transparent;
+        color: var(--text);
+        font: inherit;
+        outline: none;
+      }
+
+      .filter-tabs {
+        display: flex;
+        gap: 6px;
+        padding: 10px 0 11px;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .filter-tab {
+        height: 26px;
+        padding: 0 11px;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        background: transparent;
+        color: var(--text-soft);
+        font: inherit;
+        font-size: 12px;
+        line-height: 24px;
+        cursor: pointer;
+      }
+
+      .filter-tab.is-active {
+        border-color: transparent;
+        background: var(--text);
+        color: #fff;
+        font-weight: 600;
+      }
+
+      .message-list {
+        flex: 1;
+        min-height: 0;
+        padding: 6px 8px 10px;
+        overflow-y: auto;
+      }
+
+      .message-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 9px 10px;
+        border-left: 3px solid transparent;
+        border-radius: 9px;
+        cursor: pointer;
+      }
+
+      .message-row:hover {
+        background: #f4f6f8;
+      }
+
+      .message-row.is-selected {
+        background: var(--accent-soft);
+        border-left-color: var(--accent);
+      }
+
+      .unread-dot {
+        flex: none;
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: var(--accent);
+      }
+
+      .unread-dot.is-hidden {
+        background: transparent;
+      }
+
+      .message-text {
+        flex: 1;
+        min-width: 0;
+      }
+
+      .message-top {
+        display: flex;
+        align-items: baseline;
+        gap: 8px;
+      }
+
+      .message-subject,
+      .message-preview,
+      .reader-name,
+      .reader-address,
+      .attachment-name,
+      .attachment-size {
+        display: block;
+      }
+
+      .message-sender {
+        flex: 1;
+        min-width: 0;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        font-size: 13px;
+      }
+
+      .is-unread .message-sender {
+        font-weight: 680;
+      }
+
+      .message-time {
+        flex: none;
+        color: var(--text-mute);
+        font-size: 11px;
+      }
+
+      .message-subject {
+        margin-top: 1px;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        color: var(--text);
+        font-size: 12.5px;
+      }
+
+      .is-unread .message-subject {
+        font-weight: 600;
+      }
+
+      .message-preview {
+        margin-top: 1px;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        color: var(--text-mute);
+        font-size: 12px;
+      }
+
+      .star-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex: none;
+        width: 20px;
+        height: 20px;
+        padding: 0;
+        border: 0;
+        background: transparent;
+        color: var(--line-strong);
+        cursor: pointer;
+      }
+
+      .star-btn .icon {
+        width: 15px;
+        height: 15px;
+      }
+
+      .star-btn.is-starred {
+        color: #f4b400;
+        fill: #f4b400;
+      }
+
+      .star-btn.is-starred .icon {
+        fill: #f4b400;
+      }
+
+      /* ---------- right pane ---------- */
+
+      .reader {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+        min-width: 0;
+        min-height: 0;
+        background: var(--surface);
+      }
+
+      .reader-scroll {
+        flex: 1;
+        min-height: 0;
+        overflow-y: auto;
+      }
+
+      .reader-head {
+        padding: 20px 28px 16px;
+      }
+
+      .reader-title {
+        margin: 0 0 14px;
+        font-size: 19px;
+        font-weight: 660;
+        letter-spacing: -0.015em;
+        line-height: 1.3;
+      }
+
+      .reader-meta {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .reader-from {
+        flex: 1;
+        min-width: 0;
+      }
+
+      .reader-name {
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        font-size: 13.5px;
+        font-weight: 620;
+      }
+
+      .reader-address {
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        color: var(--text-mute);
+        font-size: 12px;
+      }
+
+      .reader-date {
+        flex: none;
+        color: var(--text-mute);
+        font-size: 12px;
+        white-space: nowrap;
+      }
+
+      .reader-actions {
+        display: flex;
+        align-items: center;
+        gap: 2px;
+        flex: none;
+      }
+
+      .tooltip-anchor {
+        position: relative;
+      }
+
+      .tooltip {
+        position: absolute;
+        bottom: calc(100% + 9px);
+        left: 50%;
+        transform: translateX(-50%);
+        padding: 5px 9px;
+        border-radius: 6px;
+        background: #14181d;
+        color: #fff;
+        font-size: 11.5px;
+        line-height: 1.3;
+        white-space: nowrap;
+        box-shadow: 0 4px 12px rgba(16, 22, 32, 0.22);
+      }
+
+      .tooltip-arrow {
+        position: absolute;
+        top: 100%;
+        left: 50%;
+        width: 0;
+        height: 0;
+        margin-left: -5px;
+        border-top: 5px solid #14181d;
+        border-right: 5px solid transparent;
+        border-left: 5px solid transparent;
+      }
+
+      .reader-divider {
+        height: 1px;
+        margin: 0 28px;
+        background: var(--line);
+      }
+
+      .reader-body {
+        padding: 18px 28px 26px;
+        color: #262c34;
+        font-size: 13.5px;
+        line-height: 1.62;
+      }
+
+      .reader-body p {
+        margin: 0 0 14px;
+      }
+
+      .quoted {
+        margin: 4px 0 18px;
+        padding: 2px 0 2px 14px;
+        border-left: 3px solid var(--line-strong);
+        color: var(--text-soft);
+      }
+
+      .quoted p {
+        margin: 0 0 10px;
+      }
+
+      .quoted p:last-child {
+        margin-bottom: 0;
+      }
+
+      .attachments-heading {
+        margin: 0 0 10px;
+        color: var(--text-mute);
+        font-size: 11px;
+        font-weight: 650;
+        letter-spacing: 0.07em;
+        text-transform: uppercase;
+      }
+
+      .attachments {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+      }
+
+      .attachment-card {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        min-width: 0;
+        padding: 10px 12px;
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        background: #fafbfc;
+      }
+
+      .attachment-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex: none;
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        background: #eaeef3;
+        color: var(--text-soft);
+      }
+
+      .attachment-text {
+        flex: 1;
+        min-width: 0;
+      }
+
+      .attachment-name {
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        font-size: 12.5px;
+        font-weight: 560;
+      }
+
+      .attachment-size {
+        color: var(--text-mute);
+        font-size: 11.5px;
+      }
+
+      /* ---------- reply box ---------- */
+
+      .reply-box {
+        flex: none;
+        padding: 12px 28px 16px;
+        border-top: 1px solid var(--line);
+        background: var(--surface);
+      }
+
+      .reply-shell {
+        padding: 10px 12px 10px;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        background: #fafbfc;
+      }
+
+      .reply-shell textarea {
+        display: block;
+        width: 100%;
+        height: 52px;
+        border: 0;
+        background: transparent;
+        color: var(--text);
+        font: inherit;
+        line-height: 1.5;
+        resize: none;
+        outline: none;
+      }
+
+      .reply-foot {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 8px;
+        margin-top: 8px;
+      }
+
+      .send-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 7px;
+        height: 32px;
+        padding: 0 14px;
+        border: 0;
+        border-radius: 8px;
+        background: var(--accent);
+        color: #fff;
+        font: inherit;
+        font-size: 12.5px;
+        font-weight: 600;
+        cursor: pointer;
+      }
+
+      /* ---------- compose window ---------- */
+
+      .compose-window {
+        position: absolute;
+        right: 24px;
+        bottom: 24px;
+        display: flex;
+        flex-direction: column;
+        width: 460px;
+        border: 1px solid var(--line-strong);
+        border-radius: 12px;
+        background: var(--surface);
+        box-shadow: var(--shadow);
+        overflow: hidden;
+      }
+
+      .compose-header {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        height: 40px;
+        padding: 0 8px 0 14px;
+        background: #1b2027;
+        color: #fff;
+      }
+
+      .compose-title {
+        flex: 1;
+        min-width: 0;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        font-size: 12.5px;
+        font-weight: 600;
+      }
+
+      .compose-header-actions {
+        display: flex;
+        align-items: center;
+        gap: 2px;
+        flex: none;
+      }
+
+      .compose-header .icon-btn {
+        width: 26px;
+        height: 26px;
+        color: #c3cad3;
+      }
+
+      .compose-header .icon-btn:hover {
+        background: rgba(255, 255, 255, 0.12);
+        color: #fff;
+      }
+
+      .compose-header .icon {
+        width: 14px;
+        height: 14px;
+      }
+
+      .compose-field {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        height: 38px;
+        padding: 0 14px;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .compose-field-label {
+        flex: none;
+        width: 48px;
+        color: var(--text-mute);
+        font-size: 12.5px;
+      }
+
+      .compose-field input {
+        flex: 1;
+        min-width: 0;
+        border: 0;
+        background: transparent;
+        color: var(--text);
+        font: inherit;
+        outline: none;
+      }
+
+      .compose-body {
+        padding: 12px 14px;
+      }
+
+      .compose-body textarea {
+        display: block;
+        width: 100%;
+        height: 130px;
+        border: 0;
+        background: transparent;
+        color: var(--text);
+        font: inherit;
+        line-height: 1.55;
+        resize: none;
+        outline: none;
+      }
+
+      .compose-foot {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 12px 12px;
+      }
+
+      .compose-tools {
+        display: flex;
+        align-items: center;
+        gap: 2px;
+        margin-left: auto;
+      }
+    </style>
+  </head>
+  <body>
+    <svg width="0" height="0" style="display: none" aria-hidden="true">
+      <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7" /><path d="M20 20l-3.6-3.6" /></symbol>
+      <symbol id="i-gear" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2" /><path d="M12 3.5v2M12 18.5v2M3.5 12h2M18.5 12h2M6 6l1.5 1.5M16.5 16.5L18 18M18 6l-1.5 1.5M7.5 16.5L6 18" /></symbol>
+      <symbol id="i-pencil" viewBox="0 0 24 24"><path d="M4 20h4l10-10-4-4L4 16v4z" /><path d="M14.5 5.5l4 4" /></symbol>
+      <symbol id="i-inbox" viewBox="0 0 24 24"><path d="M3.5 13.5h4l1.5 3h6l1.5-3h4" /><path d="M5.5 5h13l2 8.5V19H3.5v-5.5L5.5 5z" /></symbol>
+      <symbol id="i-star" viewBox="0 0 24 24"><path d="M12 4l2.5 5.2 5.5.8-4 3.9 1 5.6-5-2.7-5 2.7 1-5.6-4-3.9 5.5-.8L12 4z" /></symbol>
+      <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8" /><path d="M12 7.5V12l3 2" /></symbol>
+      <symbol id="i-send" viewBox="0 0 24 24"><path d="M20 4L10.5 13.5" /><path d="M20 4l-6 16-3.5-6.5L4 10 20 4z" /></symbol>
+      <symbol id="i-file" viewBox="0 0 24 24"><path d="M13.5 3.5H7a1.5 1.5 0 00-1.5 1.5v14A1.5 1.5 0 007 20.5h10a1.5 1.5 0 001.5-1.5V8.5l-5-5z" /><path d="M13.5 3.5v5h5" /></symbol>
+      <symbol id="i-trash" viewBox="0 0 24 24"><path d="M4.5 6.5h15" /><path d="M9.5 6.5V4.5h5v2" /><path d="M6.5 6.5l1 13h9l1-13" /></symbol>
+      <symbol id="i-archive" viewBox="0 0 24 24"><rect x="3.5" y="4.5" width="17" height="4" rx="1" /><path d="M5.5 8.5v10a1 1 0 001 1h11a1 1 0 001-1v-10" /><path d="M10 12.5h4" /></symbol>
+      <symbol id="i-reply" viewBox="0 0 24 24"><path d="M9 7L4 12l5 5" /><path d="M4 12h9a6 6 0 016 6v1" /></symbol>
+      <symbol id="i-more" viewBox="0 0 24 24"><circle cx="6" cy="12" r="1.2" /><circle cx="12" cy="12" r="1.2" /><circle cx="18" cy="12" r="1.2" /></symbol>
+      <symbol id="i-tag" viewBox="0 0 24 24"><path d="M11 3.5H4.5V10l9.5 9.5 6.5-6.5L11 3.5z" /><circle cx="8" cy="7" r="1.2" /></symbol>
+      <symbol id="i-minus" viewBox="0 0 24 24"><path d="M5.5 12h13" /></symbol>
+      <symbol id="i-expand" viewBox="0 0 24 24"><path d="M9.5 4.5h-5v5" /><path d="M14.5 19.5h5v-5" /><path d="M4.5 4.5l6 6" /><path d="M19.5 19.5l-6-6" /></symbol>
+      <symbol id="i-close" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18" /></symbol>
+      <symbol id="i-paperclip" viewBox="0 0 24 24"><path d="M19 11.5l-7.4 7.4a4 4 0 01-5.7-5.7l8-8a2.8 2.8 0 014 4l-8 8a1.6 1.6 0 01-2.3-2.3l7.2-7.2" /></symbol>
+      <symbol id="i-bold" viewBox="0 0 24 24"><path d="M7.5 5h5.5a3.5 3.5 0 010 7H7.5V5z" /><path d="M7.5 12h6.5a3.5 3.5 0 010 7H7.5v-7z" /></symbol>
+      <symbol id="i-link" viewBox="0 0 24 24"><path d="M10 13.5a3.5 3.5 0 005 0l3-3a3.5 3.5 0 00-5-5l-1.5 1.5" /><path d="M14 10.5a3.5 3.5 0 00-5 0l-3 3a3.5 3.5 0 005 5l1.5-1.5" /></symbol>
+      <symbol id="i-image" viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="14" rx="2" /><circle cx="9" cy="10" r="1.5" /><path d="M4.5 17l4.5-4.5L14 17" /><path d="M13 15.5l2.5-2.5 4 4" /></symbol>
+      <symbol id="i-drafts" viewBox="0 0 24 24"><path d="M4.5 6.5h15v12h-15z" /><path d="M4.5 7l7.5 6 7.5-6" /></symbol>
+      <symbol id="i-alert" viewBox="0 0 24 24"><path d="M12 4l8.5 15h-17L12 4z" /><path d="M12 10v4M12 16.5v.6" /></symbol>
+    </svg>
+
+    <div class="app">
+      <header class="topbar">
+        <div class="brand">
+          <span class="brand-mark"><svg class="icon" aria-hidden="true"><use href="#i-send" /></svg></span>
+          <span class="brand-name">Postmark Lite</span>
+        </div>
+
+        <div class="topbar-search">
+          <svg class="icon" aria-hidden="true"><use href="#i-search" /></svg>
+          <input type="text" placeholder="Search mail, people and files" value="" />
+        </div>
+
+        <div class="topbar-right">
+          <button class="icon-btn" type="button" aria-label="Settings">
+            <svg class="icon" aria-hidden="true"><use href="#i-gear" /></svg>
+          </button>
+          <span class="avatar avatar-sm" style="background: #6d5ae0">JR</span>
+        </div>
+      </header>
+
+      <div class="panes">
+        <!-- left pane -->
+        <nav class="sidebar">
+          <button class="compose-btn" type="button">
+            <svg class="icon" aria-hidden="true"><use href="#i-pencil" /></svg>
+            Compose
+          </button>
+
+          <p class="nav-heading">Folders</p>
+
+          <a class="nav-item is-active" href="#">
+            <svg class="icon" aria-hidden="true"><use href="#i-inbox" /></svg>
+            <span class="nav-label">Inbox</span>
+            <span class="nav-count">18</span>
+          </a>
+          <a class="nav-item" href="#">
+            <svg class="icon" aria-hidden="true"><use href="#i-star" /></svg>
+            <span class="nav-label">Starred</span>
+            <span class="nav-count">6</span>
+          </a>
+          <a class="nav-item" href="#">
+            <svg class="icon" aria-hidden="true"><use href="#i-clock" /></svg>
+            <span class="nav-label">Snoozed</span>
+            <span class="nav-count">3</span>
+          </a>
+          <a class="nav-item" href="#">
+            <svg class="icon" aria-hidden="true"><use href="#i-send" /></svg>
+            <span class="nav-label">Sent</span>
+            <span class="nav-count"></span>
+          </a>
+          <a class="nav-item" href="#">
+            <svg class="icon" aria-hidden="true"><use href="#i-drafts" /></svg>
+            <span class="nav-label">Drafts</span>
+            <span class="nav-count">2</span>
+          </a>
+          <a class="nav-item" href="#">
+            <svg class="icon" aria-hidden="true"><use href="#i-alert" /></svg>
+            <span class="nav-label">Spam</span>
+            <span class="nav-count">41</span>
+          </a>
+          <a class="nav-item" href="#">
+            <svg class="icon" aria-hidden="true"><use href="#i-archive" /></svg>
+            <span class="nav-label">Archive</span>
+            <span class="nav-count"></span>
+          </a>
+          <a class="nav-item" href="#">
+            <svg class="icon" aria-hidden="true"><use href="#i-trash" /></svg>
+            <span class="nav-label">Trash</span>
+            <span class="nav-count"></span>
+          </a>
+
+          <div class="nav-section">
+            <p class="nav-heading">Labels</p>
+
+            <a class="nav-item" href="#">
+              <span class="label-dot" style="background: #e5484d"></span>
+              <span class="nav-label">Product</span>
+              <span class="nav-count">9</span>
+            </a>
+            <a class="nav-item" href="#">
+              <span class="label-dot" style="background: #f5a524"></span>
+              <span class="nav-label">Finance</span>
+              <span class="nav-count">4</span>
+            </a>
+            <a class="nav-item" href="#">
+              <span class="label-dot" style="background: #30a46c"></span>
+              <span class="nav-label">Recruiting</span>
+              <span class="nav-count">12</span>
+            </a>
+            <a class="nav-item" href="#">
+              <span class="label-dot" style="background: #8e4ec6"></span>
+              <span class="nav-label">Personal</span>
+              <span class="nav-count">2</span>
+            </a>
+            <a class="nav-item" href="#">
+              <span class="label-dot" style="background: #0091ff"></span>
+              <span class="nav-label">Travel</span>
+              <span class="nav-count"></span>
+            </a>
+          </div>
+        </nav>
+
+        <div class="divider"></div>
+
+        <!-- middle pane -->
+        <section class="list-pane">
+          <div class="list-head">
+            <div class="list-search">
+              <svg class="icon" aria-hidden="true"><use href="#i-search" /></svg>
+              <input type="text" placeholder="Filter this folder" value="" />
+            </div>
+
+            <div class="filter-tabs">
+              <button class="filter-tab is-active" type="button">All</button>
+              <button class="filter-tab" type="button">Unread</button>
+              <button class="filter-tab" type="button">Starred</button>
+              <button class="filter-tab" type="button">Attachments</button>
+            </div>
+          </div>
+
+          <div class="message-list">
+            <div class="message-row is-unread is-selected">
+              <span class="unread-dot"></span>
+              <span class="avatar avatar-md" style="background: #b8451f">AC</span>
+              <span class="message-text">
+                <span class="message-top">
+                  <span class="message-sender">Amara Chen</span>
+                  <span class="message-time">9:41 AM</span>
+                </span>
+                <span class="message-subject">Q3 launch: final asset review</span>
+                <span class="message-preview">Everything is in the shared drive now, only the hero crop is still open for review.</span>
+              </span>
+              <button class="star-btn is-starred" type="button" aria-label="Star">
+                <svg class="icon" aria-hidden="true"><use href="#i-star" /></svg>
+              </button>
+            </div>
+
+            <div class="message-row is-unread">
+              <span class="unread-dot"></span>
+              <span class="avatar avatar-md" style="background: #2f6fd0">DK</span>
+              <span class="message-text">
+                <span class="message-top">
+                  <span class="message-sender">Deniz Kaya</span>
+                  <span class="message-time">9:12 AM</span>
+                </span>
+                <span class="message-subject">Billing export failed overnight</span>
+                <span class="message-preview">The nightly job died halfway through the invoice batch, retry is queued for noon.</span>
+              </span>
+              <button class="star-btn" type="button" aria-label="Star">
+                <svg class="icon" aria-hidden="true"><use href="#i-star" /></svg>
+              </button>
+            </div>
+
+            <div class="message-row">
+              <span class="unread-dot is-hidden"></span>
+              <span class="avatar avatar-md" style="background: #1d7a4d">MW</span>
+              <span class="message-text">
+                <span class="message-top">
+                  <span class="message-sender">Maya Whitfield</span>
+                  <span class="message-time">8:55 AM</span>
+                </span>
+                <span class="message-subject">Re: onsite loop for the platform role</span>
+                <span class="message-preview">Both candidates are free Thursday afternoon, I put holds on the rooms already.</span>
+              </span>
+              <button class="star-btn is-starred" type="button" aria-label="Star">
+                <svg class="icon" aria-hidden="true"><use href="#i-star" /></svg>
+              </button>
+            </div>
+
+            <div class="message-row is-unread">
+              <span class="unread-dot"></span>
+              <span class="avatar avatar-md" style="background: #8e4ec6">RS</span>
+              <span class="message-text">
+                <span class="message-top">
+                  <span class="message-sender">Rafael Santos</span>
+                  <span class="message-time">8:30 AM</span>
+                </span>
+                <span class="message-subject">Design tokens are merged</span>
+                <span class="message-preview">Pull the latest and delete your local overrides, the spacing scale changed a little.</span>
+              </span>
+              <button class="star-btn" type="button" aria-label="Star">
+                <svg class="icon" aria-hidden="true"><use href="#i-star" /></svg>
+              </button>
+            </div>
+
+            <div class="message-row">
+              <span class="unread-dot is-hidden"></span>
+              <span class="avatar avatar-md" style="background: #c2255c">LN</span>
+              <span class="message-text">
+                <span class="message-top">
+                  <span class="message-sender">Lena Nordström</span>
+                  <span class="message-time">8:02 AM</span>
+                </span>
+                <span class="message-subject">Weekly metrics digest</span>
+                <span class="message-preview">Signups up four percent, churn flat, the dashboard link is at the bottom as usual.</span>
+              </span>
+              <button class="star-btn" type="button" aria-label="Star">
+                <svg class="icon" aria-hidden="true"><use href="#i-star" /></svg>
+              </button>
+            </div>
+
+            <div class="message-row is-unread">
+              <span class="unread-dot"></span>
+              <span class="avatar avatar-md" style="background: #0b7285">TO</span>
+              <span class="message-text">
+                <span class="message-top">
+                  <span class="message-sender">Tomas Oyelaran</span>
+                  <span class="message-time">7:48 AM</span>
+                </span>
+                <span class="message-subject">Contract renewal, one open point</span>
+                <span class="message-preview">Legal is fine with everything except the data retention clause on page nine.</span>
+              </span>
+              <button class="star-btn" type="button" aria-label="Star">
+                <svg class="icon" aria-hidden="true"><use href="#i-star" /></svg>
+              </button>
+            </div>
+
+            <div class="message-row">
+              <span class="unread-dot is-hidden"></span>
+              <span class="avatar avatar-md" style="background: #5c6670">PB</span>
+              <span class="message-text">
+                <span class="message-top">
+                  <span class="message-sender">Priya Balakrishnan</span>
+                  <span class="message-time">Yesterday</span>
+                </span>
+                <span class="message-subject">Notes from the platform sync</span>
+                <span class="message-preview">We agreed to freeze the schema until the migration lands, notes in the doc.</span>
+              </span>
+              <button class="star-btn" type="button" aria-label="Star">
+                <svg class="icon" aria-hidden="true"><use href="#i-star" /></svg>
+              </button>
+            </div>
+
+            <div class="message-row is-unread">
+              <span class="unread-dot"></span>
+              <span class="avatar avatar-md" style="background: #b8451f">GH</span>
+              <span class="message-text">
+                <span class="message-top">
+                  <span class="message-sender">Grace Hollis</span>
+                  <span class="message-time">Yesterday</span>
+                </span>
+                <span class="message-subject">Offsite venue shortlist</span>
+                <span class="message-preview">Three options within budget, the coastal one needs a deposit by Friday though.</span>
+              </span>
+              <button class="star-btn is-starred" type="button" aria-label="Star">
+                <svg class="icon" aria-hidden="true"><use href="#i-star" /></svg>
+              </button>
+            </div>
+
+            <div class="message-row">
+              <span class="unread-dot is-hidden"></span>
+              <span class="avatar avatar-md" style="background: #2f6fd0">NF</span>
+              <span class="message-text">
+                <span class="message-top">
+                  <span class="message-sender">Nils Fredriksen</span>
+                  <span class="message-time">Yesterday</span>
+                </span>
+                <span class="message-subject">Re: API rate limits for partners</span>
+                <span class="message-preview">Raising the ceiling to six hundred a minute for the top tier seems safe enough.</span>
+              </span>
+              <button class="star-btn" type="button" aria-label="Star">
+                <svg class="icon" aria-hidden="true"><use href="#i-star" /></svg>
+              </button>
+            </div>
+
+            <div class="message-row is-unread">
+              <span class="unread-dot"></span>
+              <span class="avatar avatar-md" style="background: #1d7a4d">SA</span>
+              <span class="message-text">
+                <span class="message-top">
+                  <span class="message-sender">Sofia Almeida</span>
+                  <span class="message-time">Yesterday</span>
+                </span>
+                <span class="message-subject">Accessibility audit round two</span>
+                <span class="message-preview">Contrast is fixed everywhere, focus order in the modal is still a mess though.</span>
+              </span>
+              <button class="star-btn" type="button" aria-label="Star">
+                <svg class="icon" aria-hidden="true"><use href="#i-star" /></svg>
+              </button>
+            </div>
+
+            <div class="message-row">
+              <span class="unread-dot is-hidden"></span>
+              <span class="avatar avatar-md" style="background: #8e4ec6">JM</span>
+              <span class="message-text">
+                <span class="message-top">
+                  <span class="message-sender">Jonah Meier</span>
+                  <span class="message-time">Tue</span>
+                </span>
+                <span class="message-subject">Invoice 2041 is paid</span>
+                <span class="message-preview">Payment cleared this morning, receipt attached for your records as always.</span>
+              </span>
+              <button class="star-btn" type="button" aria-label="Star">
+                <svg class="icon" aria-hidden="true"><use href="#i-star" /></svg>
+              </button>
+            </div>
+
+            <div class="message-row is-unread">
+              <span class="unread-dot"></span>
+              <span class="avatar avatar-md" style="background: #c2255c">HK</span>
+              <span class="message-text">
+                <span class="message-top">
+                  <span class="message-sender">Hana Kobayashi</span>
+                  <span class="message-time">Tue</span>
+                </span>
+                <span class="message-subject">Localization strings for release 4.2</span>
+                <span class="message-preview">German and Japanese are done, Portuguese is waiting on two ambiguous labels.</span>
+              </span>
+              <button class="star-btn" type="button" aria-label="Star">
+                <svg class="icon" aria-hidden="true"><use href="#i-star" /></svg>
+              </button>
+            </div>
+
+            <div class="message-row">
+              <span class="unread-dot is-hidden"></span>
+              <span class="avatar avatar-md" style="background: #0b7285">EV</span>
+              <span class="message-text">
+                <span class="message-top">
+                  <span class="message-sender">Elena Voss</span>
+                  <span class="message-time">Tue</span>
+                </span>
+                <span class="message-subject">Customer call recap: Northwind</span>
+                <span class="message-preview">They want SSO before renewal, everything else in the roadmap they can wait on.</span>
+              </span>
+              <button class="star-btn" type="button" aria-label="Star">
+                <svg class="icon" aria-hidden="true"><use href="#i-star" /></svg>
+              </button>
+            </div>
+
+            <div class="message-row is-unread">
+              <span class="unread-dot"></span>
+              <span class="avatar avatar-md" style="background: #5c6670">MB</span>
+              <span class="message-text">
+                <span class="message-top">
+                  <span class="message-sender">Marcus Bell</span>
+                  <span class="message-time">Tue</span>
+                </span>
+                <span class="message-subject">Staging is back up</span>
+                <span class="message-preview">Disk filled from the old build artifacts, added a cleanup step to the pipeline.</span>
+              </span>
+              <button class="star-btn" type="button" aria-label="Star">
+                <svg class="icon" aria-hidden="true"><use href="#i-star" /></svg>
+              </button>
+            </div>
+
+            <div class="message-row">
+              <span class="unread-dot is-hidden"></span>
+              <span class="avatar avatar-md" style="background: #b8451f">YT</span>
+              <span class="message-text">
+                <span class="message-top">
+                  <span class="message-sender">Yara Tahan</span>
+                  <span class="message-time">Mon</span>
+                </span>
+                <span class="message-subject">Brand photography licenses</span>
+                <span class="message-preview">Two of the shots expire next month, I asked the agency for a renewal quote.</span>
+              </span>
+              <button class="star-btn is-starred" type="button" aria-label="Star">
+                <svg class="icon" aria-hidden="true"><use href="#i-star" /></svg>
+              </button>
+            </div>
+
+            <div class="message-row">
+              <span class="unread-dot is-hidden"></span>
+              <span class="avatar avatar-md" style="background: #2f6fd0">CW</span>
+              <span class="message-text">
+                <span class="message-top">
+                  <span class="message-sender">Colin Wexler</span>
+                  <span class="message-time">Mon</span>
+                </span>
+                <span class="message-subject">Re: pricing page copy</span>
+                <span class="message-preview">Shortened the middle tier blurb, the comparison table still reads too dense.</span>
+              </span>
+              <button class="star-btn" type="button" aria-label="Star">
+                <svg class="icon" aria-hidden="true"><use href="#i-star" /></svg>
+              </button>
+            </div>
+
+            <div class="message-row is-unread">
+              <span class="unread-dot"></span>
+              <span class="avatar avatar-md" style="background: #1d7a4d">IB</span>
+              <span class="message-text">
+                <span class="message-top">
+                  <span class="message-sender">Ines Baptista</span>
+                  <span class="message-time">Mon</span>
+                </span>
+                <span class="message-subject">Security review scheduled</span>
+                <span class="message-preview">External firm starts the twelfth, they need read access to the staging cluster.</span>
+              </span>
+              <button class="star-btn" type="button" aria-label="Star">
+                <svg class="icon" aria-hidden="true"><use href="#i-star" /></svg>
+              </button>
+            </div>
+
+            <div class="message-row">
+              <span class="unread-dot is-hidden"></span>
+              <span class="avatar avatar-md" style="background: #8e4ec6">FA</span>
+              <span class="message-text">
+                <span class="message-top">
+                  <span class="message-sender">Felix Andersson</span>
+                  <span class="message-time">Mon</span>
+                </span>
+                <span class="message-subject">Laptop refresh cycle</span>
+                <span class="message-preview">Anyone on a machine older than four years can order a replacement this quarter.</span>
+              </span>
+              <button class="star-btn" type="button" aria-label="Star">
+                <svg class="icon" aria-hidden="true"><use href="#i-star" /></svg>
+              </button>
+            </div>
+
+            <div class="message-row is-unread">
+              <span class="unread-dot"></span>
+              <span class="avatar avatar-md" style="background: #c2255c">NO</span>
+              <span class="message-text">
+                <span class="message-top">
+                  <span class="message-sender">Nadia Okonkwo</span>
+                  <span class="message-time">Sun</span>
+                </span>
+                <span class="message-subject">Support queue is under control</span>
+                <span class="message-preview">Backlog dropped below forty tickets, first response time is under two hours.</span>
+              </span>
+              <button class="star-btn" type="button" aria-label="Star">
+                <svg class="icon" aria-hidden="true"><use href="#i-star" /></svg>
+              </button>
+            </div>
+
+            <div class="message-row">
+              <span class="unread-dot is-hidden"></span>
+              <span class="avatar avatar-md" style="background: #0b7285">SP</span>
+              <span class="message-text">
+                <span class="message-top">
+                  <span class="message-sender">Sam Pereira</span>
+                  <span class="message-time">Sun</span>
+                </span>
+                <span class="message-subject">Podcast interview request</span>
+                <span class="message-preview">They want forty minutes on how the team ships without a release manager.</span>
+              </span>
+              <button class="star-btn" type="button" aria-label="Star">
+                <svg class="icon" aria-hidden="true"><use href="#i-star" /></svg>
+              </button>
+            </div>
+
+            <div class="message-row">
+              <span class="unread-dot is-hidden"></span>
+              <span class="avatar avatar-md" style="background: #5c6670">AD</span>
+              <span class="message-text">
+                <span class="message-top">
+                  <span class="message-sender">Aisha Diallo</span>
+                  <span class="message-time">Sun</span>
+                </span>
+                <span class="message-subject">Re: onboarding checklist</span>
+                <span class="message-preview">Cut it from nineteen steps to eleven, the rest moved into the first week doc.</span>
+              </span>
+              <button class="star-btn" type="button" aria-label="Star">
+                <svg class="icon" aria-hidden="true"><use href="#i-star" /></svg>
+              </button>
+            </div>
+
+            <div class="message-row is-unread">
+              <span class="unread-dot"></span>
+              <span class="avatar avatar-md" style="background: #b8451f">BR</span>
+              <span class="message-text">
+                <span class="message-top">
+                  <span class="message-sender">Bruno Reyes</span>
+                  <span class="message-time">Sat</span>
+                </span>
+                <span class="message-subject">Warehouse integration timeline</span>
+                <span class="message-preview">Their team can start in March, earlier only if we hand over the spec by Friday.</span>
+              </span>
+              <button class="star-btn" type="button" aria-label="Star">
+                <svg class="icon" aria-hidden="true"><use href="#i-star" /></svg>
+              </button>
+            </div>
+
+            <div class="message-row">
+              <span class="unread-dot is-hidden"></span>
+              <span class="avatar avatar-md" style="background: #2f6fd0">KT</span>
+              <span class="message-text">
+                <span class="message-top">
+                  <span class="message-sender">Katja Thorne</span>
+                  <span class="message-time">Sat</span>
+                </span>
+                <span class="message-subject">Conference talk accepted</span>
+                <span class="message-preview">Thirty minute slot on the second day, they need slides two weeks ahead.</span>
+              </span>
+              <button class="star-btn is-starred" type="button" aria-label="Star">
+                <svg class="icon" aria-hidden="true"><use href="#i-star" /></svg>
+              </button>
+            </div>
+
+            <div class="message-row">
+              <span class="unread-dot is-hidden"></span>
+              <span class="avatar avatar-md" style="background: #1d7a4d">OM</span>
+              <span class="message-text">
+                <span class="message-top">
+                  <span class="message-sender">Oscar Mensah</span>
+                  <span class="message-time">Fri</span>
+                </span>
+                <span class="message-subject">Vendor invoices for February</span>
+                <span class="message-preview">All approved except the analytics one, that contract ended in January.</span>
+              </span>
+              <button class="star-btn" type="button" aria-label="Star">
+                <svg class="icon" aria-hidden="true"><use href="#i-star" /></svg>
+              </button>
+            </div>
+
+            <div class="message-row is-unread">
+              <span class="unread-dot"></span>
+              <span class="avatar avatar-md" style="background: #8e4ec6">LV</span>
+              <span class="message-text">
+                <span class="message-top">
+                  <span class="message-sender">Liam Vance</span>
+                  <span class="message-time">Fri</span>
+                </span>
+                <span class="message-subject">Mobile crash rate is down</span>
+                <span class="message-preview">Point four percent after the hotfix, the camera path is finally stable.</span>
+              </span>
+              <button class="star-btn" type="button" aria-label="Star">
+                <svg class="icon" aria-hidden="true"><use href="#i-star" /></svg>
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <div class="divider"></div>
+
+        <!-- right pane -->
+        <section class="reader">
+          <div class="reader-scroll">
+            <div class="reader-head">
+              <h1 class="reader-title">Q3 launch: final asset review and go-live checklist</h1>
+
+              <div class="reader-meta">
+                <span class="avatar avatar-lg" style="background: #b8451f">AC</span>
+
+                <span class="reader-from">
+                  <span class="reader-name">Amara Chen</span>
+                  <span class="reader-address">amara.chen@northwind-studio.com</span>
+                </span>
+
+                <span class="reader-date">Sep 4, 2026, 9:41 AM</span>
+
+                <span class="reader-actions">
+                  <button class="icon-btn" type="button" aria-label="Archive">
+                    <svg class="icon" aria-hidden="true"><use href="#i-archive" /></svg>
+                  </button>
+                  <span class="tooltip-anchor">
+                    <button class="icon-btn" type="button" aria-label="Snooze">
+                      <svg class="icon" aria-hidden="true"><use href="#i-clock" /></svg>
+                    </button>
+                    <span class="tooltip">
+                      Snooze until tomorrow
+                      <span class="tooltip-arrow"></span>
+                    </span>
+                  </span>
+                  <button class="icon-btn" type="button" aria-label="Label">
+                    <svg class="icon" aria-hidden="true"><use href="#i-tag" /></svg>
+                  </button>
+                  <button class="icon-btn" type="button" aria-label="Delete">
+                    <svg class="icon" aria-hidden="true"><use href="#i-trash" /></svg>
+                  </button>
+                  <button class="icon-btn" type="button" aria-label="Reply">
+                    <svg class="icon" aria-hidden="true"><use href="#i-reply" /></svg>
+                  </button>
+                  <button class="icon-btn" type="button" aria-label="More">
+                    <svg class="icon" aria-hidden="true"><use href="#i-more" /></svg>
+                  </button>
+                </span>
+              </div>
+            </div>
+
+            <div class="reader-divider"></div>
+
+            <div class="reader-body">
+              <p>
+                Morning. The last batch of launch assets is in the shared drive, folder named
+                <strong>Q3 / final</strong>. Everything is exported at the sizes we agreed on, so nothing should need
+                another pass from the design side unless you spot something odd in the crops.
+              </p>
+
+              <p>
+                One thing still open. The hero image reads well on desktop but the subject sits too far left once the
+                layout drops below a thousand pixels. I attached an alternative crop that keeps her centered at every
+                width. If you prefer the original, say so today and I will leave it as it is.
+              </p>
+
+              <p>
+                Checklist for go-live is attached as well. Two items are still on you: the redirect map for the old
+                pricing URLs, and a final read of the legal footer. Everything else is checked off or waiting on the
+                deploy window on Thursday morning.
+              </p>
+
+              <div class="quoted">
+                <p>On Wednesday, Rafael Santos wrote:</p>
+                <p>
+                  Tokens are merged and the spacing scale changed slightly, so pull before you export anything new. The
+                  old values still render but they drift by a pixel or two on the card grid.
+                </p>
+              </div>
+
+              <p>Thanks, and shout if anything is missing from the drive.</p>
+
+              <p style="margin-bottom: 22px">Amara</p>
+
+              <p class="attachments-heading">3 attachments</p>
+
+              <div class="attachments">
+                <div class="attachment-card">
+                  <span class="attachment-icon"><svg class="icon" aria-hidden="true"><use href="#i-image" /></svg></span>
+                  <span class="attachment-text">
+                    <span class="attachment-name">hero-crop-centered-v4-final.png</span>
+                    <span class="attachment-size">2.4 MB</span>
+                  </span>
+                </div>
+
+                <div class="attachment-card">
+                  <span class="attachment-icon"><svg class="icon" aria-hidden="true"><use href="#i-file" /></svg></span>
+                  <span class="attachment-text">
+                    <span class="attachment-name">go-live-checklist-q3.pdf</span>
+                    <span class="attachment-size">318 KB</span>
+                  </span>
+                </div>
+
+                <div class="attachment-card">
+                  <span class="attachment-icon"><svg class="icon" aria-hidden="true"><use href="#i-file" /></svg></span>
+                  <span class="attachment-text">
+                    <span class="attachment-name">redirect-map-old-pricing.csv</span>
+                    <span class="attachment-size">41 KB</span>
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="reply-box">
+            <div class="reply-shell">
+              <textarea placeholder="Reply to Amara Chen"></textarea>
+              <div class="reply-foot">
+                <button class="icon-btn" type="button" aria-label="Attach file">
+                  <svg class="icon" aria-hidden="true"><use href="#i-paperclip" /></svg>
+                </button>
+                <button class="send-btn" type="button">
+                  <svg class="icon" aria-hidden="true"><use href="#i-send" /></svg>
+                  Send
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- compose window -->
+          <div class="compose-window">
+            <div class="compose-header">
+              <span class="compose-title">New message</span>
+              <span class="compose-header-actions">
+                <button class="icon-btn" type="button" aria-label="Minimize">
+                  <svg class="icon" aria-hidden="true"><use href="#i-minus" /></svg>
+                </button>
+                <button class="icon-btn" type="button" aria-label="Full screen">
+                  <svg class="icon" aria-hidden="true"><use href="#i-expand" /></svg>
+                </button>
+                <button class="icon-btn" type="button" aria-label="Close">
+                  <svg class="icon" aria-hidden="true"><use href="#i-close" /></svg>
+                </button>
+              </span>
+            </div>
+
+            <div class="compose-field">
+              <span class="compose-field-label">To</span>
+              <input type="text" value="rafael.santos@northwind-studio.com" />
+            </div>
+
+            <div class="compose-field">
+              <span class="compose-field-label">Subject</span>
+              <input type="text" value="Redirect map before Thursday" />
+            </div>
+
+            <div class="compose-body">
+              <textarea>Rafa, I will have the redirect map ready tonight. Can you sanity check the pricing URLs before the deploy window opens?</textarea>
+            </div>
+
+            <div class="compose-foot">
+              <button class="send-btn" type="button">
+                <svg class="icon" aria-hidden="true"><use href="#i-send" /></svg>
+                Send
+              </button>
+
+              <span class="compose-tools">
+                <button class="icon-btn" type="button" aria-label="Attach">
+                  <svg class="icon" aria-hidden="true"><use href="#i-paperclip" /></svg>
+                </button>
+                <button class="icon-btn" type="button" aria-label="Bold">
+                  <svg class="icon" aria-hidden="true"><use href="#i-bold" /></svg>
+                </button>
+                <button class="icon-btn" type="button" aria-label="Link">
+                  <svg class="icon" aria-hidden="true"><use href="#i-link" /></svg>
+                </button>
+                <button class="icon-btn" type="button" aria-label="Image">
+                  <svg class="icon" aria-hidden="true"><use href="#i-image" /></svg>
+                </button>
+                <button class="icon-btn" type="button" aria-label="Discard">
+                  <svg class="icon" aria-hidden="true"><use href="#i-trash" /></svg>
+                </button>
+              </span>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+  </body>
+</html>

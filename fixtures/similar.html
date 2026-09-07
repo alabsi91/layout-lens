@@ -1,0 +1,35 @@
+<!doctype html>
+<!--
+planted bugs:
+1. the icon in row 5 sits 3px lower than the icon in row 4, every other row lines up
+2. the last row's label is grey on white, and its text has a double quote in it
+-->
+<html>
+<head>
+  <style>
+    body { margin: 0; padding: 40px; font-family: Helvetica, Arial, sans-serif; background: #ffffff; }
+    .list { width: 420px; }
+    .row { display: flex; align-items: center; gap: 12px; padding: 10px 14px; border: 1px solid #e0e0e0; }
+    .row + .row { border-top: none; }
+    .icon { width: 20px; height: 20px; background: #4a6cf7; border-radius: 4px; }
+    .label { font-size: 14px; line-height: 20px; color: #222222; }
+    .row.late .icon { position: relative; top: 3px; }
+    .label.quote { color: #9a9a9a; }
+  </style>
+</head>
+<body>
+
+  <div class="list">
+    <div class="row"><div class="icon"></div><span class="label">Row one</span></div>
+    <div class="row"><div class="icon"></div><span class="label">Row two</span></div>
+    <div class="row"><div class="icon"></div><span class="label">Row three</span></div>
+    <div class="row"><div class="icon"></div><span class="label">Row four</span></div>
+    <div class="row late"><div class="icon"></div><span class="label">Row five</span></div>
+    <div class="row"><div class="icon"></div><span class="label">Row six</span></div>
+    <div class="row"><div class="icon"></div><span class="label">Row seven</span></div>
+    <div class="row"><div class="icon"></div><span class="label">Row eight</span></div>
+    <div class="row quoted"><div class="icon"></div><span class="label quote">She said "row nine" here</span></div>
+  </div>
+
+</body>
+</html>

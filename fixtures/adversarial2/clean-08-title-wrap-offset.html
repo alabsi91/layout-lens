@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Reports</title>
+<style>
+  body { margin: 0; background: #ffffff; color: #111827;
+         font-family: -apple-system, "Segoe UI", Arial, sans-serif; }
+
+  .wrap { max-width: 860px; margin: 0 auto; padding: 48px 24px; }
+  .wrap h1 { margin: 0 0 20px; font-size: 24px; line-height: 32px; }
+
+  .row { display: flex; align-items: flex-start; gap: 24px; }
+
+  .card { flex: 1; border: 1px solid #e5e7eb; border-radius: 12px; padding: 20px; }
+
+  /* one title runs to two lines, so its description starts a whole line lower */
+  .card-title { margin: 0 0 10px; font-size: 20px; line-height: 28px; }
+  .card-desc { margin: 0 0 14px; font-size: 14px; line-height: 22px; color: #4b5563; }
+
+  .card-link { font-size: 14px; line-height: 20px; color: #2563eb; text-decoration: none; }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <h1>Reports</h1>
+
+  <div class="row">
+    <article class="card">
+      <h2 class="card-title" id="title-cash">Cash position</h2>
+      <p class="card-desc" id="desc-cash">Balances across every connected account.</p>
+      <a class="card-link" href="#">Open report</a>
+    </article>
+
+    <article class="card">
+      <h2 class="card-title" id="title-ageing">Receivables ageing by customer segment</h2>
+      <p class="card-desc" id="desc-ageing">Open invoices bucketed into 30, 60 and 90 days.</p>
+      <a class="card-link" href="#">Open report</a>
+    </article>
+  </div>
+</div>
+
+</body>
+</html>

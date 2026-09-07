@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Shipping address</title>
+<style>
+  body { margin: 0; background: #ffffff; color: #1a1a1a; font-family: Arial, Helvetica, sans-serif; }
+
+  .form-col { width: 288px; margin: 50px auto 0; }
+  .form-col h2 { margin: 0 0 18px; font-size: 19px; }
+
+  .field-row { margin-bottom: 16px; }
+  .field-label { display: block; margin: 0 0 6px; font-size: 13px; line-height: 20px; font-weight: 700; }
+
+  .field { display: block; width: 282px; box-sizing: border-box; padding: 9px 12px;
+           border: 1px solid #9ca3af; border-radius: 6px;
+           font-family: inherit; font-size: 14px; line-height: 20px; color: #1a1a1a; background: #ffffff; }
+
+  /* the planted defect: this one starts 3 further in than the rest */
+  #zip { margin-left: 3px; }
+</style>
+</head>
+<body>
+
+<section class="form-col">
+  <h2>Shipping address</h2>
+
+  <div class="field-row">
+    <label class="field-label" for="street">Street</label>
+    <input class="field" id="street" type="text" value="14 Aldgate Row">
+  </div>
+
+  <div class="field-row">
+    <label class="field-label" for="city">City</label>
+    <input class="field" id="city" type="text" value="Leeds">
+  </div>
+
+  <div class="field-row">
+    <label class="field-label" for="zip">Postcode</label>
+    <input class="field" id="zip" type="text" value="LS1 4AP">
+  </div>
+
+  <div class="field-row">
+    <label class="field-label" for="country">Country</label>
+    <input class="field" id="country" type="text" value="United Kingdom">
+  </div>
+</section>
+
+</body>
+</html>

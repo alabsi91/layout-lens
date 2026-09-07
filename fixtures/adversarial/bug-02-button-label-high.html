@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Checkout — review</title>
+<style>
+  body { margin: 0; background: #ffffff; color: #1a1a1a; font-family: Arial, Helvetica, sans-serif; }
+
+  .checkout { width: 420px; margin: 60px auto 0; }
+  .checkout h2 { margin: 0 0 8px; font-size: 20px; }
+  .checkout p { margin: 0 0 20px; font-size: 14px; line-height: 22px; color: #4b5563; }
+
+  .actions { display: flex; align-items: flex-start; gap: 12px; }
+
+  .btn { border: 0; border-radius: 6px; font-family: inherit; font-size: 14px; line-height: 20px; cursor: pointer; }
+  .btn-primary { background: #1a56db; color: #ffffff; }
+  .btn-secondary { background: #eef2ff; color: #1a1a1a; padding: 11px 18px; }
+
+  /* the planted defect: 8 above, 14 below */
+  #place-order { padding: 8px 18px 14px; }
+</style>
+</head>
+<body>
+
+<section class="checkout">
+  <h2>Review your order</h2>
+  <p>Two items, delivered Thursday. Card ending 4419 will be charged when the order ships.</p>
+
+  <div class="actions">
+    <button class="btn btn-primary" id="place-order" type="button">Place order</button>
+    <button class="btn btn-secondary" type="button">Keep shopping</button>
+  </div>
+</section>
+
+</body>
+</html>

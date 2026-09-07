@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Dark mode hint</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 40px;
+        background: #ffffff;
+        color: #222222;
+        font: 16px/24px Helvetica, Arial, sans-serif;
+      }
+
+      h1 {
+        margin: 0 0 12px;
+        font-size: 24px;
+        line-height: 32px;
+      }
+
+      /* Readable on white. The dark palette below reuses it on a dark background, where it is not. */
+      p.hint {
+        margin: 0;
+        font-size: 14px;
+        line-height: 20px;
+        color: #444444;
+      }
+
+      @media (prefers-color-scheme: dark) {
+        body {
+          background: #111111;
+          color: #f5f5f5;
+        }
+
+        p.hint {
+          color: #555555;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Notification settings</h1>
+    <p class="hint">We only email you when something needs your attention.</p>
+  </body>
+</html>

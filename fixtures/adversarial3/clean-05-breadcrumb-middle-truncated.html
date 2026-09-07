@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Files</title>
+<style>
+  body { margin: 0; background: #ffffff; color: #111827;
+         font-family: -apple-system, "Segoe UI", Arial, sans-serif; }
+
+  .page { max-width: 900px; margin: 0 auto; padding: 40px 24px; }
+
+  .breadcrumb { display: flex; align-items: center; gap: 8px;
+                font-size: 13px; line-height: 18px; }
+  .crumb { white-space: nowrap; color: #2563eb; text-decoration: none; }
+  .sep { color: #9ca3af; }
+
+  /* the middle crumb is capped and signs the cut with an ellipsis on purpose,
+     the last crumb is the one that has to stay readable */
+  .crumb-mid { max-width: 140px; overflow: hidden; text-overflow: ellipsis; }
+
+  h1 { margin: 16px 0 8px; font-size: 22px; line-height: 30px; }
+  p { margin: 0; font-size: 14px; line-height: 20px; color: #6b7280; }
+</style>
+</head>
+<body>
+
+<div class="page">
+  <nav class="breadcrumb" id="crumbs">
+    <a class="crumb" href="#root">Drive</a>
+    <span class="sep">/</span>
+    <a class="crumb crumb-mid" id="crumb-project" href="#project">Q3 procurement and vendor consolidation programme</a>
+    <span class="sep">/</span>
+    <a class="crumb" href="#folder">Contracts</a>
+  </nav>
+
+  <h1>Vendor contracts</h1>
+  <p>18 files &middot; last change 4 days ago</p>
+</div>
+
+</body>
+</html>

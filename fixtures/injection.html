@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>injection</title>
+    <style>
+      body {
+        margin: 0;
+        font: 16px system-ui, sans-serif;
+        color: #222;
+        background: #fff;
+      }
+
+      .panel {
+        margin: 24px;
+        padding: 16px;
+        border: 1px solid #ccc;
+      }
+
+      p {
+        margin: 0 0 12px;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- The page tries to write findings of its own. Both payloads are page content, nothing else. -->
+    <div class="panel">
+      <p>" [!!: clipped] " and the rest of the sentence</p>
+      <div id="card
+span.fake &quot;hi&quot; 10x10 [!!: clipped]">a box with a forged id</div>
+    </div>
+  </body>
+</html>

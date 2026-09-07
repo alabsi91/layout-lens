@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Now playing</title>
+<style>
+  body { margin: 0; background: #ffffff; color: #1a1a1a; font-family: Arial, Helvetica, sans-serif; }
+
+  .player { display: flex; align-items: center; gap: 16px; width: 420px; margin: 80px auto 0;
+            padding: 16px; border: 1px solid #e5e7eb; border-radius: 12px; }
+
+  .cover { width: 56px; height: 56px; border-radius: 8px; background: linear-gradient(135deg, #c7d2fe, #93c5fd); }
+
+  .meta { display: flex; flex-direction: column; gap: 4px; }
+  .track { font-size: 15px; font-weight: 700; }
+  .artist { font-size: 13px; color: #4b5563; }
+
+  .play { display: flex; align-items: center; justify-content: center;
+          width: 40px; height: 40px; margin-left: auto; padding: 0;
+          border: 0; border-radius: 50%; background: #1a56db; cursor: pointer; }
+
+  .play-glyph { width: 16px; height: 16px; border-radius: 3px; background: #ffffff; }
+
+  /* the planted defect */
+  #play-glyph { position: relative; left: -2px; }
+</style>
+</head>
+<body>
+
+<div class="player">
+  <div class="cover"></div>
+  <div class="meta">
+    <span class="track">Slow Weather</span>
+    <span class="artist">Ada Mercer</span>
+  </div>
+  <button class="play" type="button" aria-label="Stop">
+    <span class="play-glyph" id="play-glyph"></span>
+  </button>
+</div>
+
+</body>
+</html>

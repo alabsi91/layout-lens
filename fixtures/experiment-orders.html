@@ -1,0 +1,1106 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Orders — Admin</title>
+<style>
+  :root {
+    --page-background: #f4f5f7;
+    --surface: #ffffff;
+    --surface-alt: #fafbfc;
+    --border: #e2e5ea;
+    --border-strong: #d3d8e0;
+    --text-primary: #14181d;
+    --text-secondary: #56606f;
+    --accent: #2454cf;
+    --accent-hover: #1d47b3;
+    --positive: #0b6b45;
+    --negative: #b32218;
+    --selected-row: #eef3ff;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    margin: 0;
+    background: var(--page-background);
+    color: var(--text-primary);
+    font: 13px/1.4 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  svg {
+    display: block;
+  }
+
+  /* top bar */
+
+  .top-bar {
+    display: flex;
+    align-items: center;
+    height: 56px;
+    padding: 0 20px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .hamburger-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    margin-inline-start: -6px;
+    padding: 0;
+    border: 0;
+    border-radius: 6px;
+    background: transparent;
+    color: var(--text-secondary);
+    cursor: pointer;
+  }
+
+  .hamburger-button:hover {
+    background: #eef0f3;
+  }
+
+  .page-title {
+    margin: 0 0 0 12px;
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+
+  .top-bar-end {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-inline-start: auto;
+  }
+
+  .bell-button {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border: 0;
+    border-radius: 6px;
+    background: transparent;
+    color: var(--text-secondary);
+    cursor: pointer;
+  }
+
+  .bell-button:hover {
+    background: #eef0f3;
+  }
+
+  .notification-count {
+    position: absolute;
+    top: 1px;
+    inset-inline-end: 1px;
+    min-width: 15px;
+    height: 15px;
+    padding: 0 4px;
+    border: 1.5px solid var(--surface);
+    border-radius: 999px;
+    background: #d92d20;
+    color: #ffffff;
+    font-size: 9px;
+    font-weight: 700;
+    line-height: 12px;
+    text-align: center;
+  }
+
+  .avatar-top-bar {
+    width: 30px;
+    height: 30px;
+    border-radius: 999px;
+    background: #3f4c63;
+    color: #ffffff;
+    font-size: 11px;
+    font-weight: 600;
+    line-height: 30px;
+    text-align: center;
+  }
+
+  /* page */
+
+  .page {
+    padding: 18px 20px 28px;
+  }
+
+  /* toolbar */
+
+  .toolbar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 18px;
+  }
+
+  .search-field {
+    position: relative;
+    width: 280px;
+    flex: none;
+  }
+
+  .search-icon {
+    position: absolute;
+    top: 9px;
+    inset-inline-start: 10px;
+    color: #6b7480;
+    pointer-events: none;
+  }
+
+  .search-input {
+    width: 100%;
+    height: 34px;
+    padding: 0 10px 0 32px;
+    border: 1px solid var(--border-strong);
+    border-radius: 7px;
+    background: var(--surface);
+    color: var(--text-primary);
+    font: inherit;
+  }
+
+  .search-input::placeholder {
+    color: #6b7480;
+  }
+
+  .filter-select {
+    height: 34px;
+    padding: 0 28px 0 10px;
+    border: 1px solid var(--border-strong);
+    border-radius: 7px;
+    background: var(--surface) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M2.5 4.5 6 8l3.5-3.5' fill='none' stroke='%2356606f' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat right 9px center;
+    color: var(--text-primary);
+    font: inherit;
+    -webkit-appearance: none;
+    appearance: none;
+    cursor: pointer;
+  }
+
+  .new-order-button {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    height: 34px;
+    margin-inline-start: auto;
+    padding: 0 13px;
+    border: 0;
+    border-radius: 7px;
+    background: var(--accent);
+    color: #ffffff;
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .new-order-button:hover {
+    background: var(--accent-hover);
+  }
+
+  /* stat cards */
+
+  .stat-cards {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 18px;
+  }
+
+  .stat-card {
+    padding: 13px 14px 14px;
+    border: 1px solid var(--border);
+    border-radius: 9px;
+    background: var(--surface);
+  }
+
+  .stat-label {
+    color: var(--text-secondary);
+    font-size: 12px;
+    font-weight: 500;
+  }
+
+  .stat-value {
+    margin-top: 6px;
+    font-size: 24px;
+    font-weight: 650;
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+  }
+
+  .stat-trend {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-top: 7px;
+    font-size: 12px;
+    font-weight: 500;
+  }
+
+  .stat-trend.is-up {
+    color: var(--positive);
+  }
+
+  .stat-trend.is-down {
+    color: var(--negative);
+  }
+
+  .stat-trend-note {
+    color: var(--text-secondary);
+    font-weight: 400;
+  }
+
+  /* table */
+
+  .table-panel {
+    border: 1px solid var(--border);
+    border-radius: 9px;
+    background: var(--surface);
+    overflow: hidden;
+  }
+
+  .table-scroll {
+    height: 420px;
+    overflow-y: auto;
+  }
+
+  .orders-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    table-layout: fixed;
+  }
+
+  .orders-table th {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    height: 36px;
+    padding: 0 12px;
+    border-bottom: 1px solid var(--border);
+    background: #f7f8fa;
+    color: var(--text-secondary);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    text-align: start;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .orders-table td {
+    height: 52px;
+    padding: 0 12px;
+    border-bottom: 1px solid #eef0f3;
+    vertical-align: middle;
+  }
+
+  .orders-table tbody tr:nth-child(even) td {
+    background: var(--surface-alt);
+  }
+
+  .orders-table tbody tr.is-selected td {
+    background: var(--selected-row);
+  }
+
+  .orders-table tbody tr:last-child td {
+    border-bottom: 0;
+  }
+
+  .column-check { width: 44px; }
+  .column-order { width: 120px; }
+  .column-customer { width: auto; }
+  .column-status { width: 130px; }
+  .column-amount { width: 140px; }
+  .column-date { width: 120px; }
+  .column-actions { width: 112px; }
+
+  .cell-amount,
+  .column-amount {
+    text-align: end;
+  }
+
+  .row-checkbox {
+    display: block;
+    width: 15px;
+    height: 15px;
+    margin: 0;
+    accent-color: var(--accent);
+  }
+
+  .order-number {
+    color: var(--text-primary);
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  .order-number:hover {
+    color: var(--accent);
+  }
+
+  .customer {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+  }
+
+  .avatar-customer {
+    flex: none;
+    width: 28px;
+    height: 28px;
+    border-radius: 999px;
+    color: #ffffff;
+    font-size: 10px;
+    font-weight: 650;
+    line-height: 28px;
+    text-align: center;
+  }
+
+  .customer-text {
+    min-width: 0;
+  }
+
+  .customer-name {
+    font-weight: 550;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .customer-email {
+    margin-top: 1px;
+    color: var(--text-secondary);
+    font-size: 12px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .status-pill {
+    display: inline-block;
+    padding: 3px 9px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 600;
+    line-height: 15px;
+    white-space: nowrap;
+  }
+
+  .status-paid { background: #dcf3e6; color: #0b6b45; }
+  .status-pending { background: #fdeecd; color: #7a4a06; }
+  .status-refunded { background: #e6e9ef; color: #4a5464; }
+  .status-failed { background: #fde3e0; color: #a5201a; }
+  .status-shipped { background: #dfe9ff; color: #1d47b3; }
+
+  .cell-amount {
+    font-variant-numeric: tabular-nums;
+    font-weight: 550;
+    white-space: nowrap;
+  }
+
+  .cell-date {
+    color: var(--text-secondary);
+    white-space: nowrap;
+  }
+
+  .row-actions {
+    display: flex;
+    gap: 3px;
+  }
+
+  .icon-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 26px;
+    height: 26px;
+    padding: 0;
+    border: 0;
+    border-radius: 5px;
+    background: transparent;
+    color: #616b79;
+    cursor: pointer;
+  }
+
+  .icon-button:hover {
+    background: #e7eaee;
+    color: var(--text-primary);
+  }
+
+  /* pagination */
+
+  .pagination {
+    display: flex;
+    align-items: center;
+    height: 46px;
+    padding: 0 14px;
+    border-top: 1px solid var(--border);
+    background: var(--surface);
+  }
+
+  .pagination-summary {
+    color: var(--text-secondary);
+    font-size: 12px;
+  }
+
+  .page-buttons {
+    display: flex;
+    gap: 4px;
+    margin-inline-start: auto;
+  }
+
+  .page-button {
+    min-width: 28px;
+    height: 28px;
+    padding: 0 8px;
+    border: 1px solid var(--border-strong);
+    border-radius: 6px;
+    background: var(--surface);
+    color: var(--text-primary);
+    font: inherit;
+    font-size: 12px;
+    cursor: pointer;
+  }
+
+  .page-button:hover {
+    background: #f2f4f7;
+  }
+
+  .page-button.is-current {
+    border-color: var(--accent);
+    background: var(--accent);
+    color: #ffffff;
+    font-weight: 600;
+  }
+
+  .page-button:disabled {
+    background: #f7f8fa;
+    color: #6b7480;
+    cursor: default;
+  }
+
+  .page-ellipsis {
+    align-self: center;
+    padding: 0 2px;
+    color: var(--text-secondary);
+    font-size: 12px;
+  }
+</style>
+</head>
+<body>
+
+<header class="top-bar">
+  <button class="hamburger-button" type="button" aria-label="Menu">
+    <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
+      <path d="M2.5 5h13M2.5 9h13M2.5 13h13"/>
+    </svg>
+  </button>
+
+  <h1 class="page-title">Orders</h1>
+
+  <div class="top-bar-end">
+    <button class="bell-button" type="button" aria-label="Notifications">
+      <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M4.5 7.2a4.5 4.5 0 1 1 9 0c0 3 1.2 4.3 1.2 4.3H3.3s1.2-1.3 1.2-4.3Z"/>
+        <path d="M7.4 14.1a1.8 1.8 0 0 0 3.2 0"/>
+      </svg>
+      <span class="notification-count">7</span>
+    </button>
+    <div class="avatar-top-bar">RK</div>
+  </div>
+</header>
+
+<main class="page">
+
+  <div class="toolbar">
+    <div class="search-field">
+      <span class="search-icon">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
+          <circle cx="6.2" cy="6.2" r="4.2"/>
+          <path d="M9.4 9.4 12.4 12.4"/>
+        </svg>
+      </span>
+      <input class="search-input" type="search" placeholder="Search orders, customers…">
+    </div>
+
+    <select class="filter-select" aria-label="Status">
+      <option>All statuses</option>
+      <option>Paid</option>
+      <option>Pending</option>
+      <option>Refunded</option>
+    </select>
+
+    <select class="filter-select" aria-label="Payment method">
+      <option>All payments</option>
+      <option>Card</option>
+      <option>Invoice</option>
+    </select>
+
+    <select class="filter-select" aria-label="Date range">
+      <option>Last 30 days</option>
+      <option>Last 7 days</option>
+      <option>This quarter</option>
+    </select>
+
+    <button class="new-order-button" type="button">
+      <svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+        <path d="M6.5 2.5v8M2.5 6.5h8"/>
+      </svg>
+      New order
+    </button>
+  </div>
+
+  <section class="stat-cards">
+    <div class="stat-card">
+      <div class="stat-label">Total orders</div>
+      <div class="stat-value">240</div>
+      <div class="stat-trend is-up">
+        <svg width="11" height="11" viewBox="0 0 11 11" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M5.5 9V2.5M2.6 5.4 5.5 2.5l2.9 2.9"/>
+        </svg>
+        12.4%
+        <span class="stat-trend-note">vs last month</span>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-label">Revenue</div>
+      <div class="stat-value">$184,320</div>
+      <div class="stat-trend is-up">
+        <svg width="11" height="11" viewBox="0 0 11 11" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M5.5 9V2.5M2.6 5.4 5.5 2.5l2.9 2.9"/>
+        </svg>
+        8.1%
+        <span class="stat-trend-note">vs last month</span>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-label">Avg. order value</div>
+      <div class="stat-value">$768</div>
+      <div class="stat-trend is-down">
+        <svg width="11" height="11" viewBox="0 0 11 11" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M5.5 2v6.5M2.6 5.6 5.5 8.5l2.9-2.9"/>
+        </svg>
+        3.2%
+        <span class="stat-trend-note">vs last month</span>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-label">Refund rate</div>
+      <div class="stat-value">2.7%</div>
+      <div class="stat-trend is-down">
+        <svg width="11" height="11" viewBox="0 0 11 11" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M5.5 2v6.5M2.6 5.6 5.5 8.5l2.9-2.9"/>
+        </svg>
+        0.6%
+        <span class="stat-trend-note">vs last month</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="table-panel">
+    <div class="table-scroll">
+      <table class="orders-table">
+        <colgroup>
+          <col class="column-check">
+          <col class="column-order">
+          <col class="column-customer">
+          <col class="column-status">
+          <col class="column-amount">
+          <col class="column-date">
+          <col class="column-actions">
+        </colgroup>
+        <thead>
+          <tr>
+            <th><input class="row-checkbox" type="checkbox" aria-label="Select all"></th>
+            <th>Order</th>
+            <th>Customer</th>
+            <th>Status</th>
+            <th class="column-amount">Amount</th>
+            <th>Date</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><input class="row-checkbox" type="checkbox" aria-label="Select order 10482"></td>
+            <td><a class="order-number" href="#">#10482</a></td>
+            <td>
+              <div class="customer">
+                <div class="avatar-customer" style="background:#4a6fb8">MC</div>
+                <div class="customer-text">
+                  <div class="customer-name">Maya Calderón</div>
+                  <div class="customer-email">maya.calderon@northwind.co</div>
+                </div>
+              </div>
+            </td>
+            <td><span class="status-pill status-paid">Paid</span></td>
+            <td class="cell-amount">$1,240.00</td>
+            <td class="cell-date">Mar 14</td>
+            <td>
+              <div class="row-actions">
+                <button class="icon-button" type="button" aria-label="View">
+                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M1.2 7S3.4 3.2 7 3.2 12.8 7 12.8 7 10.6 10.8 7 10.8 1.2 7 1.2 7Z"/><circle cx="7" cy="7" r="1.7"/></svg>
+                </button>
+                <button class="icon-button" type="button" aria-label="Edit">
+                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"><path d="M9.6 2.3 11.7 4.4 5 11.1 2.4 11.6 2.9 9Z"/></svg>
+                </button>
+                <button class="icon-button" type="button" aria-label="More">
+                  <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor"><circle cx="3" cy="7" r="1.15"/><circle cx="7" cy="7" r="1.15"/><circle cx="11" cy="7" r="1.15"/></svg>
+                </button>
+              </div>
+            </td>
+          </tr>
+
+          <tr>
+            <td><input class="row-checkbox" type="checkbox" aria-label="Select order 10481"></td>
+            <td><a class="order-number" href="#">#10481</a></td>
+            <td>
+              <div class="customer">
+                <div class="avatar-customer" style="background:#8a5aa8">TO</div>
+                <div class="customer-text">
+                  <div class="customer-name">Tobias Ohlsson</div>
+                  <div class="customer-email">tobias.ohlsson@procurement.scandinavian-logistics-group.example.com</div>
+                </div>
+              </div>
+            </td>
+            <td><span class="status-pill status-pending">Pending</span></td>
+            <td class="cell-amount">$318.50</td>
+            <td class="cell-date">Mar 14</td>
+            <td>
+              <div class="row-actions">
+                <button class="icon-button" type="button" aria-label="View">
+                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M1.2 7S3.4 3.2 7 3.2 12.8 7 12.8 7 10.6 10.8 7 10.8 1.2 7 1.2 7Z"/><circle cx="7" cy="7" r="1.7"/></svg>
+                </button>
+                <button class="icon-button" type="button" aria-label="Edit">
+                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"><path d="M9.6 2.3 11.7 4.4 5 11.1 2.4 11.6 2.9 9Z"/></svg>
+                </button>
+                <button class="icon-button" type="button" aria-label="More">
+                  <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor"><circle cx="3" cy="7" r="1.15"/><circle cx="7" cy="7" r="1.15"/><circle cx="11" cy="7" r="1.15"/></svg>
+                </button>
+              </div>
+            </td>
+          </tr>
+
+          <tr class="is-selected">
+            <td><input class="row-checkbox" type="checkbox" checked aria-label="Select order 10480"></td>
+            <td><a class="order-number" href="#">#10480</a></td>
+            <td>
+              <div class="customer">
+                <div class="avatar-customer" style="background:#2f7d68">HN</div>
+                <div class="customer-text">
+                  <div class="customer-name">Hannah Nakamura</div>
+                  <div class="customer-email">h.nakamura@brightline.io</div>
+                </div>
+              </div>
+            </td>
+            <td><span class="status-pill status-shipped">Shipped</span></td>
+            <td class="cell-amount">$128,940.00</td>
+            <td class="cell-date">Mar 13</td>
+            <td>
+              <div class="row-actions">
+                <button class="icon-button" type="button" aria-label="View">
+                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M1.2 7S3.4 3.2 7 3.2 12.8 7 12.8 7 10.6 10.8 7 10.8 1.2 7 1.2 7Z"/><circle cx="7" cy="7" r="1.7"/></svg>
+                </button>
+                <button class="icon-button" type="button" aria-label="Edit">
+                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"><path d="M9.6 2.3 11.7 4.4 5 11.1 2.4 11.6 2.9 9Z"/></svg>
+                </button>
+                <button class="icon-button" type="button" aria-label="More">
+                  <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor"><circle cx="3" cy="7" r="1.15"/><circle cx="7" cy="7" r="1.15"/><circle cx="11" cy="7" r="1.15"/></svg>
+                </button>
+              </div>
+            </td>
+          </tr>
+
+          <tr>
+            <td><input class="row-checkbox" type="checkbox" aria-label="Select order 10479"></td>
+            <td><a class="order-number" href="#">#10479</a></td>
+            <td>
+              <div class="customer">
+                <div class="avatar-customer" style="background:#92531d">DP</div>
+                <div class="customer-text">
+                  <div class="customer-name">Devon Park</div>
+                  <div class="customer-email">devon@parkstudio.design</div>
+                </div>
+              </div>
+            </td>
+            <td><span class="status-pill status-refunded">Refunded</span></td>
+            <td class="cell-amount">$96.00</td>
+            <td class="cell-date">Mar 13</td>
+            <td>
+              <div class="row-actions">
+                <button class="icon-button" type="button" aria-label="View">
+                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M1.2 7S3.4 3.2 7 3.2 12.8 7 12.8 7 10.6 10.8 7 10.8 1.2 7 1.2 7Z"/><circle cx="7" cy="7" r="1.7"/></svg>
+                </button>
+                <button class="icon-button" type="button" aria-label="Edit">
+                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"><path d="M9.6 2.3 11.7 4.4 5 11.1 2.4 11.6 2.9 9Z"/></svg>
+                </button>
+                <button class="icon-button" type="button" aria-label="More">
+                  <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor"><circle cx="3" cy="7" r="1.15"/><circle cx="7" cy="7" r="1.15"/><circle cx="11" cy="7" r="1.15"/></svg>
+                </button>
+              </div>
+            </td>
+          </tr>
+
+          <tr>
+            <td><input class="row-checkbox" type="checkbox" aria-label="Select order 10478"></td>
+            <td><a class="order-number" href="#">#10478</a></td>
+            <td>
+              <div class="customer">
+                <div class="avatar-customer" style="background:#4a6fb8">LA</div>
+                <div class="customer-text">
+                  <div class="customer-name">Liam Abraham</div>
+                  <div class="customer-email">liam.abraham@fielder.co.uk</div>
+                </div>
+              </div>
+            </td>
+            <td><span class="status-pill status-paid">Paid</span></td>
+            <td class="cell-amount">$2,015.75</td>
+            <td class="cell-date">Mar 12</td>
+            <td>
+              <div class="row-actions">
+                <button class="icon-button" type="button" aria-label="View">
+                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M1.2 7S3.4 3.2 7 3.2 12.8 7 12.8 7 10.6 10.8 7 10.8 1.2 7 1.2 7Z"/><circle cx="7" cy="7" r="1.7"/></svg>
+                </button>
+                <button class="icon-button" type="button" aria-label="Edit">
+                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"><path d="M9.6 2.3 11.7 4.4 5 11.1 2.4 11.6 2.9 9Z"/></svg>
+                </button>
+                <button class="icon-button" type="button" aria-label="More">
+                  <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor"><circle cx="3" cy="7" r="1.15"/><circle cx="7" cy="7" r="1.15"/><circle cx="11" cy="7" r="1.15"/></svg>
+                </button>
+              </div>
+            </td>
+          </tr>
+
+          <tr>
+            <td><input class="row-checkbox" type="checkbox" aria-label="Select order 10477"></td>
+            <td><a class="order-number" href="#">#10477</a></td>
+            <td>
+              <div class="customer">
+                <div class="avatar-customer" style="background:#a8455c">SR</div>
+                <div class="customer-text">
+                  <div class="customer-name">Sofia Ricci</div>
+                  <div class="customer-email">sofia.ricci@atelier-milano.it</div>
+                </div>
+              </div>
+            </td>
+            <td><span class="status-pill status-failed">Failed</span></td>
+            <td class="cell-amount">$540.00</td>
+            <td class="cell-date">Mar 12</td>
+            <td>
+              <div class="row-actions">
+                <button class="icon-button" type="button" aria-label="View">
+                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M1.2 7S3.4 3.2 7 3.2 12.8 7 12.8 7 10.6 10.8 7 10.8 1.2 7 1.2 7Z"/><circle cx="7" cy="7" r="1.7"/></svg>
+                </button>
+                <button class="icon-button" type="button" aria-label="Edit">
+                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"><path d="M9.6 2.3 11.7 4.4 5 11.1 2.4 11.6 2.9 9Z"/></svg>
+                </button>
+                <button class="icon-button" type="button" aria-label="More">
+                  <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor"><circle cx="3" cy="7" r="1.15"/><circle cx="7" cy="7" r="1.15"/><circle cx="11" cy="7" r="1.15"/></svg>
+                </button>
+              </div>
+            </td>
+          </tr>
+
+          <tr>
+            <td><input class="row-checkbox" type="checkbox" aria-label="Select order 10476"></td>
+            <td><a class="order-number" href="#">#10476</a></td>
+            <td>
+              <div class="customer">
+                <div class="avatar-customer" style="background:#2f7d68">EO</div>
+                <div class="customer-text">
+                  <div class="customer-name">Emeka Okafor</div>
+                  <div class="customer-email">emeka@okaforsupply.ng</div>
+                </div>
+              </div>
+            </td>
+            <td><span class="status-pill status-paid">Paid</span></td>
+            <td class="cell-amount">$4,780.20</td>
+            <td class="cell-date">Mar 11</td>
+            <td>
+              <div class="row-actions">
+                <button class="icon-button" type="button" aria-label="View">
+                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M1.2 7S3.4 3.2 7 3.2 12.8 7 12.8 7 10.6 10.8 7 10.8 1.2 7 1.2 7Z"/><circle cx="7" cy="7" r="1.7"/></svg>
+                </button>
+                <button class="icon-button" type="button" aria-label="Edit">
+                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"><path d="M9.6 2.3 11.7 4.4 5 11.1 2.4 11.6 2.9 9Z"/></svg>
+                </button>
+                <button class="icon-button" type="button" aria-label="More">
+                  <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor"><circle cx="3" cy="7" r="1.15"/><circle cx="7" cy="7" r="1.15"/><circle cx="11" cy="7" r="1.15"/></svg>
+                </button>
+              </div>
+            </td>
+          </tr>
+
+          <tr>
+            <td><input class="row-checkbox" type="checkbox" aria-label="Select order 10475"></td>
+            <td><a class="order-number" href="#">#10475</a></td>
+            <td>
+              <div class="customer">
+                <div class="avatar-customer" style="background:#4a6fb8">JW</div>
+                <div class="customer-text">
+                  <div class="customer-name">Julia Weiss</div>
+                  <div class="customer-email">j.weiss@heilbronn-partners.de</div>
+                </div>
+              </div>
+            </td>
+            <td><span class="status-pill status-pending">Pending</span></td>
+            <td class="cell-amount">$860.00</td>
+            <td class="cell-date">Mar 11</td>
+            <td>
+              <div class="row-actions">
+                <button class="icon-button" type="button" aria-label="View">
+                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M1.2 7S3.4 3.2 7 3.2 12.8 7 12.8 7 10.6 10.8 7 10.8 1.2 7 1.2 7Z"/><circle cx="7" cy="7" r="1.7"/></svg>
+                </button>
+                <button class="icon-button" type="button" aria-label="Edit">
+                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"><path d="M9.6 2.3 11.7 4.4 5 11.1 2.4 11.6 2.9 9Z"/></svg>
+                </button>
+                <button class="icon-button" type="button" aria-label="More">
+                  <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor"><circle cx="3" cy="7" r="1.15"/><circle cx="7" cy="7" r="1.15"/><circle cx="11" cy="7" r="1.15"/></svg>
+                </button>
+              </div>
+            </td>
+          </tr>
+
+          <tr>
+            <td><input class="row-checkbox" type="checkbox" aria-label="Select order 10474"></td>
+            <td><a class="order-number" href="#">#10474</a></td>
+            <td>
+              <div class="customer">
+                <div class="avatar-customer" style="background:#8a5aa8">AR</div>
+                <div class="customer-text">
+                  <div class="customer-name">Amir Rahimi</div>
+                  <div class="customer-email">amir.rahimi@vellum.app</div>
+                </div>
+              </div>
+            </td>
+            <td><span class="status-pill status-shipped">Shipped</span></td>
+            <td class="cell-amount">$1,099.99</td>
+            <td class="cell-date">Mar 10</td>
+            <td>
+              <div class="row-actions">
+                <button class="icon-button" type="button" aria-label="View">
+                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M1.2 7S3.4 3.2 7 3.2 12.8 7 12.8 7 10.6 10.8 7 10.8 1.2 7 1.2 7Z"/><circle cx="7" cy="7" r="1.7"/></svg>
+                </button>
+                <button class="icon-button" type="button" aria-label="Edit">
+                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"><path d="M9.6 2.3 11.7 4.4 5 11.1 2.4 11.6 2.9 9Z"/></svg>
+                </button>
+                <button class="icon-button" type="button" aria-label="More">
+                  <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor"><circle cx="3" cy="7" r="1.15"/><circle cx="7" cy="7" r="1.15"/><circle cx="11" cy="7" r="1.15"/></svg>
+                </button>
+              </div>
+            </td>
+          </tr>
+
+          <tr>
+            <td><input class="row-checkbox" type="checkbox" aria-label="Select order 10473"></td>
+            <td><a class="order-number" href="#">#10473</a></td>
+            <td>
+              <div class="customer">
+                <div class="avatar-customer" style="background:#92531d">CB</div>
+                <div class="customer-text">
+                  <div class="customer-name">Clara Bennett</div>
+                  <div class="customer-email">clara.bennett@ridgefield.org</div>
+                </div>
+              </div>
+            </td>
+            <td><span class="status-pill status-paid">Paid</span></td>
+            <td class="cell-amount">$275.40</td>
+            <td class="cell-date">Mar 10</td>
+            <td>
+              <div class="row-actions">
+                <button class="icon-button" type="button" aria-label="View">
+                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M1.2 7S3.4 3.2 7 3.2 12.8 7 12.8 7 10.6 10.8 7 10.8 1.2 7 1.2 7Z"/><circle cx="7" cy="7" r="1.7"/></svg>
+                </button>
+                <button class="icon-button" type="button" aria-label="Edit">
+                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"><path d="M9.6 2.3 11.7 4.4 5 11.1 2.4 11.6 2.9 9Z"/></svg>
+                </button>
+                <button class="icon-button" type="button" aria-label="More">
+                  <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor"><circle cx="3" cy="7" r="1.15"/><circle cx="7" cy="7" r="1.15"/><circle cx="11" cy="7" r="1.15"/></svg>
+                </button>
+              </div>
+            </td>
+          </tr>
+
+          <tr>
+            <td><input class="row-checkbox" type="checkbox" aria-label="Select order 10472"></td>
+            <td><a class="order-number" href="#">#10472</a></td>
+            <td>
+              <div class="customer">
+                <div class="avatar-customer" style="background:#2f7d68">NS</div>
+                <div class="customer-text">
+                  <div class="customer-name">Nadia Salem</div>
+                  <div class="customer-email">nadia@salem-textiles.com</div>
+                </div>
+              </div>
+            </td>
+            <td><span class="status-pill status-refunded">Refunded</span></td>
+            <td class="cell-amount">$3,420.00</td>
+            <td class="cell-date">Mar 9</td>
+            <td>
+              <div class="row-actions">
+                <button class="icon-button" type="button" aria-label="View">
+                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M1.2 7S3.4 3.2 7 3.2 12.8 7 12.8 7 10.6 10.8 7 10.8 1.2 7 1.2 7Z"/><circle cx="7" cy="7" r="1.7"/></svg>
+                </button>
+                <button class="icon-button" type="button" aria-label="Edit">
+                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"><path d="M9.6 2.3 11.7 4.4 5 11.1 2.4 11.6 2.9 9Z"/></svg>
+                </button>
+                <button class="icon-button" type="button" aria-label="More">
+                  <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor"><circle cx="3" cy="7" r="1.15"/><circle cx="7" cy="7" r="1.15"/><circle cx="11" cy="7" r="1.15"/></svg>
+                </button>
+              </div>
+            </td>
+          </tr>
+
+          <tr>
+            <td><input class="row-checkbox" type="checkbox" aria-label="Select order 10471"></td>
+            <td><a class="order-number" href="#">#10471</a></td>
+            <td>
+              <div class="customer">
+                <div class="avatar-customer" style="background:#4a6fb8">GT</div>
+                <div class="customer-text">
+                  <div class="customer-name">Gabriel Torres</div>
+                  <div class="customer-email">g.torres@almacen-sur.mx</div>
+                </div>
+              </div>
+            </td>
+            <td><span class="status-pill status-paid">Paid</span></td>
+            <td class="cell-amount">$612.10</td>
+            <td class="cell-date">Mar 9</td>
+            <td>
+              <div class="row-actions">
+                <button class="icon-button" type="button" aria-label="View">
+                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M1.2 7S3.4 3.2 7 3.2 12.8 7 12.8 7 10.6 10.8 7 10.8 1.2 7 1.2 7Z"/><circle cx="7" cy="7" r="1.7"/></svg>
+                </button>
+                <button class="icon-button" type="button" aria-label="Edit">
+                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"><path d="M9.6 2.3 11.7 4.4 5 11.1 2.4 11.6 2.9 9Z"/></svg>
+                </button>
+                <button class="icon-button" type="button" aria-label="More">
+                  <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor"><circle cx="3" cy="7" r="1.15"/><circle cx="7" cy="7" r="1.15"/><circle cx="11" cy="7" r="1.15"/></svg>
+                </button>
+              </div>
+            </td>
+          </tr>
+
+          <tr>
+            <td><input class="row-checkbox" type="checkbox" aria-label="Select order 10470"></td>
+            <td><a class="order-number" href="#">#10470</a></td>
+            <td>
+              <div class="customer">
+                <div class="avatar-customer" style="background:#a8455c">PV</div>
+                <div class="customer-text">
+                  <div class="customer-name">Priya Venkatesan</div>
+                  <div class="customer-email">priya.v@kalyan-exports.in</div>
+                </div>
+              </div>
+            </td>
+            <td><span class="status-pill status-shipped">Shipped</span></td>
+            <td class="cell-amount">$7,884.00</td>
+            <td class="cell-date">Mar 8</td>
+            <td>
+              <div class="row-actions">
+                <button class="icon-button" type="button" aria-label="View">
+                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M1.2 7S3.4 3.2 7 3.2 12.8 7 12.8 7 10.6 10.8 7 10.8 1.2 7 1.2 7Z"/><circle cx="7" cy="7" r="1.7"/></svg>
+                </button>
+                <button class="icon-button" type="button" aria-label="Edit">
+                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"><path d="M9.6 2.3 11.7 4.4 5 11.1 2.4 11.6 2.9 9Z"/></svg>
+                </button>
+                <button class="icon-button" type="button" aria-label="More">
+                  <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor"><circle cx="3" cy="7" r="1.15"/><circle cx="7" cy="7" r="1.15"/><circle cx="11" cy="7" r="1.15"/></svg>
+                </button>
+              </div>
+            </td>
+          </tr>
+
+          <tr>
+            <td><input class="row-checkbox" type="checkbox" aria-label="Select order 10469"></td>
+            <td><a class="order-number" href="#">#10469</a></td>
+            <td>
+              <div class="customer">
+                <div class="avatar-customer" style="background:#8a5aa8">RF</div>
+                <div class="customer-text">
+                  <div class="customer-name">Rowan Fitzgerald</div>
+                  <div class="customer-email">rowan.fitzgerald@dockside.ie</div>
+                </div>
+              </div>
+            </td>
+            <td><span class="status-pill status-failed">Failed</span></td>
+            <td class="cell-amount">$149.00</td>
+            <td class="cell-date">Mar 8</td>
+            <td>
+              <div class="row-actions">
+                <button class="icon-button" type="button" aria-label="View">
+                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M1.2 7S3.4 3.2 7 3.2 12.8 7 12.8 7 10.6 10.8 7 10.8 1.2 7 1.2 7Z"/><circle cx="7" cy="7" r="1.7"/></svg>
+                </button>
+                <button class="icon-button" type="button" aria-label="Edit">
+                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"><path d="M9.6 2.3 11.7 4.4 5 11.1 2.4 11.6 2.9 9Z"/></svg>
+                </button>
+                <button class="icon-button" type="button" aria-label="More">
+                  <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor"><circle cx="3" cy="7" r="1.15"/><circle cx="7" cy="7" r="1.15"/><circle cx="11" cy="7" r="1.15"/></svg>
+                </button>
+              </div>
+            </td>
+          </tr>
+
+          <tr>
+            <td><input class="row-checkbox" type="checkbox" aria-label="Select order 10468"></td>
+            <td><a class="order-number" href="#">#10468</a></td>
+            <td>
+              <div class="customer">
+                <div class="avatar-customer" style="background:#2f7d68">YT</div>
+                <div class="customer-text">
+                  <div class="customer-name">Yuki Tanaka</div>
+                  <div class="customer-email">yuki.tanaka@meridian-lab.jp</div>
+                </div>
+              </div>
+            </td>
+            <td><span class="status-pill status-paid">Paid</span></td>
+            <td class="cell-amount">$1,006.30</td>
+            <td class="cell-date">Mar 7</td>
+            <td>
+              <div class="row-actions">
+                <button class="icon-button" type="button" aria-label="View">
+                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M1.2 7S3.4 3.2 7 3.2 12.8 7 12.8 7 10.6 10.8 7 10.8 1.2 7 1.2 7Z"/><circle cx="7" cy="7" r="1.7"/></svg>
+                </button>
+                <button class="icon-button" type="button" aria-label="Edit">
+                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"><path d="M9.6 2.3 11.7 4.4 5 11.1 2.4 11.6 2.9 9Z"/></svg>
+                </button>
+                <button class="icon-button" type="button" aria-label="More">
+                  <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor"><circle cx="3" cy="7" r="1.15"/><circle cx="7" cy="7" r="1.15"/><circle cx="11" cy="7" r="1.15"/></svg>
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="pagination">
+      <div class="pagination-summary">Showing 1 to 15 of 240 orders</div>
+      <div class="page-buttons">
+        <button class="page-button" type="button" disabled>Previous</button>
+        <button class="page-button is-current" type="button">1</button>
+        <button class="page-button" type="button">2</button>
+        <button class="page-button" type="button">3</button>
+        <span class="page-ellipsis">…</span>
+        <button class="page-button" type="button">16</button>
+        <button class="page-button" type="button">Next</button>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+</body>
+</html>

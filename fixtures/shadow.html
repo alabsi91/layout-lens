@@ -1,0 +1,71 @@
+<!doctype html>
+<!--
+planted bugs:
+1. card 1 slotted title sits 3px lower than the shadow header text beside it
+2. x-badge text inside card 1's shadow tree is #9a9a9a on #ffffff, contrast under 4.5
+3. card 2 slotted body is truncated with ellipsis inside the shadow tree
+4. x-secret has a closed shadow root, nothing inside it can be measured
+-->
+<html>
+<head>
+  <style>
+    body { margin: 0; padding: 40px; font-family: Helvetica, Arial, sans-serif; background: #ffffff; }
+    x-card { display: block; width: 420px; }
+    x-card + x-card { margin-top: 24px; }
+    .title { font-size: 16px; line-height: 20px; position: relative; top: 3px; }
+    .body { font-size: 14px; line-height: 20px; }
+    x-secret { display: block; width: 420px; height: 40px; margin-top: 24px; }
+  </style>
+</head>
+<body>
+
+  <x-card>
+    <span slot="title" class="title">Slotted title</span>
+    <x-badge>new</x-badge>
+  </x-card>
+
+  <x-card class="narrow">
+    <span slot="title" class="title">Second card</span>
+    <span class="body">A slotted sentence that is far too long to fit inside the shadow body box</span>
+  </x-card>
+
+  <x-secret></x-secret>
+
+  <script>
+    customElements.define('x-card', class extends HTMLElement {
+      connectedCallback() {
+        const root = this.attachShadow({ mode: 'open' });
+        root.innerHTML = `
+          <style>
+            .head { display: flex; align-items: flex-start; gap: 12px; padding: 12px 16px; border: 1px solid #e0e0e0; border-radius: 8px 8px 0 0; }
+            .head-text { font-size: 16px; line-height: 20px; }
+            .body-box { padding: 12px 16px; border: 1px solid #e0e0e0; border-top: none; border-radius: 0 0 8px 8px; }
+            :host(.narrow) ::slotted(.body) { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+          </style>
+          <div class="head"><span class="head-text">Card</span><slot name="title"></slot></div>
+          <div class="body-box"><slot></slot></div>
+        `;
+      }
+    });
+
+    customElements.define('x-badge', class extends HTMLElement {
+      connectedCallback() {
+        const root = this.attachShadow({ mode: 'open' });
+        root.innerHTML = `
+          <style>
+            .pill { display: inline-block; font-size: 12px; line-height: 16px; color: #9a9a9a; }
+          </style>
+          <span class="pill"><slot></slot></span>
+        `;
+      }
+    });
+
+    customElements.define('x-secret', class extends HTMLElement {
+      connectedCallback() {
+        const root = this.attachShadow({ mode: 'closed' });
+        root.innerHTML = '<div style="padding:10px;background:#eeeeee">hidden from the walk</div>';
+      }
+    });
+  </script>
+</body>
+</html>

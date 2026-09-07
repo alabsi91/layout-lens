@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Playback speed</title>
+<style>
+  body { margin: 0; background: #ffffff; color: #1a1a1a; font-family: Arial, Helvetica, sans-serif; }
+
+  .setting { width: 380px; margin: 100px auto 0; }
+  .setting h2 { margin: 0 0 4px; font-size: 17px; }
+  .setting .value { margin: 0 0 16px; font-size: 13px; line-height: 20px; color: #4b5563; }
+
+  .slider { position: relative; display: flex; align-items: center; height: 20px; }
+
+  /* on purpose: a bar and a knob sitting on it, both too thin to be an empty box */
+  .slider-track { width: 100%; height: 6px; border-radius: 3px; background: #e5e7eb; }
+  .slider-fill { position: absolute; left: 0; width: 40%; height: 6px; border-radius: 3px; background: #1a56db; }
+  .slider-thumb { position: absolute; left: 40%; width: 20px; height: 20px; margin-left: -10px;
+                  border: 2px solid #1a56db; border-radius: 50%; background: #ffffff;
+                  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25); }
+
+  .ticks { display: flex; justify-content: space-between; margin-top: 10px;
+           font-size: 12px; line-height: 18px; color: #4b5563; }
+</style>
+</head>
+<body>
+
+<section class="setting">
+  <h2>Playback speed</h2>
+  <p class="value">1.0x</p>
+
+  <div class="slider">
+    <div class="slider-track" id="speed-track"></div>
+    <div class="slider-fill" id="speed-fill"></div>
+    <div class="slider-thumb" id="speed-thumb"></div>
+  </div>
+
+  <div class="ticks">
+    <span>0.5x</span>
+    <span>1.5x</span>
+    <span>2.0x</span>
+  </div>
+</section>
+
+</body>
+</html>

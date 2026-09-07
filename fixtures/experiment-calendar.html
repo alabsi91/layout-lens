@@ -1,0 +1,805 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Week — September 2026</title>
+<style>
+  :root {
+    --surface: #ffffff;
+    --canvas: #f6f7f9;
+    --line: #e6e8ec;
+    --line-strong: #d5d9e0;
+    --ink: #1b1d21;
+    --ink-muted: #5b6270;
+    --ink-faint: #656c7a;
+    --accent: #3b5bdb;
+    --accent-soft: #eef2fe;
+    --today-tint: #f5f7ff;
+    --now: #d92d20;
+    --hour-height: 60px;
+    --gutter-width: 60px;
+    --scrollbar-width: 15px;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  html,
+  body {
+    height: 100%;
+    margin: 0;
+    overflow: hidden;
+  }
+
+  body {
+    background: var(--canvas);
+    color: var(--ink);
+    font: 13px/1.4 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .app {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+
+  /* ---------- top bar ---------- */
+
+  .topbar {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    height: 56px;
+    flex: none;
+    padding: 0 16px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .topbarStart {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .topbarEnd {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+  }
+
+  .monthTitle {
+    margin: 0;
+    font-size: 18px;
+    line-height: 24px;
+    font-weight: 600;
+    letter-spacing: -0.2px;
+    white-space: nowrap;
+  }
+
+  .button {
+    height: 30px;
+    padding: 0 12px;
+    border: 1px solid var(--line-strong);
+    border-radius: 6px;
+    background: var(--surface);
+    color: var(--ink);
+    font: inherit;
+    font-size: 13px;
+    line-height: 28px;
+    font-weight: 500;
+    cursor: pointer;
+  }
+
+  .arrowGroup {
+    display: flex;
+  }
+
+  .arrowButton {
+    width: 30px;
+    height: 30px;
+    padding: 0;
+    border: 1px solid var(--line-strong);
+    background: var(--surface);
+    color: var(--ink-muted);
+    font: inherit;
+    font-size: 15px;
+    line-height: 28px;
+    cursor: pointer;
+  }
+
+  .arrowButton:first-child {
+    border-radius: 6px 0 0 6px;
+  }
+
+  .arrowButton:last-child {
+    border-radius: 0 6px 6px 0;
+    border-left-width: 0;
+  }
+
+  .segmented {
+    display: flex;
+    padding: 2px;
+    border-radius: 7px;
+    background: var(--canvas);
+    border: 1px solid var(--line);
+  }
+
+  .segmentedButton {
+    height: 26px;
+    padding: 0 16px;
+    border: 0;
+    border-radius: 5px;
+    background: transparent;
+    color: var(--ink-muted);
+    font: inherit;
+    font-size: 13px;
+    line-height: 26px;
+    font-weight: 500;
+    cursor: pointer;
+  }
+
+  .segmentedButton.is-selected {
+    background: var(--surface);
+    color: var(--ink);
+    font-weight: 600;
+    box-shadow: 0 1px 2px rgba(20, 24, 33, 0.14);
+  }
+
+  .createButton {
+    height: 32px;
+    padding: 0 14px;
+    border: 0;
+    border-radius: 6px;
+    background: var(--accent);
+    color: #ffffff;
+    font: inherit;
+    font-size: 13px;
+    line-height: 32px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  /* ---------- shell below the bar ---------- */
+
+  .shell {
+    display: flex;
+    flex: 1;
+    min-height: 0;
+  }
+
+  .sidebar {
+    width: 220px;
+    flex: none;
+    padding: 16px;
+    background: var(--surface);
+    border-right: 1px solid var(--line);
+  }
+
+  .miniHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+  }
+
+  .miniTitle {
+    font-size: 13px;
+    line-height: 20px;
+    font-weight: 600;
+  }
+
+  .miniNav {
+    display: flex;
+    gap: 2px;
+  }
+
+  .miniNavButton {
+    width: 20px;
+    height: 20px;
+    padding: 0;
+    border: 0;
+    border-radius: 4px;
+    background: transparent;
+    color: var(--ink-muted);
+    font: inherit;
+    font-size: 13px;
+    line-height: 20px;
+    cursor: pointer;
+  }
+
+  .miniGrid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    row-gap: 2px;
+  }
+
+  .miniWeekday {
+    height: 20px;
+    color: var(--ink-faint);
+    font-size: 10px;
+    line-height: 20px;
+    font-weight: 600;
+    letter-spacing: 0.4px;
+    text-align: center;
+  }
+
+  .miniDay {
+    height: 24px;
+    border-radius: 12px;
+    font-size: 12px;
+    line-height: 24px;
+    text-align: center;
+  }
+
+  .miniDay.is-outside {
+    color: var(--ink-faint);
+  }
+
+  .miniDay.is-inWeek {
+    background: var(--accent-soft);
+  }
+
+  .miniDay.is-today {
+    background: var(--accent);
+    color: #ffffff;
+    font-weight: 600;
+  }
+
+  /* ---------- calendar ---------- */
+
+  .calendar {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-width: 0;
+    background: var(--surface);
+  }
+
+  .dayHeaderRow,
+  .allDayRow {
+    display: grid;
+    grid-template-columns: var(--gutter-width) repeat(7, 1fr);
+    flex: none;
+    padding-right: var(--scrollbar-width);
+  }
+
+  .dayHeaderRow {
+    height: 64px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .dayHeaderCorner {
+    border-right: 1px solid var(--line);
+  }
+
+  .dayHeader {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    border-right: 1px solid var(--line);
+  }
+
+  .dayHeader:last-child {
+    border-right: 0;
+  }
+
+  .dayHeader.is-today {
+    background: var(--today-tint);
+  }
+
+  .dayHeaderWeekday {
+    color: var(--ink-muted);
+    font-size: 11px;
+    line-height: 14px;
+    font-weight: 600;
+    letter-spacing: 0.6px;
+  }
+
+  .dayHeader.is-today .dayHeaderWeekday {
+    color: var(--accent);
+  }
+
+  .dayHeaderDate {
+    min-width: 26px;
+    height: 26px;
+    border-radius: 13px;
+    font-size: 17px;
+    line-height: 26px;
+    font-weight: 500;
+    text-align: center;
+  }
+
+  .dayHeader.is-today .dayHeaderDate {
+    background: var(--accent);
+    color: #ffffff;
+    font-weight: 600;
+  }
+
+  .allDayRow {
+    min-height: 38px;
+    border-bottom: 1px solid var(--line-strong);
+  }
+
+  .allDayLabel {
+    padding: 6px 8px 0 0;
+    border-right: 1px solid var(--line);
+    color: var(--ink-muted);
+    font-size: 10px;
+    line-height: 14px;
+    font-weight: 600;
+    letter-spacing: 0.4px;
+    text-align: right;
+  }
+
+  .allDayCell {
+    padding: 5px 4px;
+    border-right: 1px solid var(--line);
+  }
+
+  .allDayCell:last-child {
+    border-right: 0;
+  }
+
+  .allDayCell.is-today {
+    background: var(--today-tint);
+  }
+
+  .allDayChip {
+    height: 22px;
+    padding: 0 8px;
+    border-radius: 4px;
+    background: #dcecff;
+    color: #123a6b;
+    font-size: 12px;
+    line-height: 22px;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .gridScroller {
+    flex: 1;
+    min-height: 0;
+    overflow-y: scroll;
+    overflow-x: hidden;
+  }
+
+  .gridBody {
+    position: relative;
+    display: grid;
+    grid-template-columns: var(--gutter-width) repeat(7, 1fr);
+    height: calc(14 * var(--hour-height));
+  }
+
+  .timeGutter {
+    position: relative;
+    border-right: 1px solid var(--line);
+  }
+
+  .hourLabel {
+    position: absolute;
+    right: 8px;
+    width: 44px;
+    margin-top: -7px;
+    color: var(--ink-muted);
+    font-size: 11px;
+    line-height: 14px;
+    font-variant-numeric: tabular-nums;
+    text-align: right;
+  }
+
+  .dayColumn {
+    position: relative;
+    border-right: 1px solid var(--line);
+    background-image: repeating-linear-gradient(
+      to bottom,
+      transparent 0,
+      transparent calc(var(--hour-height) - 1px),
+      var(--line) calc(var(--hour-height) - 1px),
+      var(--line) var(--hour-height)
+    );
+  }
+
+  .dayColumn:last-child {
+    border-right: 0;
+  }
+
+  .dayColumn.is-today {
+    background-color: var(--today-tint);
+  }
+
+  .nowLine {
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: var(--now);
+    pointer-events: none;
+    z-index: 4;
+  }
+
+  .nowDot {
+    position: absolute;
+    top: -3px;
+    left: 0;
+    width: 8px;
+    height: 8px;
+    border-radius: 4px;
+    background: var(--now);
+  }
+
+  /* ---------- events ---------- */
+
+  .event {
+    position: absolute;
+    left: 2px;
+    right: 3px;
+    padding: 3px 7px;
+    border-radius: 5px;
+    border-left: 3px solid;
+    overflow: hidden;
+    cursor: pointer;
+  }
+
+  .eventTitle {
+    font-size: 12px;
+    line-height: 16px;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .eventTime {
+    font-size: 11px;
+    line-height: 14px;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .event.is-compact {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    padding-top: 1px;
+    padding-bottom: 1px;
+  }
+
+  .event.is-compact .eventTitle {
+    min-width: 0;
+    flex: 1;
+  }
+
+  .event.is-compact .eventTime {
+    flex: none;
+  }
+
+  .event.cat-work {
+    background: #e7edfd;
+    border-left-color: #3b5bdb;
+  }
+
+  .event.cat-work .eventTitle {
+    color: #1b3080;
+  }
+
+  .event.cat-work .eventTime {
+    color: #3c56a8;
+  }
+
+  .event.cat-focus {
+    background: #f2ecfd;
+    border-left-color: #7c3aed;
+  }
+
+  .event.cat-focus .eventTitle {
+    color: #45197f;
+  }
+
+  .event.cat-focus .eventTime {
+    color: #6935c4;
+  }
+
+  .event.cat-personal {
+    background: #e4f6ea;
+    border-left-color: #17a34a;
+  }
+
+  .event.cat-personal .eventTitle {
+    color: #11482a;
+  }
+
+  .event.cat-personal .eventTime {
+    color: #1c6b3c;
+  }
+
+  .event.cat-external {
+    background: #fdefe5;
+    border-left-color: #ea580c;
+  }
+
+  .event.cat-external .eventTitle {
+    color: #71280f;
+  }
+
+  .event.cat-external .eventTime {
+    color: #9c450e;
+  }
+</style>
+</head>
+<body>
+  <div class="app">
+
+    <header class="topbar">
+      <div class="topbarStart">
+        <h1 class="monthTitle">September 2026</h1>
+        <button class="button" type="button">Today</button>
+        <div class="arrowGroup">
+          <button class="arrowButton" type="button" aria-label="Previous week">&#8249;</button>
+          <button class="arrowButton" type="button" aria-label="Next week">&#8250;</button>
+        </div>
+      </div>
+
+      <div class="segmented">
+        <button class="segmentedButton" type="button">Day</button>
+        <button class="segmentedButton is-selected" type="button">Week</button>
+        <button class="segmentedButton" type="button">Month</button>
+      </div>
+
+      <div class="topbarEnd">
+        <button class="createButton" type="button">+ Create</button>
+      </div>
+    </header>
+
+    <div class="shell">
+
+      <aside class="sidebar">
+        <div class="miniHeader">
+          <div class="miniTitle">September 2026</div>
+          <div class="miniNav">
+            <button class="miniNavButton" type="button" aria-label="Previous month">&#8249;</button>
+            <button class="miniNavButton" type="button" aria-label="Next month">&#8250;</button>
+          </div>
+        </div>
+
+        <div class="miniGrid">
+          <div class="miniWeekday">M</div>
+          <div class="miniWeekday">T</div>
+          <div class="miniWeekday">W</div>
+          <div class="miniWeekday">T</div>
+          <div class="miniWeekday">F</div>
+          <div class="miniWeekday">S</div>
+          <div class="miniWeekday">S</div>
+
+          <div class="miniDay is-outside">31</div>
+          <div class="miniDay">1</div>
+          <div class="miniDay">2</div>
+          <div class="miniDay">3</div>
+          <div class="miniDay">4</div>
+          <div class="miniDay">5</div>
+          <div class="miniDay">6</div>
+
+          <div class="miniDay is-today">7</div>
+          <div class="miniDay is-inWeek">8</div>
+          <div class="miniDay is-inWeek">9</div>
+          <div class="miniDay is-inWeek">10</div>
+          <div class="miniDay is-inWeek">11</div>
+          <div class="miniDay is-inWeek">12</div>
+          <div class="miniDay is-inWeek">13</div>
+
+          <div class="miniDay">14</div>
+          <div class="miniDay">15</div>
+          <div class="miniDay">16</div>
+          <div class="miniDay">17</div>
+          <div class="miniDay">18</div>
+          <div class="miniDay">19</div>
+          <div class="miniDay">20</div>
+
+          <div class="miniDay">21</div>
+          <div class="miniDay">22</div>
+          <div class="miniDay">23</div>
+          <div class="miniDay">24</div>
+          <div class="miniDay">25</div>
+          <div class="miniDay">26</div>
+          <div class="miniDay">27</div>
+
+          <div class="miniDay">28</div>
+          <div class="miniDay">29</div>
+          <div class="miniDay">30</div>
+          <div class="miniDay is-outside">1</div>
+          <div class="miniDay is-outside">2</div>
+          <div class="miniDay is-outside">3</div>
+          <div class="miniDay is-outside">4</div>
+        </div>
+      </aside>
+
+      <main class="calendar">
+
+        <div class="dayHeaderRow">
+          <div class="dayHeaderCorner"></div>
+
+          <div class="dayHeader is-today">
+            <div class="dayHeaderWeekday">MON</div>
+            <div class="dayHeaderDate">7</div>
+          </div>
+          <div class="dayHeader">
+            <div class="dayHeaderWeekday">TUE</div>
+            <div class="dayHeaderDate">8</div>
+          </div>
+          <div class="dayHeader">
+            <div class="dayHeaderWeekday">WED</div>
+            <div class="dayHeaderDate">9</div>
+          </div>
+          <div class="dayHeader">
+            <div class="dayHeaderWeekday">THU</div>
+            <div class="dayHeaderDate">10</div>
+          </div>
+          <div class="dayHeader">
+            <div class="dayHeaderWeekday">FRI</div>
+            <div class="dayHeaderDate">11</div>
+          </div>
+          <div class="dayHeader">
+            <div class="dayHeaderWeekday">SAT</div>
+            <div class="dayHeaderDate">12</div>
+          </div>
+          <div class="dayHeader">
+            <div class="dayHeaderWeekday">SUN</div>
+            <div class="dayHeaderDate">13</div>
+          </div>
+        </div>
+
+        <div class="allDayRow">
+          <div class="allDayLabel">ALL-DAY</div>
+          <div class="allDayCell is-today"></div>
+          <div class="allDayCell"></div>
+          <div class="allDayCell">
+            <div class="allDayChip">Company all-hands</div>
+          </div>
+          <div class="allDayCell"></div>
+          <div class="allDayCell"></div>
+          <div class="allDayCell"></div>
+          <div class="allDayCell"></div>
+        </div>
+
+        <div class="gridScroller">
+          <div class="gridBody">
+
+            <div class="timeGutter">
+              <div class="hourLabel" style="top: 0px">7 AM</div>
+              <div class="hourLabel" style="top: 60px">8 AM</div>
+              <div class="hourLabel" style="top: 120px">9 AM</div>
+              <div class="hourLabel" style="top: 180px">10 AM</div>
+              <div class="hourLabel" style="top: 240px">11 AM</div>
+              <div class="hourLabel" style="top: 300px">12 PM</div>
+              <div class="hourLabel" style="top: 360px">1 PM</div>
+              <div class="hourLabel" style="top: 420px">2 PM</div>
+              <div class="hourLabel" style="top: 480px">3 PM</div>
+              <div class="hourLabel" style="top: 540px">4 PM</div>
+              <div class="hourLabel" style="top: 600px">5 PM</div>
+              <div class="hourLabel" style="top: 660px">6 PM</div>
+              <div class="hourLabel" style="top: 720px">7 PM</div>
+              <div class="hourLabel" style="top: 780px">8 PM</div>
+              <div class="hourLabel" style="top: 840px">9 PM</div>
+            </div>
+
+            <!-- Monday 7, today -->
+            <div class="dayColumn is-today">
+              <div class="event cat-work" style="top: 60px; height: 45px">
+                <div class="eventTitle">Standup</div>
+                <div class="eventTime">8:00 – 8:45 AM</div>
+              </div>
+              <div class="event cat-work" style="top: 180px; height: 60px">
+                <div class="eventTitle">Design review</div>
+                <div class="eventTime">10:00 – 11:00 AM</div>
+              </div>
+              <div class="event cat-external" style="top: 360px; height: 90px">
+                <div class="eventTitle">Roadmap sync — Nordic</div>
+                <div class="eventTime">1:00 – 2:30 PM</div>
+              </div>
+              <div class="event cat-focus" style="top: 540px; height: 90px">
+                <div class="eventTitle">Deep work: layout engine</div>
+                <div class="eventTime">4:00 – 5:30 PM</div>
+              </div>
+            </div>
+
+            <!-- Tuesday 8 -->
+            <div class="dayColumn">
+              <div class="event cat-work" style="top: 180px; height: 60px; right: 50%">
+                <div class="eventTitle">Sprint planning</div>
+                <div class="eventTime">10:00 – 11:00 AM</div>
+              </div>
+              <div class="event cat-external" style="top: 210px; height: 75px; left: 50%">
+                <div class="eventTitle">Recruiting debrief</div>
+                <div class="eventTime">10:30 – 11:45 AM</div>
+              </div>
+              <div class="event cat-personal" style="top: 480px; height: 60px">
+                <div class="eventTitle">Customer interview — Nadia</div>
+                <div class="eventTime">3:00 – 4:00 PM</div>
+              </div>
+            </div>
+
+            <!-- Wednesday 9 -->
+            <div class="dayColumn">
+              <div class="event cat-personal" style="top: 30px; height: 60px">
+                <div class="eventTitle">Swim</div>
+                <div class="eventTime">7:30 – 8:30 AM</div>
+              </div>
+              <div class="event cat-work" style="top: 240px; height: 60px">
+                <div class="eventTitle">Platform sync</div>
+                <div class="eventTime">11:00 AM – 12:00 PM</div>
+              </div>
+              <div class="event cat-focus" style="top: 420px; height: 60px">
+                <div class="eventTitle">Perf review prep</div>
+                <div class="eventTime">2:00 – 3:00 PM</div>
+              </div>
+            </div>
+
+            <!-- Thursday 10 -->
+            <div class="dayColumn">
+              <div class="event cat-work is-compact" style="top: 120px; height: 20px">
+                <div class="eventTitle">Sync with Priya on the migration rollback</div>
+                <div class="eventTime">9:00 AM</div>
+              </div>
+              <div class="event cat-personal" style="top: 300px; height: 60px">
+                <div class="eventTitle">Lunch with the design team</div>
+                <div class="eventTime">12:00 – 1:00 PM</div>
+              </div>
+              <div class="event cat-work" style="top: 390px; height: 90px">
+                <div class="eventTitle">Architecture review</div>
+                <div class="eventTime">1:30 – 3:00 PM</div>
+              </div>
+            </div>
+
+            <!-- Friday 11 -->
+            <div class="dayColumn">
+              <div class="event cat-work" style="top: 180px; height: 90px">
+                <div class="eventTitle">Sprint retro</div>
+                <div class="eventTime">10:00 – 11:30 AM</div>
+              </div>
+              <div class="event cat-focus" style="top: 360px; height: 60px">
+                <div class="eventTitle">Write the release notes</div>
+                <div class="eventTime">1:00 – 2:00 PM</div>
+              </div>
+              <div class="event cat-external" style="top: 810px; height: 105px">
+                <div class="eventTitle">Release window — v2.4 deploy</div>
+                <div class="eventTime">8:30 – 10:15 PM</div>
+              </div>
+            </div>
+
+            <!-- Saturday 12 -->
+            <div class="dayColumn">
+              <div class="event cat-personal" style="top: 120px; height: 120px">
+                <div class="eventTitle">Farmers market, then brunch</div>
+                <div class="eventTime">9:00 – 11:00 AM</div>
+              </div>
+            </div>
+
+            <!-- Sunday 13 -->
+            <div class="dayColumn">
+              <div class="event cat-personal" style="top: 660px; height: 90px">
+                <div class="eventTitle">Dinner at Sami's</div>
+                <div class="eventTime">6:00 – 7:30 PM</div>
+              </div>
+            </div>
+
+            <div class="nowLine" style="top: 450px">
+              <div class="nowDot"></div>
+            </div>
+
+          </div>
+        </div>
+
+      </main>
+    </div>
+  </div>
+</body>
+</html>

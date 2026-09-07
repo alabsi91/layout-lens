@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Depot</title>
+<style>
+  body { margin: 0; background: #ffffff; color: #111827;
+         font-family: -apple-system, "Segoe UI", Arial, sans-serif; }
+
+  .page { width: 420px; margin: 0 auto; padding: 56px 0; }
+  .page h1 { margin: 0 0 6px; font-size: 22px; line-height: 30px; }
+  .page .addr { margin: 0 0 20px; font-size: 15px; line-height: 22px; color: #4b5563; }
+
+  /* the map is drawn into this box by a script that never ran, so the tile stays
+     the flat colour it was given while loading */
+  .map { width: 360px; height: 240px; border-radius: 10px; background: #0b1220; }
+
+  .hours { margin: 20px 0 0; font-size: 14px; line-height: 22px; color: #1f2937; }
+</style>
+</head>
+<body>
+
+<div class="page">
+  <h1>Harbour depot</h1>
+  <p class="addr">Unit 4, Pier Road, Bristol BS1 6XN</p>
+
+  <div class="map" id="map-tile"></div>
+
+  <p class="hours">Open 06:00 to 20:00, seven days.</p>
+</div>
+
+</body>
+</html>

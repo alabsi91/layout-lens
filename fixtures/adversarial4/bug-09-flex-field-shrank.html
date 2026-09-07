@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>New message</title>
+<style>
+  body { margin: 0; background: #ffffff; color: #111827;
+         font-family: -apple-system, "Segoe UI", Arial, sans-serif; }
+
+  .page { padding: 48px 32px; }
+  .page h1 { margin: 0 0 20px; font-size: 22px; line-height: 30px; }
+
+  .row { display: flex; width: 480px; gap: 16px; align-items: flex-start; }
+
+  /* the schedule panel was pinned at 300 and the recipient field was left to take
+     whatever is over. 480 - 300 - 16 leaves 164 for a 200 wide chip */
+  .field { flex: 1 1 auto; min-width: 0; box-sizing: border-box; height: 40px;
+           border-radius: 8px; background: #f3f4f6; overflow: hidden; }
+
+  .token { width: 200px; height: 28px; margin: 6px 0; border-radius: 14px;
+           background: #dbeafe; color: #1e3a8a; font-size: 13px; line-height: 28px;
+           text-align: center; }
+
+  .side { flex: 0 0 auto; box-sizing: border-box; width: 300px; height: 40px;
+          padding: 0 12px; border-radius: 8px; background: #f3f4f6;
+          font-size: 14px; line-height: 40px; color: #4b5563; }
+
+  .body { margin-top: 16px; width: 480px; height: 160px; box-sizing: border-box;
+          padding: 12px; border-radius: 8px; background: #f9fafb;
+          font-size: 14px; line-height: 20px; color: #4b5563; }
+</style>
+</head>
+<body>
+
+<div class="page">
+  <h1>New message</h1>
+
+  <div class="row">
+    <div class="field" id="recipient-field">
+      <div class="token">hana@northwind</div>
+    </div>
+
+    <div class="side">Send Tuesday, 09:00</div>
+  </div>
+
+  <div class="body">Draft saved a minute ago.</div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Fees</title>
+<style>
+  body { margin: 0; background: #ffffff; color: #111827;
+         font-family: -apple-system, "Segoe UI", Arial, sans-serif; }
+
+  .wrap { max-width: 700px; margin: 0 auto; padding: 48px 24px; }
+  .wrap h1 { margin: 0 0 20px; font-size: 24px; line-height: 32px; }
+
+  table { table-layout: fixed; width: 340px; border-collapse: collapse; }
+
+  th { text-align: left; font-size: 12px; line-height: 16px; color: #6b7280;
+       font-weight: 600; padding: 8px 0; border-bottom: 1px solid #e5e7eb; }
+  th.label { width: 200px; }
+  th.num { width: 140px; text-align: right; }
+
+  td { font-size: 14px; line-height: 20px; padding: 8px 0;
+       border-bottom: 1px solid #f3f4f6; }
+  td.label { width: 200px; }
+
+  /* every amount ends on the same edge, so the short ones start further in */
+  td.num { width: 140px; text-align: right; }
+  .amount { display: inline-block;
+            font-family: ui-monospace, Menlo, Consolas, monospace; }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <h1>Fees</h1>
+
+  <table>
+    <thead>
+      <tr><th class="label">Line</th><th class="num">Amount</th></tr>
+    </thead>
+    <tbody>
+      <tr><td class="label">Card fee</td>
+          <td class="num"><span class="amount" id="amt-card">9.40</span></td></tr>
+      <tr><td class="label">Payout fee</td>
+          <td class="num"><span class="amount">184.00</span></td></tr>
+      <tr><td class="label">Platform fee</td>
+          <td class="num"><span class="amount">1,240.00</span></td></tr>
+      <tr><td class="label">Total</td>
+          <td class="num"><span class="amount" id="amt-total">72,905.15</span></td></tr>
+    </tbody>
+  </table>
+</div>
+
+</body>
+</html>

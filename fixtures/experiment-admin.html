@@ -1,0 +1,1522 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Harbor — Orders</title>
+    <style>
+      :root {
+        --bg: #f6f7f9;
+        --surface: #ffffff;
+        --border: #e3e6ea;
+        --border-strong: #d3d8de;
+        --text: #12161c;
+        --text-muted: #667085;
+        --text-faint: #6b7280;
+        --accent: #3145e0;
+        --accent-soft: #eef1ff;
+        --danger: #d92d20;
+        --green: #12a150;
+        --amber: #dd8b00;
+        --sidebar-width: 240px;
+        --topbar-height: 56px;
+        --drawer-width: 346px;
+        --row-height: 40px;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        height: 100%;
+        margin: 0;
+        overflow: hidden;
+      }
+
+      body {
+        background: var(--bg);
+        color: var(--text);
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        font-size: 13px;
+        line-height: 1.45;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      .no-scrollbar {
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+      }
+
+      .no-scrollbar::-webkit-scrollbar {
+        width: 0;
+        height: 0;
+      }
+
+      button {
+        font: inherit;
+        color: inherit;
+        cursor: pointer;
+      }
+
+      svg {
+        display: block;
+        flex: none;
+      }
+
+      /* ---------- app shell ---------- */
+
+      .app-shell {
+        display: flex;
+        flex-direction: column;
+        height: 100vh;
+        width: 100vw;
+      }
+
+      .app-body {
+        display: flex;
+        flex: 1;
+        min-height: 0;
+      }
+
+      /* ---------- top bar ---------- */
+
+      .top-bar {
+        position: relative;
+        z-index: 60;
+        display: flex;
+        align-items: center;
+        gap: 24px;
+        flex: none;
+        height: var(--topbar-height);
+        padding: 0 16px;
+        background: var(--surface);
+        border-bottom: 1px solid var(--border);
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        width: calc(var(--sidebar-width) - 16px);
+        flex: none;
+      }
+
+      .brand-logo {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 26px;
+        height: 26px;
+        border-radius: 7px;
+        background: var(--accent);
+        color: #fff;
+      }
+
+      .brand-name {
+        font-size: 14px;
+        font-weight: 650;
+        letter-spacing: -0.01em;
+        white-space: nowrap;
+      }
+
+      .search-field {
+        position: relative;
+        display: flex;
+        align-items: center;
+        flex: 1;
+        max-width: 460px;
+        height: 34px;
+        padding: 0 8px 0 32px;
+        border: 1px solid var(--border-strong);
+        border-radius: 8px;
+        background: #fbfcfd;
+      }
+
+      .search-icon {
+        position: absolute;
+        top: 50%;
+        left: 9px;
+        transform: translateY(-50%);
+        color: var(--text-faint);
+      }
+
+      .search-input {
+        width: 100%;
+        border: 0;
+        outline: 0;
+        background: transparent;
+        font: inherit;
+        color: var(--text);
+      }
+
+      .search-input::placeholder {
+        color: var(--text-faint);
+      }
+
+      .shortcut-pill {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex: none;
+        height: 20px;
+        padding: 0 6px;
+        margin-left: 8px;
+        border: 1px solid var(--border-strong);
+        border-radius: 5px;
+        background: #fff;
+        color: var(--text-muted);
+        font-size: 11px;
+        font-weight: 600;
+        line-height: 1;
+      }
+
+      .top-bar-actions {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-left: auto;
+        flex: none;
+      }
+
+      .icon-button {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 32px;
+        height: 32px;
+        padding: 0;
+        border: 1px solid var(--border);
+        border-radius: 50%;
+        background: #fff;
+        color: var(--text-muted);
+      }
+
+      .notification-badge {
+        position: absolute;
+        top: -5px;
+        right: -5px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 16px;
+        height: 16px;
+        padding: 0 4px;
+        border: 2px solid #fff;
+        border-radius: 999px;
+        background: var(--danger);
+        color: #fff;
+        font-size: 9px;
+        font-weight: 700;
+        line-height: 1;
+      }
+
+      .avatar-button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 32px;
+        height: 32px;
+        padding: 0;
+        border: 1px solid var(--border);
+        border-radius: 50%;
+        background: #e8ecfb;
+        color: var(--accent);
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.02em;
+      }
+
+      /* ---------- account menu ---------- */
+
+      .account-menu {
+        position: absolute;
+        top: calc(var(--topbar-height) + 6px);
+        right: 16px;
+        width: 224px;
+        padding: 6px;
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        background: var(--surface);
+        box-shadow: 0 12px 28px rgba(16, 24, 40, 0.16);
+      }
+
+      .account-identity {
+        padding: 8px 10px 10px;
+      }
+
+      .account-name {
+        font-size: 13px;
+        font-weight: 650;
+      }
+
+      .account-email {
+        color: var(--text-muted);
+        font-size: 12px;
+      }
+
+      .menu-divider {
+        height: 1px;
+        margin: 4px 0;
+        background: var(--border);
+      }
+
+      .menu-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        width: 100%;
+        height: 32px;
+        padding: 0 10px;
+        border: 0;
+        border-radius: 7px;
+        background: transparent;
+        text-align: left;
+        color: var(--text);
+      }
+
+      .menu-item svg {
+        color: var(--text-muted);
+      }
+
+      /* ---------- sidebar ---------- */
+
+      .sidebar {
+        display: flex;
+        flex-direction: column;
+        flex: none;
+        width: var(--sidebar-width);
+        padding: 10px 10px 12px;
+        background: var(--surface);
+        border-right: 1px solid var(--border);
+      }
+
+      .sidebar-nav {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 6px;
+        flex: 1;
+        min-height: 0;
+      }
+
+      .nav-item {
+        position: relative;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        height: 34px;
+        padding: 0 10px;
+        border-radius: 8px;
+        color: var(--text-muted);
+        text-decoration: none;
+      }
+
+      .nav-item svg {
+        color: var(--text-faint);
+      }
+
+      .nav-item.is-active {
+        background: var(--accent-soft);
+        color: var(--accent);
+        font-weight: 600;
+      }
+
+      .nav-item.is-active svg {
+        color: var(--accent);
+      }
+
+      .nav-active-bar {
+        position: absolute;
+        top: 7px;
+        left: 0;
+        width: 3px;
+        height: 20px;
+        border-radius: 0 3px 3px 0;
+        background: var(--accent);
+      }
+
+      .workspace-card {
+        flex: none;
+        padding: 10px;
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        background: #fafbfc;
+      }
+
+      .workspace-name {
+        font-size: 12px;
+        font-weight: 650;
+      }
+
+      .workspace-plan {
+        color: var(--text-muted);
+        font-size: 11px;
+      }
+
+      .upgrade-button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        height: 28px;
+        margin-top: 8px;
+        border: 0;
+        border-radius: 7px;
+        background: var(--accent);
+        color: #fff;
+        font-size: 12px;
+        font-weight: 600;
+      }
+
+      /* ---------- main ---------- */
+
+      .main-area {
+        position: relative;
+        flex: 1;
+        min-width: 0;
+      }
+
+      .main-content {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        width: calc(100% - var(--drawer-width));
+        padding: 0 16px;
+      }
+
+      .page-header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex: none;
+        height: 60px;
+      }
+
+      .page-title {
+        margin: 0;
+        font-size: 19px;
+        font-weight: 680;
+        letter-spacing: -0.015em;
+      }
+
+      .count-pill {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 20px;
+        padding: 0 8px;
+        border-radius: 999px;
+        background: #eceff3;
+        color: #4a5261;
+        font-size: 11px;
+        font-weight: 650;
+        line-height: 1;
+      }
+
+      .page-header-actions {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-left: auto;
+      }
+
+      .button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        height: 32px;
+        padding: 0 12px;
+        border-radius: 8px;
+        font-size: 12.5px;
+        font-weight: 600;
+        white-space: nowrap;
+      }
+
+      .button-outline {
+        border: 1px solid var(--border-strong);
+        background: #fff;
+        color: var(--text);
+      }
+
+      .button-filled {
+        border: 1px solid var(--accent);
+        background: var(--accent);
+        color: #fff;
+      }
+
+      .button-danger {
+        border: 1px solid var(--danger);
+        background: var(--danger);
+        color: #fff;
+      }
+
+      /* ---------- filter chips ---------- */
+
+      .chip-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex: none;
+        height: 44px;
+        overflow-x: auto;
+        overflow-y: hidden;
+      }
+
+      .chip {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        flex: none;
+        height: 28px;
+        padding: 0 12px;
+        border: 1px solid var(--border-strong);
+        border-radius: 999px;
+        background: #fff;
+        color: var(--text-muted);
+        font-size: 12px;
+        font-weight: 550;
+        white-space: nowrap;
+      }
+
+      .chip.is-selected {
+        border-color: var(--accent);
+        background: var(--accent-soft);
+        color: var(--accent);
+        font-weight: 650;
+      }
+
+      .chip-dot {
+        width: 6px;
+        height: 6px;
+        flex: none;
+        border-radius: 50%;
+        background: currentColor;
+      }
+
+      /* ---------- table ---------- */
+
+      .table-area {
+        position: relative;
+        flex: 1;
+        min-height: 0;
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        background: var(--surface);
+        overflow: hidden;
+      }
+
+      .table-scroller {
+        height: 100%;
+        overflow: auto;
+      }
+
+      .orders-table {
+        border-collapse: separate;
+        border-spacing: 0;
+        table-layout: fixed;
+        width: 1422px;
+      }
+
+      .orders-table th,
+      .orders-table td {
+        height: var(--row-height);
+        padding: 0 12px;
+        border-bottom: 1px solid var(--border);
+        text-align: left;
+        vertical-align: middle;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .orders-table th {
+        position: sticky;
+        top: 0;
+        z-index: 2;
+        height: 36px;
+        background: #f8f9fb;
+        color: var(--text-muted);
+        font-size: 11px;
+        font-weight: 650;
+        letter-spacing: 0.03em;
+        text-transform: uppercase;
+      }
+
+      .orders-table tbody tr:last-child td {
+        border-bottom: 0;
+      }
+
+      .column-order {
+        position: sticky;
+        left: 0;
+        z-index: 1;
+        width: 150px;
+        background: var(--surface);
+        box-shadow: 1px 0 0 var(--border);
+      }
+
+      th.column-order {
+        z-index: 3;
+        background: #f8f9fb;
+      }
+
+      .column-actions {
+        position: sticky;
+        right: 0;
+        z-index: 1;
+        width: 56px;
+        padding: 0;
+        background: var(--surface);
+        box-shadow: -1px 0 0 var(--border);
+      }
+
+      th.column-actions {
+        z-index: 3;
+        background: #f8f9fb;
+      }
+
+      .order-cell {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .order-cell input {
+        width: 14px;
+        height: 14px;
+        margin: 0;
+        flex: none;
+        accent-color: var(--accent);
+      }
+
+      .order-number {
+        font-weight: 600;
+        font-variant-numeric: tabular-nums;
+      }
+
+      .align-right {
+        text-align: right;
+        font-variant-numeric: tabular-nums;
+      }
+
+      .status-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        height: 20px;
+        padding: 0 8px;
+        border-radius: 999px;
+        background: #eceff3;
+        color: var(--text-muted);
+        font-size: 11px;
+        font-weight: 650;
+        line-height: 1;
+      }
+
+      .status-dot {
+        width: 6px;
+        height: 6px;
+        flex: none;
+        border-radius: 50%;
+        background: currentColor;
+      }
+
+      .status-paid {
+        background: #e6f6ed;
+        color: #0a7a3d;
+      }
+
+      .status-pending {
+        background: #fdf3e2;
+        color: #8a5600;
+      }
+
+      .status-refunded {
+        background: #fdecea;
+        color: #b42318;
+      }
+
+      .status-shipped {
+        background: #e9edff;
+        color: #2b45c9;
+      }
+
+      .row-action-button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 26px;
+        height: 26px;
+        margin: 0 auto;
+        padding: 0;
+        border: 1px solid transparent;
+        border-radius: 7px;
+        background: transparent;
+        color: var(--text-muted);
+      }
+
+      .row-action-button.is-open {
+        border-color: var(--border-strong);
+        background: #f2f4f7;
+        color: var(--text);
+      }
+
+      .row-action-menu {
+        position: absolute;
+        top: 200px;
+        right: 16px;
+        z-index: 5;
+        width: 172px;
+        padding: 5px;
+        border: 1px solid var(--border);
+        border-radius: 9px;
+        background: var(--surface);
+        box-shadow: 0 14px 30px rgba(16, 24, 40, 0.18);
+      }
+
+      .row-action-menu .menu-item {
+        height: 30px;
+        font-size: 12.5px;
+      }
+
+      .row-action-menu .menu-item.is-danger,
+      .row-action-menu .menu-item.is-danger svg {
+        color: var(--danger);
+      }
+
+      /* ---------- pagination ---------- */
+
+      .pagination-bar {
+        display: flex;
+        align-items: center;
+        flex: none;
+        height: 48px;
+        color: var(--text-muted);
+        font-size: 12px;
+      }
+
+      .pagination-pages {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        margin: 0 auto;
+      }
+
+      .page-button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 26px;
+        height: 26px;
+        padding: 0 6px;
+        border: 1px solid var(--border);
+        border-radius: 7px;
+        background: #fff;
+        color: var(--text-muted);
+        font-size: 12px;
+        font-weight: 600;
+      }
+
+      .page-button.is-current {
+        border-color: var(--accent);
+        background: var(--accent);
+        color: #fff;
+      }
+
+      .rows-per-page {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .rows-per-page select {
+        height: 26px;
+        padding: 0 4px;
+        border: 1px solid var(--border-strong);
+        border-radius: 7px;
+        background: #fff;
+        font: inherit;
+        color: var(--text);
+      }
+
+      /* ---------- drawer ---------- */
+
+      .details-drawer {
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 40;
+        display: flex;
+        flex-direction: column;
+        width: var(--drawer-width);
+        background: var(--surface);
+        border-left: 1px solid var(--border);
+        box-shadow: -14px 0 34px rgba(16, 24, 40, 0.12);
+      }
+
+      .drawer-header {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex: none;
+        height: 52px;
+        padding: 0 14px;
+      }
+
+      .drawer-title {
+        margin: 0;
+        font-size: 15px;
+        font-weight: 680;
+        font-variant-numeric: tabular-nums;
+      }
+
+      .drawer-close {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 28px;
+        height: 28px;
+        margin-left: auto;
+        padding: 0;
+        border: 1px solid var(--border);
+        border-radius: 7px;
+        background: #fff;
+        color: var(--text-muted);
+      }
+
+      .drawer-tabs {
+        display: flex;
+        align-items: stretch;
+        gap: 18px;
+        flex: none;
+        height: 36px;
+        padding: 0 14px;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .drawer-tab {
+        display: flex;
+        align-items: center;
+        border: 0;
+        border-bottom: 2px solid transparent;
+        background: transparent;
+        padding: 2px 0 0;
+        color: var(--text-muted);
+        font-size: 12.5px;
+        font-weight: 600;
+      }
+
+      .drawer-tab.is-active {
+        border-bottom-color: var(--accent);
+        color: var(--accent);
+      }
+
+      .drawer-body {
+        flex: 1;
+        min-height: 0;
+        overflow-y: auto;
+        padding: 12px 14px;
+      }
+
+      .drawer-section + .drawer-section {
+        margin-top: 10px;
+      }
+
+      .section-label {
+        margin: 0 0 6px;
+        color: var(--text-faint);
+        font-size: 10.5px;
+        font-weight: 700;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+      }
+
+      .customer-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .customer-avatar {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 36px;
+        height: 36px;
+        flex: none;
+        border-radius: 50%;
+        background: #ecf0fe;
+        color: var(--accent);
+        font-size: 12px;
+        font-weight: 700;
+      }
+
+      .customer-name {
+        font-weight: 620;
+      }
+
+      .customer-email {
+        color: var(--text-muted);
+        font-size: 12px;
+      }
+
+      .address-block {
+        padding: 8px 12px;
+        border: 1px solid var(--border);
+        border-radius: 9px;
+        background: #fafbfc;
+        font-size: 12.5px;
+        line-height: 1.55;
+      }
+
+      .timeline {
+        position: relative;
+        padding-left: 2px;
+      }
+
+      .timeline-line {
+        position: absolute;
+        top: 9px;
+        bottom: 25px;
+        left: 7px;
+        width: 1px;
+        background: var(--border-strong);
+      }
+
+      .timeline-event {
+        position: relative;
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+      }
+
+      .timeline-event + .timeline-event {
+        margin-top: 8px;
+      }
+
+      .timeline-dot {
+        width: 11px;
+        height: 11px;
+        flex: none;
+        margin-top: 3.5px;
+        border: 2px solid var(--surface);
+        border-radius: 50%;
+        background: var(--border-strong);
+        outline: 1px solid var(--border-strong);
+      }
+
+      .timeline-event.is-done .timeline-dot {
+        background: var(--accent);
+        outline-color: var(--accent);
+      }
+
+      .timeline-text {
+        min-width: 0;
+      }
+
+      .timeline-title {
+        font-size: 12.5px;
+        font-weight: 600;
+        line-height: 18px;
+      }
+
+      .timeline-time {
+        color: var(--text-muted);
+        font-size: 11.5px;
+        line-height: 16px;
+      }
+
+      .summary-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 12.5px;
+      }
+
+      .summary-table td {
+        height: 26px;
+        padding: 0;
+        vertical-align: middle;
+      }
+
+      .summary-table td:last-child {
+        text-align: right;
+        font-variant-numeric: tabular-nums;
+      }
+
+      .summary-table .summary-label {
+        color: var(--text-muted);
+      }
+
+      .summary-table .summary-total td {
+        height: 32px;
+        border-top: 1px solid var(--border-strong);
+        font-weight: 700;
+      }
+
+      /* ---------- dialog ---------- */
+
+      .dialog-backdrop {
+        position: fixed;
+        inset: 0;
+        z-index: 100;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(16, 24, 40, 0.45);
+      }
+
+      .dialog {
+        width: 400px;
+        padding: 20px;
+        border-radius: 12px;
+        background: var(--surface);
+        box-shadow: 0 24px 48px rgba(16, 24, 40, 0.3);
+      }
+
+      .dialog-title {
+        margin: 0 0 8px;
+        font-size: 16px;
+        font-weight: 680;
+      }
+
+      .dialog-text {
+        margin: 0;
+        color: var(--text-muted);
+        font-size: 13px;
+      }
+
+      .dialog-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 8px;
+        margin-top: 20px;
+      }
+
+      /* ---------- toast ---------- */
+
+      .toast {
+        position: fixed;
+        right: 20px;
+        bottom: 20px;
+        z-index: 90;
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        height: 40px;
+        padding: 0 14px;
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        background: var(--surface);
+        box-shadow: 0 10px 26px rgba(16, 24, 40, 0.18);
+        font-size: 12.5px;
+        font-weight: 600;
+      }
+
+      .toast-check {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 18px;
+        height: 18px;
+        flex: none;
+        border-radius: 50%;
+        background: var(--green);
+        color: #fff;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="app-shell">
+      <header class="top-bar">
+        <div class="brand">
+          <span class="brand-logo">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M8 1.5 14 5v6L8 14.5 2 11V5z" />
+              <path d="M8 8v6.5" />
+            </svg>
+          </span>
+          <span class="brand-name">Harbor</span>
+        </div>
+
+        <div class="search-field">
+          <span class="search-icon">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round">
+              <circle cx="7" cy="7" r="4.5" />
+              <path d="m10.5 10.5 3 3" />
+            </svg>
+          </span>
+          <input class="search-input" type="text" placeholder="Search orders, customers, SKUs" />
+          <span class="shortcut-pill">⌘K</span>
+        </div>
+
+        <div class="top-bar-actions">
+          <button class="icon-button" type="button" aria-label="Help">
+            <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
+              <circle cx="8" cy="8" r="6.2" />
+              <path d="M6.3 6.2a1.8 1.8 0 1 1 2.4 1.7c-.5.2-.7.6-.7 1.1" />
+              <path d="M8 11.4h.01" />
+            </svg>
+          </button>
+
+          <button class="icon-button" type="button" aria-label="Notifications">
+            <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 6.6a4 4 0 0 1 8 0c0 2.4.6 3.6 1.2 4.2H2.8C3.4 10.2 4 9 4 6.6Z" />
+              <path d="M6.6 13a1.6 1.6 0 0 0 2.8 0" />
+            </svg>
+            <span class="notification-badge">7</span>
+          </button>
+
+          <button class="avatar-button" type="button" aria-label="Account">NK</button>
+        </div>
+
+        <div class="account-menu">
+          <div class="account-identity">
+            <div class="account-name">Nadia Karim</div>
+            <div class="account-email">nadia@harborhq.com</div>
+          </div>
+          <div class="menu-divider"></div>
+          <button class="menu-item" type="button">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="8" cy="5.6" r="2.6" />
+              <path d="M3 13c.6-2.2 2.5-3.4 5-3.4S12.4 10.8 13 13" />
+            </svg>
+            Profile
+          </button>
+          <button class="menu-item" type="button">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="8" cy="8" r="2.2" />
+              <path d="M13 8a5 5 0 0 0-.4-1.9l1-1.4-1.3-1.3-1.4 1A5 5 0 0 0 9 3l-.3-1.7H7.3L7 3a5 5 0 0 0-1.9.4l-1.4-1-1.3 1.3 1 1.4A5 5 0 0 0 3 8l-1.7.3v1.4L3 10c.1.7.3 1.3.7 1.9l-1 1.4 1.3 1.3 1.4-1c.6.4 1.2.6 1.9.7l.3 1.7h1.4l.3-1.7c.7-.1 1.3-.3 1.9-.7l1.4 1 1.3-1.3-1-1.4c.4-.6.6-1.2.7-1.9l1.7-.3V8.3z" />
+            </svg>
+            Preferences
+          </button>
+          <button class="menu-item" type="button">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="2" y="4" width="12" height="9" rx="1.6" />
+              <path d="M2 7h12" />
+            </svg>
+            Billing
+          </button>
+          <button class="menu-item" type="button">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M6.5 13.5H4a1.5 1.5 0 0 1-1.5-1.5V4A1.5 1.5 0 0 1 4 2.5h2.5" />
+              <path d="M10.5 10.5 13.5 8l-3-2.5" />
+              <path d="M13.5 8h-7" />
+            </svg>
+            Sign out
+          </button>
+        </div>
+      </header>
+
+      <div class="app-body">
+        <aside class="sidebar">
+          <nav class="sidebar-nav">
+            <a class="nav-item" href="#">
+              <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="2" y="2" width="5" height="5" rx="1.2" />
+                <rect x="9" y="2" width="5" height="5" rx="1.2" />
+                <rect x="2" y="9" width="5" height="5" rx="1.2" />
+                <rect x="9" y="9" width="5" height="5" rx="1.2" />
+              </svg>
+              Overview
+            </a>
+            <a class="nav-item" href="#">
+              <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M2 12.5V7l6-4.5L14 7v5.5" />
+                <path d="M2 12.5h12" />
+                <path d="M6.5 12.5V9h3v3.5" />
+              </svg>
+              Storefront
+            </a>
+            <a class="nav-item is-active" href="#">
+              <span class="nav-active-bar"></span>
+              <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 5h10l-.8 8H3.8z" />
+                <path d="M6 5V3.6a2 2 0 0 1 4 0V5" />
+              </svg>
+              Orders
+            </a>
+            <a class="nav-item" href="#">
+              <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M8 2 14 5v6L8 14 2 11V5z" />
+                <path d="M2 5l6 3 6-3" />
+                <path d="M8 8v6" />
+              </svg>
+              Products
+            </a>
+            <a class="nav-item" href="#">
+              <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="6" cy="5.5" r="2.4" />
+                <path d="M1.8 13c.6-2.1 2.2-3.3 4.2-3.3S9.6 10.9 10.2 13" />
+                <path d="M10.6 3.4a2.4 2.4 0 0 1 0 4.4" />
+                <path d="M11.6 9.9c1.4.4 2.3 1.5 2.7 3.1" />
+              </svg>
+              Customers
+            </a>
+            <a class="nav-item" href="#">
+              <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M2 13h12" />
+                <path d="M4 13V8" />
+                <path d="M7.3 13V4.5" />
+                <path d="M10.6 13V9.8" />
+                <path d="M13.9 13V6.5" />
+              </svg>
+              Analytics
+            </a>
+            <a class="nav-item" href="#">
+              <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M8 2.2 3 4.3v3.4c0 3 2.1 5.4 5 6.1 2.9-.7 5-3.1 5-6.1V4.3z" />
+                <path d="m6.2 8 1.3 1.3 2.6-2.6" />
+              </svg>
+              Payouts
+            </a>
+            <a class="nav-item" href="#">
+              <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="2.2" y="3" width="11.6" height="10" rx="1.6" />
+                <path d="M5.4 1.8v2.4" />
+                <path d="M10.6 1.8v2.4" />
+                <path d="M2.2 6.6h11.6" />
+              </svg>
+              Schedule
+            </a>
+          </nav>
+
+          <div class="workspace-card">
+            <div class="workspace-name">Marina Supply Co.</div>
+            <div class="workspace-plan">Starter plan · 2 seats</div>
+            <button class="upgrade-button" type="button">Upgrade</button>
+          </div>
+        </aside>
+
+        <main class="main-area">
+          <div class="main-content">
+            <div class="page-header">
+              <h1 class="page-title">Orders</h1>
+              <span class="count-pill">1,284</span>
+              <div class="page-header-actions">
+                <button class="button button-outline" type="button">
+                  <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M8 2.5v7" />
+                    <path d="m5 6.8 3 3 3-3" />
+                    <path d="M3 12.5h10" />
+                  </svg>
+                  Export
+                </button>
+                <button class="button button-filled" type="button">
+                  <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round">
+                    <path d="M8 3.5v9" />
+                    <path d="M3.5 8h9" />
+                  </svg>
+                  New order
+                </button>
+              </div>
+            </div>
+
+            <div class="chip-row no-scrollbar">
+              <button class="chip is-selected" type="button"><span class="chip-dot"></span>All orders</button>
+              <button class="chip" type="button"><span class="chip-dot"></span>Awaiting payment</button>
+              <button class="chip" type="button"><span class="chip-dot"></span>Paid</button>
+              <button class="chip" type="button"><span class="chip-dot"></span>Fulfilled</button>
+              <button class="chip" type="button"><span class="chip-dot"></span>Partially shipped</button>
+              <button class="chip" type="button"><span class="chip-dot"></span>Refund requested</button>
+              <button class="chip" type="button"><span class="chip-dot"></span>Chargebacks</button>
+              <button class="chip" type="button"><span class="chip-dot"></span>High value</button>
+              <button class="chip" type="button"><span class="chip-dot"></span>Wholesale</button>
+              <button class="chip" type="button"><span class="chip-dot"></span>Gift orders</button>
+            </div>
+
+            <div class="table-area">
+              <div class="table-scroller no-scrollbar">
+                <table class="orders-table">
+                  <colgroup>
+                    <col style="width: 150px" />
+                    <col style="width: 110px" />
+                    <col style="width: 140px" />
+                    <col style="width: 120px" />
+                    <col style="width: 210px" />
+                    <col style="width: 70px" />
+                    <col style="width: 136px" />
+                    <col style="width: 110px" />
+                    <col style="width: 120px" />
+                    <col style="width: 100px" />
+                    <col style="width: 100px" />
+                    <col style="width: 56px" />
+                  </colgroup>
+                  <thead>
+                    <tr>
+                      <th class="column-order">Order</th>
+                      <th>Date</th>
+                      <th>Customer</th>
+                      <th>Status</th>
+                      <th>Email</th>
+                      <th class="align-right">Items</th>
+                      <th>Payment</th>
+                      <th>Channel</th>
+                      <th>Shipping</th>
+                      <th class="align-right">Subtotal</th>
+                      <th class="align-right">Total</th>
+                      <th class="column-actions"></th>
+                    </tr>
+                  </thead>
+                  <tbody id="orders-body"></tbody>
+                </table>
+              </div>
+
+              <div class="row-action-menu">
+                <button class="menu-item" type="button">
+                  <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M1.8 8S3.9 4 8 4s6.2 4 6.2 4-2.1 4-6.2 4-6.2-4-6.2-4Z" />
+                    <circle cx="8" cy="8" r="1.8" />
+                  </svg>
+                  View details
+                </button>
+                <button class="menu-item" type="button">
+                  <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M10.5 2.8 13.2 5.5 6 12.7l-3.2.5.5-3.2z" />
+                  </svg>
+                  Edit order
+                </button>
+                <button class="menu-item" type="button">
+                  <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="5.5" y="5.5" width="8" height="8" rx="1.4" />
+                    <path d="M10.5 3.2a1.4 1.4 0 0 0-1.4-1.4H4a1.4 1.4 0 0 0-1.4 1.4v5.1" />
+                  </svg>
+                  Duplicate
+                </button>
+                <button class="menu-item" type="button">
+                  <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 12.5V9.8" />
+                    <path d="M2 4.5h12l-1 6H3z" />
+                    <path d="M5.6 13.6h.01M11 13.6h.01" />
+                  </svg>
+                  Print packing slip
+                </button>
+                <div class="menu-divider"></div>
+                <button class="menu-item is-danger" type="button">
+                  <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M2.6 4.4h10.8" />
+                    <path d="M6 4.4V3a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v1.4" />
+                    <path d="M3.8 4.4 4.5 13h7l.7-8.6" />
+                  </svg>
+                  Cancel order
+                </button>
+              </div>
+            </div>
+
+            <div class="pagination-bar">
+              <span>Showing 1–30 of 1,284</span>
+              <div class="pagination-pages">
+                <button class="page-button" type="button">‹</button>
+                <button class="page-button is-current" type="button">1</button>
+                <button class="page-button" type="button">2</button>
+                <button class="page-button" type="button">3</button>
+                <button class="page-button" type="button">4</button>
+                <button class="page-button" type="button">…</button>
+                <button class="page-button" type="button">43</button>
+                <button class="page-button" type="button">›</button>
+              </div>
+              <label class="rows-per-page">
+                Rows per page
+                <select>
+                  <option>30</option>
+                  <option>60</option>
+                  <option>120</option>
+                </select>
+              </label>
+            </div>
+          </div>
+
+          <aside class="details-drawer">
+            <div class="drawer-header">
+              <h2 class="drawer-title">#1042</h2>
+              <span class="status-pill status-paid"><span class="status-dot"></span>Paid</span>
+              <button class="drawer-close" type="button" aria-label="Close">
+                <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+                  <path d="m4.4 4.4 7.2 7.2" />
+                  <path d="m11.6 4.4-7.2 7.2" />
+                </svg>
+              </button>
+            </div>
+
+            <div class="drawer-tabs">
+              <button class="drawer-tab is-active" type="button">Summary</button>
+              <button class="drawer-tab" type="button">Items</button>
+              <button class="drawer-tab" type="button">Notes</button>
+            </div>
+
+            <div class="drawer-body no-scrollbar">
+              <section class="drawer-section">
+                <h3 class="section-label">Customer</h3>
+                <div class="customer-row">
+                  <span class="customer-avatar">LH</span>
+                  <div>
+                    <div class="customer-name">Layla Haddad</div>
+                    <div class="customer-email">layla.haddad@example.com</div>
+                  </div>
+                </div>
+              </section>
+
+              <section class="drawer-section">
+                <h3 class="section-label">Shipping address</h3>
+                <div class="address-block" dir="rtl" lang="ar">
+                  ليلى حداد<br />
+                  شارع الملك فهد، مبنى ١٢، شقة ٤<br />
+                  حي العليا، الرياض ١٢٢١٤<br />
+                  المملكة العربية السعودية
+                </div>
+              </section>
+
+              <section class="drawer-section">
+                <h3 class="section-label">Timeline</h3>
+                <div class="timeline">
+                  <div class="timeline-line"></div>
+                  <div class="timeline-event is-done">
+                    <span class="timeline-dot"></span>
+                    <div class="timeline-text">
+                      <div class="timeline-title">Order placed</div>
+                      <div class="timeline-time">Mar 4, 09:12</div>
+                    </div>
+                  </div>
+                  <div class="timeline-event is-done">
+                    <span class="timeline-dot"></span>
+                    <div class="timeline-text">
+                      <div class="timeline-title">Payment captured</div>
+                      <div class="timeline-time">Mar 4, 09:13</div>
+                    </div>
+                  </div>
+                  <div class="timeline-event is-done">
+                    <span class="timeline-dot"></span>
+                    <div class="timeline-text">
+                      <div class="timeline-title">Packed at Riyadh hub</div>
+                      <div class="timeline-time">Mar 5, 14:40</div>
+                    </div>
+                  </div>
+                  <div class="timeline-event">
+                    <span class="timeline-dot"></span>
+                    <div class="timeline-text">
+                      <div class="timeline-title">Handed to carrier</div>
+                      <div class="timeline-time">Mar 6, 08:05</div>
+                    </div>
+                  </div>
+                  <div class="timeline-event">
+                    <span class="timeline-dot"></span>
+                    <div class="timeline-text">
+                      <div class="timeline-title">Out for delivery</div>
+                      <div class="timeline-time">Expected Mar 7</div>
+                    </div>
+                  </div>
+                </div>
+              </section>
+
+              <section class="drawer-section">
+                <h3 class="section-label">Summary</h3>
+                <table class="summary-table">
+                  <tbody>
+                    <tr>
+                      <td class="summary-label">Subtotal</td>
+                      <td>$412.00</td>
+                    </tr>
+                    <tr>
+                      <td class="summary-label">Shipping</td>
+                      <td>$18.50</td>
+                    </tr>
+                    <tr>
+                      <td class="summary-label">Tax</td>
+                      <td>$64.58</td>
+                    </tr>
+                    <tr class="summary-total">
+                      <td>Total</td>
+                      <td>$495.08</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </section>
+            </div>
+          </aside>
+        </main>
+      </div>
+    </div>
+
+    <div class="toast">
+      <span class="toast-check">
+        <svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+          <path d="m3.5 8.3 3 3 6-6.6" />
+        </svg>
+      </span>
+      Order #1042 updated
+    </div>
+
+    <div class="dialog-backdrop">
+      <div class="dialog" role="dialog" aria-label="Refund order">
+        <h2 class="dialog-title">Refund order #1042?</h2>
+        <p class="dialog-text">The customer gets $495.08 back on the original card, and this cannot be undone.</p>
+        <div class="dialog-actions">
+          <button class="button button-outline" type="button">Cancel</button>
+          <button class="button button-danger" type="button">Refund order</button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const customerNames = [
+        "Layla Haddad", "Marco Reyes", "Ingrid Sorensen", "Tom Baxter", "Priya Nair",
+        "Elena Rossi", "Jonas Weber", "Sofia Almeida", "Ahmed Farouk", "Grace Lin",
+      ];
+      const statusVariants = [
+        ["Paid", "status-paid"],
+        ["Pending", "status-pending"],
+        ["Shipped", "status-shipped"],
+        ["Refunded", "status-refunded"],
+      ];
+      const paymentMethods = ["Visa •• 4421", "Mastercard •• 88", "Apple Pay", "PayPal"];
+      const salesChannels = ["Online", "POS", "Wholesale", "Marketplace"];
+      const shippingMethods = ["Express", "Standard", "Pickup", "Freight"];
+
+      const actionIcon =
+        '<svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor">' +
+        '<circle cx="3.4" cy="8" r="1.2"/><circle cx="8" cy="8" r="1.2"/><circle cx="12.6" cy="8" r="1.2"/></svg>';
+
+      const rowsMarkup = [];
+
+      for (let index = 0; index < 30; index += 1) {
+        const orderNumber = 1042 - index;
+        const customerName = customerNames[index % customerNames.length];
+        const [statusLabel, statusClass] = statusVariants[index % statusVariants.length];
+        const emailAddress = customerName.toLowerCase().replace(/[^a-z]+/g, ".") + "@example.com";
+        const itemCount = (index % 6) + 1;
+        const subtotal = 96 + index * 37.25;
+        const total = subtotal * 1.19;
+        const dayOfMonth = 28 - (index % 28);
+        const isOpenRow = index === 3;
+
+        rowsMarkup.push(
+          '<tr>' +
+            '<td class="column-order"><span class="order-cell"><input type="checkbox"' +
+              (isOpenRow ? " checked" : "") +
+              ' aria-label="Select order" /><span class="order-number">#' + orderNumber + '</span></span></td>' +
+            '<td>Mar ' + dayOfMonth + ', 2025</td>' +
+            '<td>' + customerName + '</td>' +
+            '<td><span class="status-pill ' + statusClass + '"><span class="status-dot"></span>' + statusLabel + '</span></td>' +
+            '<td>' + emailAddress + '</td>' +
+            '<td class="align-right">' + itemCount + '</td>' +
+            '<td>' + paymentMethods[index % paymentMethods.length] + '</td>' +
+            '<td>' + salesChannels[index % salesChannels.length] + '</td>' +
+            '<td>' + shippingMethods[index % shippingMethods.length] + '</td>' +
+            '<td class="align-right">$' + subtotal.toFixed(2) + '</td>' +
+            '<td class="align-right">$' + total.toFixed(2) + '</td>' +
+            '<td class="column-actions"><button class="row-action-button' +
+              (isOpenRow ? " is-open" : "") +
+              '" type="button" aria-label="Row actions">' + actionIcon + '</button></td>' +
+          '</tr>'
+        );
+      }
+
+      document.getElementById("orders-body").innerHTML = rowsMarkup.join("");
+    </script>
+  </body>
+</html>

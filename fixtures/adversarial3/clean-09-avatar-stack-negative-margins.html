@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Viewers</title>
+<style>
+  body { margin: 0; background: #ffffff; color: #111827;
+         font-family: -apple-system, "Segoe UI", Arial, sans-serif; }
+
+  .page { width: 520px; margin: 0 auto; padding: 56px 0; }
+  .page h1 { margin: 0 0 6px; font-size: 22px; line-height: 30px; }
+  .page p { margin: 0 0 20px; font-size: 14px; line-height: 20px; color: #6b7280; }
+
+  .avatar-stack { display: flex; }
+
+  .avatar { width: 36px; height: 36px; box-sizing: border-box; border-radius: 18px;
+            border: 2px solid #ffffff; background: #c7d2fe; color: #1e3a8a;
+            font-size: 12px; font-weight: 600; line-height: 32px; text-align: center; }
+
+  /* each circle is pulled 12 onto the one before it on purpose */
+  .avatar + .avatar { margin-left: -12px; }
+</style>
+</head>
+<body>
+
+<div class="page">
+  <h1>Sprint 42 board</h1>
+  <p>Viewing right now</p>
+
+  <div class="avatar-stack" id="viewers">
+    <span class="avatar">AK</span>
+    <span class="avatar">MR</span>
+    <span class="avatar">JD</span>
+    <span class="avatar">LO</span>
+    <span class="avatar">+3</span>
+  </div>
+</div>
+
+</body>
+</html>

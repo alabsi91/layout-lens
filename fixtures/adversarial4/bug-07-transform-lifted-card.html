@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Templates</title>
+<style>
+  body { margin: 0; background: #ffffff; color: #111827;
+         font-family: -apple-system, "Segoe UI", Arial, sans-serif; }
+
+  .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; padding: 32px; }
+
+  .card { box-sizing: border-box; height: 180px; padding: 16px; border-radius: 10px;
+          background: #f6f7f9; }
+  .card h3 { margin: 0 0 6px; font-size: 16px; line-height: 24px; }
+  .card p { margin: 0; font-size: 14px; line-height: 20px; color: #4b5563; }
+
+  /* the lift belonged to a :hover rule. the selector was dropped in a refactor and
+     the transform stayed on the card itself */
+  .card.is-lifted { transform: translateY(10px); }
+</style>
+</head>
+<body>
+
+<section class="grid">
+  <article class="card">
+    <h3>Weekly report</h3>
+    <p>A summary of every run that finished in the last seven days.</p>
+  </article>
+
+  <article class="card is-lifted" id="card-mid">
+    <h3>Incident review</h3>
+    <p>Timeline, impact and the follow up actions in one page.</p>
+  </article>
+
+  <article class="card">
+    <h3>Cost breakdown</h3>
+    <p>Spend by project, by environment and by owner.</p>
+  </article>
+
+  <article class="card">
+    <h3>Onboarding</h3>
+    <p>The checklist a new engineer works through in week one.</p>
+  </article>
+
+  <article class="card">
+    <h3>Release notes</h3>
+    <p>What shipped, what moved and what was pulled back out.</p>
+  </article>
+
+  <article class="card">
+    <h3>Runbook</h3>
+    <p>The steps to take when the queue stops draining.</p>
+  </article>
+</section>
+
+</body>
+</html>

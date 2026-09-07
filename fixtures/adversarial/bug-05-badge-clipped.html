@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Product card</title>
+<style>
+  body { margin: 0; background: #ffffff; color: #1a1a1a; font-family: Arial, Helvetica, sans-serif; }
+
+  .card { width: 260px; margin: 70px auto 0; border: 1px solid #e5e7eb; border-radius: 12px; overflow: hidden; }
+
+  .card-media { position: relative; height: 150px; background: linear-gradient(135deg, #fde68a, #fca5a5); }
+
+  .badge { position: absolute; top: 12px; padding: 4px 10px; border-radius: 999px;
+           background: #1a1a1a; color: #ffffff; font-size: 12px; line-height: 16px; }
+
+  /* the planted defect: the pill hangs 3 past the card, which clips it */
+  #stock-badge { right: -3px; }
+
+  .card-body { padding: 14px 16px 16px; }
+  .card-title { margin: 0 0 6px; font-size: 15px; }
+  .card-price { margin: 0; font-size: 14px; color: #4b5563; }
+</style>
+</head>
+<body>
+
+<article class="card">
+  <div class="card-media">
+    <span class="badge" id="stock-badge">2 left</span>
+  </div>
+  <div class="card-body">
+    <h3 class="card-title">Linen throw, sand</h3>
+    <p class="card-price">$64.00</p>
+  </div>
+</article>
+
+</body>
+</html>

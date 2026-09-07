@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Results</title>
+<style>
+  body { margin: 0; background: #ffffff; color: #111827;
+         font-family: -apple-system, "Segoe UI", Arial, sans-serif; }
+
+  .layout { max-width: 960px; margin: 0 auto; padding: 32px 0;
+            display: grid; grid-template-columns: 240px 1fr; column-gap: 24px; row-gap: 20px;
+            grid-template-areas: "head head"
+                                 "side main"; }
+
+  .topbar { grid-area: head; height: 44px; display: flex; align-items: center;
+            border-bottom: 1px solid #e5e7eb; font-size: 15px; font-weight: 600; }
+
+  .filters { grid-area: side; background: #f8fafc; border-radius: 10px; padding: 16px;
+             font-size: 13px; line-height: 22px; color: #4b5563; }
+  .filters h2 { margin: 0 0 6px; font-size: 13px; line-height: 20px; }
+
+  .results { grid-area: main; }
+
+  .toolbar { display: flex; gap: 8px; }
+  .btn { height: 34px; padding: 0 14px; border: 0; border-radius: 8px;
+         background: #2563eb; color: #ffffff; font-size: 13px; }
+  .btn.ghost { background: #eef2ff; color: #1e3a8a; }
+
+  .results h2 { margin: 16px 0 8px; font-size: 17px; line-height: 24px; }
+  .row { padding: 10px 0; border-bottom: 1px solid #f3f4f6; font-size: 14px; line-height: 20px; }
+
+  /* the planted defect: this notice belongs in the head area and was given main,
+     so it renders 40 tall over the top of the main column */
+  .status { grid-area: main; align-self: start; height: 40px; box-sizing: border-box;
+            padding: 0 12px; background: #fef3c7; border-radius: 8px;
+            font-size: 13px; line-height: 40px; color: #92400e; }
+</style>
+</head>
+<body>
+
+<div class="layout">
+  <header class="topbar">Deal search</header>
+
+  <aside class="filters">
+    <h2>Filters</h2>
+    Stage: negotiation<br>
+    Owner: any<br>
+    Closed: last 90 days
+  </aside>
+
+  <section class="results">
+    <div class="toolbar">
+      <button class="btn" id="export-csv">Export CSV</button>
+      <button class="btn ghost">Save view</button>
+    </div>
+
+    <h2>412 deals</h2>
+
+    <div class="row">Northwind renewal &middot; 12,400</div>
+    <div class="row">Fabrikam expansion &middot; 8,900</div>
+    <div class="row">Contoso pilot &middot; 3,150</div>
+    <div class="row">Tailspin upgrade &middot; 6,720</div>
+    <div class="row">Litware seats &middot; 2,480</div>
+  </section>
+
+  <div class="status" id="status-bar">Sync paused &mdash; reconnect to keep results fresh</div>
+</div>
+
+</body>
+</html>

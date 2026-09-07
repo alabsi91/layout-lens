@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Order summary</title>
+<style>
+  body { margin: 0; background: #ffffff; color: #1a1a1a; font-family: Arial, Helvetica, sans-serif; }
+
+  .summary { width: 360px; margin: 80px auto 0; padding: 20px;
+             border: 1px solid #e5e7eb; border-radius: 12px; }
+  .summary h2 { margin: 0 0 16px; font-size: 18px; }
+
+  .price-row { display: flex; justify-content: space-between; align-items: baseline;
+               margin-bottom: 12px; font-size: 14px; line-height: 22px; }
+
+  .price-label { color: #4b5563; }
+
+  /* on purpose: the numbers end on one line, so they start in four places */
+  .price { font-variant-numeric: tabular-nums; }
+
+  .total-row { display: flex; justify-content: space-between; align-items: baseline;
+               padding-top: 12px; border-top: 1px solid #e5e7eb; font-size: 15px; font-weight: 700; }
+</style>
+</head>
+<body>
+
+<section class="summary">
+  <h2>Order summary</h2>
+
+  <div class="price-row">
+    <span class="price-label">Beans, 1 kg</span>
+    <span class="price">$32.00</span>
+  </div>
+  <div class="price-row">
+    <span class="price-label">Grinder</span>
+    <span class="price">$1,499.00</span>
+  </div>
+  <div class="price-row">
+    <span class="price-label">Filters</span>
+    <span class="price">$9.00</span>
+  </div>
+  <div class="price-row">
+    <span class="price-label">Shipping</span>
+    <span class="price">$120.50</span>
+  </div>
+
+  <div class="total-row">
+    <span class="price-label">Total</span>
+    <span class="price">$1,660.50</span>
+  </div>
+</section>
+
+</body>
+</html>

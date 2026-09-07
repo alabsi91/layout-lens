@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Timesheet</title>
+<style>
+  body { margin: 0; background: #ffffff; color: #111827;
+         font-family: -apple-system, "Segoe UI", Arial, sans-serif; }
+
+  .wrap { max-width: 760px; margin: 0 auto; padding: 48px 24px; }
+  .wrap h1 { margin: 0 0 20px; font-size: 24px; line-height: 32px; }
+
+  table { table-layout: fixed; width: 670px; border-collapse: collapse; }
+
+  th { width: 110px; text-align: left; font-size: 12px; line-height: 16px; color: #6b7280;
+       font-weight: 600; text-transform: uppercase; letter-spacing: .04em;
+       padding: 8px 16px; border-bottom: 1px solid #e5e7eb; }
+  th.week { width: 120px; }
+
+  td { vertical-align: top; padding: 12px 16px; font-size: 14px; line-height: 20px;
+       border-bottom: 1px solid #f3f4f6; }
+
+  .hours { display: inline-block; font-family: ui-monospace, Menlo, Consolas, monospace; }
+
+  /* the planted defect: this one cell kept a padding from an older row height */
+  #cell-tue { padding-top: 20px; }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <h1>Timesheet</h1>
+
+  <table>
+    <thead>
+      <tr>
+        <th class="week">Week</th>
+        <th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Fri</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Week 12</td>
+        <td class="cell"><span class="hours">7.5h</span></td>
+        <td class="cell"><span class="hours">8.0h</span></td>
+        <td class="cell"><span class="hours">6.0h</span></td>
+        <td class="cell"><span class="hours">8.0h</span></td>
+        <td class="cell"><span class="hours">4.5h</span></td>
+      </tr>
+      <tr>
+        <td>Week 13</td>
+        <td class="cell"><span class="hours">8.0h</span></td>
+        <td class="cell" id="cell-tue"><span class="hours" id="hours-tue">7.0h</span></td>
+        <td class="cell"><span class="hours">8.0h</span></td>
+        <td class="cell"><span class="hours">5.5h</span></td>
+        <td class="cell"><span class="hours">6.5h</span></td>
+      </tr>
+      <tr>
+        <td>Week 14</td>
+        <td class="cell"><span class="hours">6.0h</span></td>
+        <td class="cell"><span class="hours">7.5h</span></td>
+        <td class="cell"><span class="hours">7.0h</span></td>
+        <td class="cell"><span class="hours">8.0h</span></td>
+        <td class="cell"><span class="hours">3.0h</span></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+</body>
+</html>

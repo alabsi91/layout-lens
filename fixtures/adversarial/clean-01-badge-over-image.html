@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Sale card</title>
+<style>
+  body { margin: 0; background: #ffffff; color: #1a1a1a; font-family: Arial, Helvetica, sans-serif; }
+
+  .card { width: 260px; margin: 70px auto 0; border: 1px solid #e5e7eb; border-radius: 12px; overflow: hidden; }
+
+  .card-media { position: relative; height: 150px; background: linear-gradient(135deg, #fecaca, #fdba74); }
+
+  /* on purpose: the pill sits on the picture, well inside it */
+  .badge { position: absolute; top: 12px; left: 12px; z-index: 2;
+           padding: 4px 10px; border-radius: 999px; background: #1a1a1a; color: #ffffff;
+           font-size: 12px; line-height: 16px; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3); }
+
+  .card-body { padding: 14px 16px 16px; }
+  .card-title { margin: 0 0 6px; font-size: 15px; }
+  .card-price { margin: 0; font-size: 14px; color: #4b5563; }
+</style>
+</head>
+<body>
+
+<article class="card">
+  <div class="card-media">
+    <span class="badge" id="sale-badge">30% off</span>
+  </div>
+  <div class="card-body">
+    <h3 class="card-title">Stoneware mug, clay</h3>
+    <p class="card-price">$18.00</p>
+  </div>
+</article>
+
+</body>
+</html>

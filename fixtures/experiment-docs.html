@@ -1,0 +1,1191 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Quill Docs — Configuration</title>
+    <style>
+      :root {
+        --bg: #ffffff;
+        --bg-soft: #f7f8fa;
+        --bg-code: #f4f5f7;
+        --line: #e4e6eb;
+        --line-soft: #eef0f3;
+        --text: #1b1e24;
+        --text-dim: #565b63;
+        --text-faint: #656b74;
+        --accent: #5b53d6;
+        --accent-soft: #eeecfb;
+        --accent-line: #cfcaf5;
+        --topbar-h: 56px;
+        --font-ui: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        background: var(--bg);
+        color: var(--text);
+        font-family: var(--font-ui);
+        font-size: 14px;
+        line-height: 1.6;
+        overflow-x: hidden;
+      }
+
+      /* ---------- top bar ---------- */
+
+      .topbar {
+        position: sticky;
+        top: 0;
+        z-index: 40;
+        display: flex;
+        align-items: center;
+        gap: 24px;
+        height: var(--topbar-h);
+        padding: 0 24px;
+        background: rgba(255, 255, 255, 0.92);
+        border-bottom: 1px solid var(--line);
+        backdrop-filter: blur(6px);
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        flex: none;
+        width: 200px;
+      }
+
+      .brand-mark {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 26px;
+        height: 26px;
+        border-radius: 7px;
+        background: var(--accent);
+        color: #fff;
+        flex: none;
+      }
+
+      .brand-name {
+        font-size: 15px;
+        font-weight: 650;
+        letter-spacing: -0.01em;
+      }
+
+      .brand-tag {
+        font-size: 11px;
+        color: var(--text-faint);
+        border: 1px solid var(--line);
+        border-radius: 5px;
+        padding: 1px 5px;
+        line-height: 1.4;
+      }
+
+      .searchbar {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex: 1 1 auto;
+        max-width: 420px;
+        height: 34px;
+        padding: 0 8px 0 11px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--bg-soft);
+        color: var(--text-faint);
+      }
+
+      .searchbar .icon {
+        flex: none;
+        color: var(--text-faint);
+      }
+
+      .searchbar-label {
+        flex: 1 1 auto;
+        font-size: 13px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .kbd-pill {
+        flex: none;
+        display: flex;
+        align-items: center;
+        gap: 2px;
+        height: 20px;
+        padding: 0 6px;
+        border: 1px solid var(--line);
+        border-radius: 5px;
+        background: #fff;
+        color: var(--text-faint);
+        font-family: var(--font-mono);
+        font-size: 11px;
+        line-height: 1;
+      }
+
+      .topbar-right {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-left: auto;
+        flex: none;
+      }
+
+      .version-select {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        height: 30px;
+        padding: 0 8px 0 10px;
+        border: 1px solid var(--line);
+        border-radius: 7px;
+        background: #fff;
+        font-size: 13px;
+        color: var(--text-dim);
+        white-space: nowrap;
+      }
+
+      .gh-link {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        height: 30px;
+        padding: 0 10px;
+        border-radius: 7px;
+        font-size: 13px;
+        color: var(--text-dim);
+        text-decoration: none;
+        white-space: nowrap;
+      }
+
+      /* ---------- three columns ---------- */
+
+      .shell {
+        display: grid;
+        grid-template-columns: 232px minmax(0, 1fr) 208px;
+        gap: 32px;
+        max-width: 1232px;
+        margin: 0 auto;
+        padding: 0 24px;
+        align-items: start;
+      }
+
+      .sidebar,
+      .toc {
+        position: sticky;
+        top: var(--topbar-h);
+        max-height: calc(100vh - var(--topbar-h));
+        overflow-y: auto;
+        padding: 24px 0 32px;
+      }
+
+      /* ---------- nav tree ---------- */
+
+      .nav-group + .nav-group {
+        margin-top: 24px;
+      }
+
+      .nav-heading {
+        margin: 0 0 8px;
+        padding: 0 10px;
+        font-size: 11px;
+        font-weight: 650;
+        letter-spacing: 0.07em;
+        text-transform: uppercase;
+        color: var(--text-faint);
+      }
+
+      .nav-link {
+        display: block;
+        padding: 5px 10px;
+        border-radius: 6px;
+        font-size: 13.5px;
+        color: var(--text-dim);
+        text-decoration: none;
+      }
+
+      .nav-link.is-current {
+        background: var(--accent-soft);
+        color: var(--accent);
+        font-weight: 600;
+      }
+
+      .nav-nested {
+        margin-left: 14px;
+        padding-left: 12px;
+        border-left: 1px solid var(--line);
+      }
+
+      /* ---------- article ---------- */
+
+      .article {
+        min-width: 0;
+        padding: 24px 0 56px;
+      }
+
+      .crumbs {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        font-size: 12.5px;
+        color: var(--text-faint);
+      }
+
+      .crumbs .sep {
+        color: #6c727b;
+      }
+
+      .crumbs .current {
+        color: var(--text-dim);
+      }
+
+      .article h1 {
+        margin: 10px 0 0;
+        font-size: 32px;
+        line-height: 1.2;
+        font-weight: 680;
+        letter-spacing: -0.02em;
+      }
+
+      .lead {
+        margin: 12px 0 0;
+        font-size: 15.5px;
+        line-height: 1.65;
+        color: var(--text-dim);
+        max-width: 62ch;
+      }
+
+      .article h2 {
+        margin: 40px 0 0;
+        padding-top: 4px;
+        font-size: 20px;
+        line-height: 1.3;
+        font-weight: 650;
+        letter-spacing: -0.01em;
+      }
+
+      .article h3 {
+        margin: 28px 0 0;
+        font-size: 15.5px;
+        font-weight: 650;
+      }
+
+      .article p {
+        margin: 12px 0 0;
+        max-width: 68ch;
+      }
+
+      .article a {
+        color: var(--accent);
+      }
+
+      code {
+        font-family: var(--font-mono);
+        font-size: 0.88em;
+      }
+
+      p code,
+      td code {
+        padding: 1.5px 5px;
+        border: 1px solid var(--line);
+        border-radius: 5px;
+        background: var(--bg-code);
+        white-space: nowrap;
+      }
+
+      /* ---------- callout ---------- */
+
+      .callout {
+        display: flex;
+        align-items: flex-start;
+        gap: 11px;
+        margin-top: 20px;
+        padding: 13px 15px;
+        border: 1px solid var(--accent-line);
+        border-radius: 9px;
+        background: var(--accent-soft);
+      }
+
+      .callout-icon {
+        flex: none;
+        /* same box height as one line of text, so the icon centers on it */
+        display: flex;
+        align-items: center;
+        height: 22px;
+        color: var(--accent);
+      }
+
+      .callout-body {
+        min-width: 0;
+      }
+
+      .callout-title {
+        font-size: 13.5px;
+        font-weight: 650;
+        line-height: 22px;
+        color: #3f37b8;
+      }
+
+      .callout-text {
+        margin: 3px 0 0;
+        font-size: 13.5px;
+        line-height: 1.6;
+        color: #4b4a63;
+      }
+
+      /* ---------- code block ---------- */
+
+      .code-block {
+        position: relative;
+        margin-top: 18px;
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        background: var(--bg-code);
+        overflow: hidden;
+      }
+
+      .code-toolbar {
+        position: absolute;
+        top: 8px;
+        right: 10px;
+        z-index: 2;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .lang-label {
+        height: 21px;
+        padding: 0 7px;
+        border: 1px solid var(--line);
+        border-radius: 5px;
+        background: #fff;
+        font-family: var(--font-mono);
+        font-size: 11px;
+        line-height: 19px;
+        color: var(--text-faint);
+      }
+
+      .copy-button {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        height: 21px;
+        padding: 0 7px;
+        border: 1px solid var(--line);
+        border-radius: 5px;
+        background: #fff;
+        color: var(--text-dim);
+        font-family: var(--font-ui);
+        font-size: 11px;
+        line-height: 1;
+        cursor: pointer;
+      }
+
+      .code-lines {
+        padding: 12px 0;
+        font-family: var(--font-mono);
+        font-size: 12.5px;
+        line-height: 21px;
+        overflow-x: auto;
+      }
+
+      .code-line {
+        display: flex;
+        min-width: max-content;
+        padding-right: 14px;
+      }
+
+      .code-line.is-highlighted {
+        background: #fdf1cf;
+        box-shadow: inset 2px 0 0 #e0a92c;
+      }
+
+      .line-number {
+        flex: none;
+        width: 42px;
+        padding-right: 14px;
+        text-align: right;
+        color: #636973;
+        user-select: none;
+      }
+
+      .line-code {
+        flex: 1 1 auto;
+        padding-right: 90px;
+        white-space: pre;
+      }
+
+      .tok-key {
+        color: #8250df;
+      }
+      .tok-str {
+        color: #0a7d55;
+      }
+      .tok-num {
+        color: #b5500c;
+      }
+      .tok-com {
+        color: #66707a;
+      }
+
+      /* ---------- tabs ---------- */
+
+      .tabs {
+        display: flex;
+        align-items: flex-end;
+        gap: 18px;
+        margin-top: 22px;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .tab {
+        padding: 6px 2px 4px;
+        margin-bottom: -1px;
+        border-bottom: 2px solid transparent;
+        font-size: 13.5px;
+        color: var(--text-faint);
+        cursor: pointer;
+      }
+
+      .tab.is-active {
+        border-bottom-color: var(--accent);
+        color: var(--accent);
+        font-weight: 600;
+      }
+
+      .tabs + .code-block {
+        margin-top: 14px;
+      }
+
+      /* ---------- table ---------- */
+
+      .table-wrap {
+        margin-top: 18px;
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        overflow-x: auto;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 13.5px;
+      }
+
+      thead th {
+        padding: 9px 14px;
+        background: var(--bg-soft);
+        border-bottom: 1px solid var(--line);
+        text-align: left;
+        font-size: 12px;
+        font-weight: 650;
+        letter-spacing: 0.02em;
+        color: var(--text-dim);
+        white-space: nowrap;
+      }
+
+      tbody td {
+        padding: 10px 14px;
+        border-bottom: 1px solid var(--line-soft);
+        vertical-align: top;
+        color: var(--text-dim);
+      }
+
+      tbody tr:last-child td {
+        border-bottom: none;
+      }
+
+      tbody td:first-child {
+        color: var(--text);
+        font-family: var(--font-mono);
+        font-size: 12.5px;
+        white-space: nowrap;
+      }
+
+      th.align-end,
+      td.align-end {
+        text-align: right;
+        white-space: nowrap;
+      }
+
+      /* ---------- steps ---------- */
+
+      .steps {
+        margin: 16px 0 0;
+        padding: 0;
+        list-style: none;
+      }
+
+      .step {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+      }
+
+      .step + .step {
+        margin-top: 14px;
+      }
+
+      .step-number {
+        flex: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 22px;
+        height: 22px;
+        margin-top: 0;
+        border-radius: 50%;
+        background: var(--accent-soft);
+        color: var(--accent);
+        font-size: 11.5px;
+        font-weight: 650;
+        line-height: 1;
+      }
+
+      .step-body {
+        min-width: 0;
+        max-width: 62ch;
+      }
+
+      .step-title {
+        font-weight: 620;
+        line-height: 22px;
+      }
+
+      .step-text {
+        margin: 2px 0 0;
+        color: var(--text-dim);
+      }
+
+      /* ---------- prev / next ---------- */
+
+      .pager {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+        margin-top: 44px;
+        padding-top: 28px;
+        border-top: 1px solid var(--line);
+        align-items: stretch;
+      }
+
+      .pager-card {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        min-width: 0;
+        padding: 13px 15px;
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        text-decoration: none;
+        color: inherit;
+        background: #fff;
+      }
+
+      .pager-card .arrow {
+        flex: none;
+        color: var(--text-faint);
+      }
+
+      .pager-text {
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+        flex: 1 1 auto;
+      }
+
+      .pager-kind {
+        font-size: 11.5px;
+        line-height: 1.5;
+        color: var(--text-faint);
+      }
+
+      .pager-title {
+        margin-top: 1px;
+        font-size: 14px;
+        font-weight: 620;
+        color: var(--text);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .pager-card.is-next {
+        text-align: right;
+      }
+
+      /* ---------- on this page ---------- */
+
+      .toc-heading {
+        margin: 0 0 10px;
+        padding-left: 13px;
+        font-size: 11px;
+        font-weight: 650;
+        letter-spacing: 0.07em;
+        text-transform: uppercase;
+        color: var(--text-faint);
+      }
+
+      .toc-link {
+        position: relative;
+        display: block;
+        padding: 4px 0 4px 13px;
+        font-size: 13px;
+        line-height: 1.45;
+        color: var(--text-dim);
+        text-decoration: none;
+      }
+
+      .toc-link.is-current {
+        color: var(--accent);
+        font-weight: 600;
+      }
+
+      .toc-link.is-current::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 7px;
+        width: 2px;
+        height: 15px;
+        border-radius: 1px;
+        background: var(--accent);
+      }
+
+      .toc-link.is-sub {
+        padding-left: 25px;
+      }
+
+      /* ---------- command palette ---------- */
+
+      .palette-backdrop {
+        position: fixed;
+        inset: 0;
+        z-index: 90;
+        background: rgba(24, 26, 32, 0.42);
+      }
+
+      .palette {
+        position: fixed;
+        top: 84px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 91;
+        width: 560px;
+        max-width: calc(100vw - 48px);
+        border: 1px solid #d8dae0;
+        border-radius: 13px;
+        background: #fff;
+        box-shadow: 0 20px 50px rgba(16, 18, 24, 0.28);
+        overflow: hidden;
+      }
+
+      .palette-input-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        height: 50px;
+        padding: 0 15px;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .palette-input-row .icon {
+        flex: none;
+        color: var(--text-faint);
+      }
+
+      .palette-query {
+        flex: 1 1 auto;
+        min-width: 0;
+        font-size: 15px;
+        color: var(--text);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .palette-caret {
+        flex: none;
+        width: 1px;
+        height: 18px;
+        background: var(--accent);
+      }
+
+      .palette-list {
+        padding: 6px;
+        max-height: 320px;
+        overflow-y: auto;
+      }
+
+      .palette-item {
+        display: flex;
+        align-items: center;
+        gap: 11px;
+        height: 40px;
+        padding: 0 10px;
+        border-radius: 8px;
+      }
+
+      .palette-item.is-selected {
+        background: var(--accent-soft);
+      }
+
+      .palette-item-icon {
+        flex: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 24px;
+        height: 24px;
+        border-radius: 6px;
+        background: var(--bg-soft);
+        border: 1px solid var(--line);
+        color: var(--text-dim);
+      }
+
+      .palette-item.is-selected .palette-item-icon {
+        background: #fff;
+        border-color: var(--accent-line);
+        color: var(--accent);
+      }
+
+      .palette-item-title {
+        flex: 1 1 auto;
+        min-width: 0;
+        font-size: 13.5px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .palette-item.is-selected .palette-item-title {
+        color: var(--accent);
+        font-weight: 600;
+      }
+
+      .palette-item-hint {
+        flex: none;
+        font-family: var(--font-mono);
+        font-size: 11px;
+        color: var(--text-faint);
+        white-space: nowrap;
+      }
+
+      .palette-footer {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        height: 38px;
+        padding: 0 14px;
+        border-top: 1px solid var(--line);
+        background: var(--bg-soft);
+      }
+
+      .palette-foot-hint {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        font-size: 11.5px;
+        color: var(--text-faint);
+        white-space: nowrap;
+      }
+
+      .kbd-mini {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 18px;
+        height: 18px;
+        padding: 0 4px;
+        border: 1px solid var(--line);
+        border-radius: 4px;
+        background: #fff;
+        font-family: var(--font-mono);
+        font-size: 10.5px;
+        line-height: 1;
+        color: var(--text-dim);
+      }
+    </style>
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="brand">
+        <span class="brand-mark">
+          <svg width="15" height="15" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+            <path d="M3 13c4-1 6.5-3.5 9-9-1 5-3 8-9 9Z" fill="currentColor" />
+            <path d="M3 13l2.5-2.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" />
+          </svg>
+        </span>
+        <span class="brand-name">Quill</span>
+        <span class="brand-tag">docs</span>
+      </div>
+
+      <div class="searchbar">
+        <svg class="icon" width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+          <circle cx="7" cy="7" r="4.5" stroke="currentColor" stroke-width="1.5" />
+          <path d="M10.5 10.5L14 14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+        </svg>
+        <span class="searchbar-label">Search the documentation</span>
+        <span class="kbd-pill">⌘K</span>
+      </div>
+
+      <div class="topbar-right">
+        <div class="version-select">
+          <span>v4.2.0</span>
+          <svg width="10" height="10" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+            <path d="M2.5 4.5L6 8l3.5-3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        </div>
+        <a class="gh-link" href="#">
+          <svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+            <path
+              d="M8 .5a7.5 7.5 0 0 0-2.37 14.62c.37.07.5-.16.5-.36v-1.3c-2.09.45-2.53-.9-2.53-.9-.34-.87-.83-1.1-.83-1.1-.68-.47.05-.46.05-.46.75.05 1.15.77 1.15.77.67 1.15 1.76.82 2.19.63.07-.49.26-.82.48-1.01-1.67-.19-3.42-.83-3.42-3.7 0-.82.29-1.49.77-2.01-.08-.19-.34-.95.07-1.99 0 0 .63-.2 2.06.77a7.1 7.1 0 0 1 3.75 0c1.43-.97 2.06-.77 2.06-.77.41 1.04.15 1.8.07 1.99.48.52.77 1.19.77 2.01 0 2.88-1.75 3.51-3.42 3.69.27.23.51.69.51 1.39v2.06c0 .2.13.44.51.36A7.5 7.5 0 0 0 8 .5Z"
+            />
+          </svg>
+          <span>GitHub</span>
+        </a>
+      </div>
+    </header>
+
+    <div class="shell">
+      <nav class="sidebar">
+        <div class="nav-group">
+          <div class="nav-heading">Getting started</div>
+          <a class="nav-link" href="#">Introduction</a>
+          <a class="nav-link" href="#">Installation</a>
+          <a class="nav-link" href="#">Quick start</a>
+          <div class="nav-nested">
+            <a class="nav-link" href="#">Your first document</a>
+          </div>
+          <a class="nav-link" href="#">Editor concepts</a>
+        </div>
+
+        <div class="nav-group">
+          <div class="nav-heading">Guides</div>
+          <a class="nav-link" href="#">Toolbars</a>
+          <a class="nav-link is-current" href="#">Configuration</a>
+          <div class="nav-nested">
+            <a class="nav-link" href="#">Theme options</a>
+          </div>
+          <a class="nav-link" href="#">Formats and blots</a>
+          <a class="nav-link" href="#">Collaborative editing</a>
+        </div>
+
+        <div class="nav-group">
+          <div class="nav-heading">API reference</div>
+          <a class="nav-link" href="#">Quill class</a>
+          <a class="nav-link" href="#">Content methods</a>
+          <div class="nav-nested">
+            <a class="nav-link" href="#">Delta operations</a>
+          </div>
+          <a class="nav-link" href="#">Selection</a>
+          <a class="nav-link" href="#">Events</a>
+        </div>
+      </nav>
+
+      <main class="article">
+        <div class="crumbs">
+          <span>Docs</span>
+          <span class="sep">/</span>
+          <span>Guides</span>
+          <span class="sep">/</span>
+          <span class="current">Configuration</span>
+        </div>
+
+        <h1>Configuration</h1>
+
+        <p class="lead">
+          Every Quill instance is created from a single options object. This page walks through the options you will reach for
+          first, what they default to, and how they interact once the editor is running.
+        </p>
+
+        <h2 id="options">The options object</h2>
+
+        <p>
+          Pass the options as the second argument to the constructor. Anything you leave out falls back to the built-in default,
+          so a working editor needs very little. The <code>theme</code> option is the one exception worth setting explicitly.
+        </p>
+
+        <div class="callout">
+          <span class="callout-icon">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+              <circle cx="8" cy="8" r="6.6" stroke="currentColor" stroke-width="1.4" />
+              <path d="M8 7.2v4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
+              <circle cx="8" cy="4.7" r="0.95" fill="currentColor" />
+            </svg>
+          </span>
+          <div class="callout-body">
+            <div class="callout-title">Options are read once</div>
+            <p class="callout-text">
+              Quill reads the object when the editor is constructed. Changing a property later has no effect. To swap a theme at
+              runtime, destroy the instance and build a new one with the content you kept.
+            </p>
+          </div>
+        </div>
+
+        <div class="code-block">
+          <div class="code-toolbar">
+            <span class="lang-label">javascript</span>
+            <button class="copy-button" type="button">
+              <svg width="11" height="11" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+                <rect x="4" y="4" width="6.5" height="6.5" rx="1.4" stroke="currentColor" stroke-width="1.2" />
+                <path d="M8 2.5H3.2c-.4 0-.7.3-.7.7V8" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" />
+              </svg>
+              <span>Copy</span>
+            </button>
+          </div>
+          <div class="code-lines">
+            <div class="code-line"><span class="line-number">1</span><span class="line-code"><span class="tok-key">import</span> Quill <span class="tok-key">from</span> <span class="tok-str">"quill"</span>;</span></div>
+            <div class="code-line"><span class="line-number">2</span><span class="line-code"></span></div>
+            <div class="code-line"><span class="line-number">3</span><span class="line-code"><span class="tok-key">const</span> editor = <span class="tok-key">new</span> <span class="tok-num">Quill</span>(<span class="tok-str">"#editor"</span>, {</span></div>
+            <div class="code-line is-highlighted"><span class="line-number">4</span><span class="line-code">  theme: <span class="tok-str">"snow"</span>,</span></div>
+            <div class="code-line"><span class="line-number">5</span><span class="line-code">  placeholder: <span class="tok-str">"Write something…"</span>,</span></div>
+            <div class="code-line"><span class="line-number">6</span><span class="line-code">  readOnly: <span class="tok-num">false</span>,</span></div>
+            <div class="code-line"><span class="line-number">7</span><span class="line-code">  modules: { toolbar: <span class="tok-str">"#toolbar"</span> },</span></div>
+            <div class="code-line"><span class="line-number">8</span><span class="line-code">});</span></div>
+          </div>
+        </div>
+
+        <h2 id="bounds">Bounds and containers</h2>
+
+        <p>
+          Tooltips and pickers position themselves inside the element given by <code>bounds</code>. Set it to the scroll container
+          when the editor lives inside a panel, otherwise a link tooltip near the edge can end up outside the visible area.
+        </p>
+
+        <div class="tabs">
+          <div class="tab is-active">npm</div>
+          <div class="tab">CDN</div>
+        </div>
+
+        <div class="code-block">
+          <div class="code-toolbar">
+            <span class="lang-label">bash</span>
+            <button class="copy-button" type="button">
+              <svg width="11" height="11" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+                <rect x="4" y="4" width="6.5" height="6.5" rx="1.4" stroke="currentColor" stroke-width="1.2" />
+                <path d="M8 2.5H3.2c-.4 0-.7.3-.7.7V8" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" />
+              </svg>
+              <span>Copy</span>
+            </button>
+          </div>
+          <div class="code-lines">
+            <div class="code-line"><span class="line-number">1</span><span class="line-code"><span class="tok-com"># install the editor and its stylesheet</span></span></div>
+            <div class="code-line"><span class="line-number">2</span><span class="line-code">npm install quill</span></div>
+            <div class="code-line"><span class="line-number">3</span><span class="line-code">npm run dev</span></div>
+          </div>
+        </div>
+
+        <h2 id="reference">Option reference</h2>
+
+        <p>Every option below is optional. The last column shows the version the option first shipped in.</p>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Option</th>
+                <th>Type</th>
+                <th>Description</th>
+                <th class="align-end">Since</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>theme</td>
+                <td>string</td>
+                <td>Name of a registered theme. Falls back to the bare <code>core</code> theme.</td>
+                <td class="align-end">1.0</td>
+              </tr>
+              <tr>
+                <td>placeholder</td>
+                <td>string</td>
+                <td>Shown while the editor is empty and not focused.</td>
+                <td class="align-end">1.0</td>
+              </tr>
+              <tr>
+                <td>bounds</td>
+                <td>Element</td>
+                <td>Container that tooltips and pickers stay inside.</td>
+                <td class="align-end">1.2</td>
+              </tr>
+              <tr>
+                <td>readOnly</td>
+                <td>boolean</td>
+                <td>Starts the editor in a non-editable state.</td>
+                <td class="align-end">2.0</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h2 id="steps">Wiring it up</h2>
+
+        <ol class="steps">
+          <li class="step">
+            <span class="step-number">1</span>
+            <div class="step-body">
+              <div class="step-title">Add the container</div>
+              <p class="step-text">Give the editor a plain element with a fixed height. Quill will not create one for you.</p>
+            </div>
+          </li>
+          <li class="step">
+            <span class="step-number">2</span>
+            <div class="step-body">
+              <div class="step-title">Load a theme stylesheet</div>
+              <p class="step-text">
+                The snow and bubble themes each ship their own CSS file. Without it the toolbar renders as unstyled buttons.
+              </p>
+            </div>
+          </li>
+          <li class="step">
+            <span class="step-number">3</span>
+            <div class="step-body">
+              <div class="step-title">Construct the editor</div>
+              <p class="step-text">Build the instance after the container is in the document, so measurements are correct.</p>
+            </div>
+          </li>
+          <li class="step">
+            <span class="step-number">4</span>
+            <div class="step-body">
+              <div class="step-title">Listen for changes</div>
+              <p class="step-text">Subscribe to text-change and store the delta, not the rendered HTML.</p>
+            </div>
+          </li>
+        </ol>
+
+        <nav class="pager">
+          <a class="pager-card is-prev" href="#">
+            <span class="arrow">
+              <svg width="15" height="15" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                <path d="M10 3L5 8l5 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+            </span>
+            <span class="pager-text">
+              <span class="pager-kind">Previous</span>
+              <span class="pager-title">Toolbars</span>
+            </span>
+          </a>
+          <a class="pager-card is-next" href="#">
+            <span class="pager-text">
+              <span class="pager-kind">Next</span>
+              <span class="pager-title">Formats and blots</span>
+            </span>
+            <span class="arrow">
+              <svg width="15" height="15" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                <path d="M6 3l5 5-5 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+            </span>
+          </a>
+        </nav>
+      </main>
+
+      <aside class="toc">
+        <div class="toc-heading">On this page</div>
+        <a class="toc-link" href="#options">The options object</a>
+        <a class="toc-link is-sub" href="#options">Defaults</a>
+        <a class="toc-link is-current" href="#bounds">Bounds and containers</a>
+        <a class="toc-link" href="#reference">Option reference</a>
+        <a class="toc-link" href="#steps">Wiring it up</a>
+      </aside>
+    </div>
+
+    <div class="palette-backdrop"></div>
+
+    <div class="palette" role="dialog" aria-label="Command palette">
+      <div class="palette-input-row">
+        <svg class="icon" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+          <circle cx="7" cy="7" r="4.5" stroke="currentColor" stroke-width="1.5" />
+          <path d="M10.5 10.5L14 14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+        </svg>
+        <span class="palette-query">theme</span>
+        <span class="palette-caret"></span>
+      </div>
+
+      <div class="palette-list">
+        <div class="palette-item">
+          <span class="palette-item-icon">
+            <svg width="13" height="13" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+              <rect x="2.2" y="1.8" width="9.6" height="10.4" rx="1.6" stroke="currentColor" stroke-width="1.2" />
+              <path d="M4.6 5h4.8M4.6 7.4h4.8M4.6 9.8h3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" />
+            </svg>
+          </span>
+          <span class="palette-item-title">Theme options</span>
+          <span class="palette-item-hint">Guides</span>
+        </div>
+
+        <div class="palette-item is-selected">
+          <span class="palette-item-icon">
+            <svg width="13" height="13" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+              <circle cx="7" cy="7" r="5.2" stroke="currentColor" stroke-width="1.2" />
+              <path d="M7 1.8v10.4M1.8 7h10.4" stroke="currentColor" stroke-width="1.2" />
+            </svg>
+          </span>
+          <span class="palette-item-title">Registering a custom theme</span>
+          <span class="palette-item-hint">Guides</span>
+        </div>
+
+        <div class="palette-item">
+          <span class="palette-item-icon">
+            <svg width="13" height="13" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+              <path d="M5.2 3.4L2 7l3.2 3.6M8.8 3.4L12 7l-3.2 3.6" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+          </span>
+          <span class="palette-item-title">theme: "snow" reference</span>
+          <span class="palette-item-hint">API</span>
+        </div>
+
+        <div class="palette-item">
+          <span class="palette-item-icon">
+            <svg width="13" height="13" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+              <path d="M7 1.8l1.6 3.3 3.6.5-2.6 2.5.6 3.6L7 10l-3.2 1.7.6-3.6-2.6-2.5 3.6-.5L7 1.8Z" stroke="currentColor" stroke-width="1.1" stroke-linejoin="round" />
+            </svg>
+          </span>
+          <span class="palette-item-title">Bubble theme walkthrough</span>
+          <span class="palette-item-hint">Guides</span>
+        </div>
+
+        <div class="palette-item">
+          <span class="palette-item-icon">
+            <svg width="13" height="13" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+              <rect x="1.8" y="3" width="10.4" height="8" rx="1.5" stroke="currentColor" stroke-width="1.2" />
+              <path d="M1.8 5.6h10.4" stroke="currentColor" stroke-width="1.2" />
+            </svg>
+          </span>
+          <span class="palette-item-title">Theming the toolbar buttons</span>
+          <span class="palette-item-hint">Guides</span>
+        </div>
+
+        <div class="palette-item">
+          <span class="palette-item-icon">
+            <svg width="13" height="13" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+              <circle cx="6.3" cy="6.3" r="4.1" stroke="currentColor" stroke-width="1.2" />
+              <path d="M9.4 9.4L12.2 12.2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" />
+            </svg>
+          </span>
+          <span class="palette-item-title">Search all pages for "theme"</span>
+          <span class="palette-item-hint">Enter</span>
+        </div>
+      </div>
+
+      <div class="palette-footer">
+        <span class="palette-foot-hint"><span class="kbd-mini">↑</span><span class="kbd-mini">↓</span> navigate</span>
+        <span class="palette-foot-hint"><span class="kbd-mini">↵</span> open</span>
+        <span class="palette-foot-hint"><span class="kbd-mini">esc</span> close</span>
+      </div>
+    </div>
+  </body>
+</html>

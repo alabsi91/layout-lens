@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Spring offer</title>
+<style>
+  body { margin: 0; background: #ffffff; color: #111827;
+         font-family: -apple-system, "Segoe UI", Arial, sans-serif; }
+
+  .page { width: 640px; margin: 0 auto; padding: 48px 0; }
+  .page h1 { margin: 0 0 6px; font-size: 26px; line-height: 34px; }
+  .page p.lede { margin: 0 0 20px; font-size: 15px; line-height: 22px; color: #6b7280; }
+
+  .hero { position: relative; width: 640px; height: 320px; border-radius: 16px;
+          overflow: hidden; background: linear-gradient(135deg, #1f2937, #4b5563); }
+
+  .cta-btn { position: absolute; left: 32px; bottom: 28px; height: 44px; padding: 0 22px;
+             border: 0; border-radius: 22px; background: #f59e0b; color: #1f2937;
+             font-size: 15px; font-weight: 600; }
+
+  /* the planted defect: the scrim was added over the whole card, it reaches full
+     #0b1020 at 68% of the height and it never got pointer-events: none */
+  .scrim { position: absolute; inset: 0;
+           background: linear-gradient(180deg,
+                                       rgba(11, 16, 32, 0) 0%,
+                                       rgba(11, 16, 32, 0.35) 45%,
+                                       #0b1020 68%); }
+
+  .page p.note { margin: 20px 0 0; font-size: 13px; line-height: 20px; color: #6b7280; }
+</style>
+</head>
+<body>
+
+<div class="page">
+  <h1>Spring offer</h1>
+  <p class="lede">Two months on us when you move an annual plan before 31 May.</p>
+
+  <div class="hero">
+    <button class="cta-btn" id="claim-offer">Claim offer</button>
+    <div class="scrim" id="hero-scrim"></div>
+  </div>
+
+  <p class="note">Offer applies once per workspace.</p>
+</div>
+
+</body>
+</html>

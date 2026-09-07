@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Search</title>
+<style>
+  body { margin: 0; background: #ffffff; color: #111827;
+         font-family: -apple-system, "Segoe UI", Arial, sans-serif; }
+
+  .search-bar { display: flex; align-items: center; gap: 8px; padding: 12px 16px;
+                border-bottom: 1px solid #e5e7eb; }
+
+  .search-field { flex: 1; padding: 10px 12px; border: 1px solid #d1d5db; border-radius: 8px;
+                  font-size: 15px; line-height: 20px; font-family: inherit; }
+
+  .icon-btn { width: 40px; height: 40px; flex: 0 0 40px; padding: 0; border: none;
+              border-radius: 8px; background: #f3f4f6;
+              display: flex; align-items: center; justify-content: center; }
+
+  .icon-btn svg { width: 24px; height: 24px; display: block; position: relative; }
+
+  /* the planted defect: the glyph was nudged and never put back */
+  #clear-search svg { top: 1px; left: 1px; }
+
+  .results { padding: 8px 16px 24px; }
+  .result { padding: 12px 0; border-bottom: 1px solid #f3f4f6; }
+  .result h2 { margin: 0 0 2px; font-size: 15px; line-height: 20px; }
+  .result p { margin: 0; font-size: 13px; line-height: 18px; color: #6b7280; }
+</style>
+</head>
+<body>
+
+<div class="search-bar">
+  <input class="search-field" value="invoice march" aria-label="Search">
+  <button class="icon-btn" id="clear-search" aria-label="Clear search">
+    <svg viewBox="0 0 24 24" fill="none" stroke="#374151" stroke-width="2">
+      <path d="M6 6l12 12M18 6L6 18"></path>
+    </svg>
+  </button>
+</div>
+
+<main class="results">
+  <article class="result"><h2>Invoice 2043</h2><p>March 2024 · paid</p></article>
+  <article class="result"><h2>Invoice 2044</h2><p>March 2024 · open</p></article>
+  <article class="result"><h2>March summary</h2><p>Export · 18 lines</p></article>
+  <article class="result"><h2>Invoice 1998</h2><p>March 2023 · paid</p></article>
+</main>
+
+</body>
+</html>

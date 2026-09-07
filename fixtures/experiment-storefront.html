@@ -1,0 +1,754 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Alder & Grain — Fenwick Wool Overshirt</title>
+<style>
+  :root {
+    --ink: #16181c;
+    --ink-muted: #5b6169;
+    --ink-faint: #5e646c;
+    --line: #dcdfe4;
+    --line-strong: #b9bec6;
+    --surface: #ffffff;
+    --surface-sunken: #f3f4f6;
+    --accent: #1b4dd1;
+    --sale: #a1231b;
+    --page-pad: 16px;
+  }
+
+  * { box-sizing: border-box; }
+
+  html { -webkit-text-size-adjust: 100%; }
+
+  body {
+    margin: 0;
+    background: var(--surface);
+    color: var(--ink);
+    font: 15px/1.5 "Helvetica Neue", Helvetica, Arial, sans-serif;
+  }
+
+  img { max-width: 100%; }
+
+  .page-shell {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 var(--page-pad);
+  }
+
+  /* ---------- header ---------- */
+
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    background: var(--surface);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .header-bar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    height: 56px;
+  }
+
+  .icon-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    border: 1px solid transparent;
+    border-radius: 10px;
+    background: transparent;
+    color: var(--ink);
+    cursor: pointer;
+  }
+
+  .icon-button:hover { background: var(--surface-sunken); }
+
+  .icon-button svg {
+    width: 22px;
+    height: 22px;
+    display: block;
+  }
+
+  .shop-name {
+    flex: 1;
+    min-width: 0;
+    margin: 0;
+    font-size: 17px;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .cart-button { position: relative; }
+
+  .cart-count {
+    position: absolute;
+    top: 0;
+    right: 0;
+    min-width: 16px;
+    height: 16px;
+    padding: 0 4px;
+    border-radius: 8px;
+    background: var(--sale);
+    color: #ffffff;
+    font-size: 11px;
+    font-weight: 700;
+    line-height: 16px;
+    text-align: center;
+  }
+
+  /* ---------- product ---------- */
+
+  .product {
+    display: grid;
+    gap: 24px;
+    padding: 20px 0 32px;
+  }
+
+  .gallery {
+    display: grid;
+    grid-template-areas: "stage" "thumbs";
+    gap: 12px;
+  }
+
+  .gallery-stage {
+    grid-area: stage;
+    aspect-ratio: 4 / 5;
+    border-radius: 14px;
+    background: linear-gradient(150deg, #cbd3c6 0%, #9fae9b 55%, #7d8f7c 100%);
+  }
+
+  .gallery-thumbs {
+    grid-area: thumbs;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .thumb {
+    display: block;
+    width: 100%;
+    aspect-ratio: 1;
+    padding: 0;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: linear-gradient(150deg, #d5dbd1, #93a48f);
+    cursor: pointer;
+  }
+
+  .thumb.is-selected {
+    border-color: var(--ink);
+    box-shadow: 0 0 0 1px var(--ink);
+  }
+
+  .thumb-2 { background: linear-gradient(150deg, #dcd6c8, #a89a7d); }
+  .thumb-3 { background: linear-gradient(150deg, #c9d2dc, #8494a8); }
+  .thumb-4 { background: linear-gradient(150deg, #ded0d0, #a98d8d); }
+
+  .product-info { display: grid; gap: 20px; align-content: start; }
+
+  .product-heading { display: grid; gap: 8px; }
+
+  .product-title {
+    margin: 0;
+    font-size: 26px;
+    line-height: 1.2;
+    font-weight: 650;
+    letter-spacing: -0.01em;
+  }
+
+  .rating {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    color: var(--ink-muted);
+  }
+
+  .rating-stars {
+    color: #8a5800;
+    letter-spacing: 1px;
+    font-size: 15px;
+  }
+
+  .rating-link { color: var(--ink-muted); }
+
+  .price-row {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .price-now {
+    font-size: 24px;
+    font-weight: 650;
+    color: var(--sale);
+  }
+
+  .price-was {
+    font-size: 16px;
+    color: var(--ink-muted);
+    text-decoration: line-through;
+  }
+
+  .price-note {
+    font-size: 13px;
+    color: var(--ink-muted);
+  }
+
+  .option-group { display: grid; gap: 10px; }
+
+  .option-label {
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+  }
+
+  .option-label .option-value {
+    font-weight: 400;
+    text-transform: none;
+    letter-spacing: 0;
+    color: var(--ink);
+  }
+
+  .swatch-row {
+    display: flex;
+    gap: 14px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .swatch {
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border: 1px solid var(--line-strong);
+    border-radius: 50%;
+    cursor: pointer;
+  }
+
+  .swatch.is-selected {
+    box-shadow: 0 0 0 2px var(--surface), 0 0 0 4px var(--ink);
+  }
+
+  .swatch-moss { background: #6f7f68; }
+  .swatch-clay { background: #b0765c; }
+  .swatch-slate { background: #5c6a7a; }
+  .swatch-bone { background: #e6e0d4; }
+  .swatch-ink { background: #2a2d33; }
+
+  .size-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .size-pill {
+    min-width: 58px;
+    height: 42px;
+    padding: 0 12px;
+    border: 1px solid var(--line-strong);
+    border-radius: 21px;
+    background: var(--surface);
+    color: var(--ink);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+  }
+
+  .size-pill.is-selected {
+    border-color: var(--ink);
+    background: var(--ink);
+    color: #ffffff;
+  }
+
+  .size-pill.is-sold-out {
+    color: var(--ink-faint);
+    border-color: var(--line);
+    text-decoration: line-through;
+    cursor: not-allowed;
+  }
+
+  .buy-row { display: grid; gap: 12px; }
+
+  .quantity-stepper {
+    display: inline-grid;
+    grid-template-columns: 44px 52px 44px;
+    align-items: center;
+    justify-self: start;
+    height: 48px;
+    border: 1px solid var(--line-strong);
+    border-radius: 24px;
+  }
+
+  .quantity-button {
+    height: 100%;
+    border: 0;
+    border-radius: 24px;
+    background: transparent;
+    color: var(--ink);
+    font-size: 20px;
+    line-height: 1;
+    cursor: pointer;
+  }
+
+  .quantity-value {
+    text-align: center;
+    font-size: 15px;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .add-to-cart {
+    width: 100%;
+    height: 52px;
+    border: 0;
+    border-radius: 26px;
+    background: var(--ink);
+    color: #ffffff;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .delivery-note {
+    margin: 0;
+    font-size: 13px;
+    color: var(--ink-muted);
+  }
+
+  /* ---------- details ---------- */
+
+  .details-section {
+    border-top: 1px solid var(--line);
+    padding: 8px 0 24px;
+  }
+
+  .details-row { border-bottom: 1px solid var(--line); }
+
+  .details-row summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 16px 6px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    list-style: none;
+  }
+
+  .details-row summary::-webkit-details-marker { display: none; }
+
+  /* the arrow is rotated on a pseudo element so the tilted box stays inside the row */
+  .details-chevron {
+    position: relative;
+    flex: none;
+    width: 14px;
+    height: 14px;
+  }
+
+  .details-chevron::after {
+    content: "";
+    position: absolute;
+    top: 1px;
+    left: 2px;
+    width: 9px;
+    height: 9px;
+    border-right: 2px solid var(--ink-faint);
+    border-bottom: 2px solid var(--ink-faint);
+    transform: rotate(45deg);
+  }
+
+  .details-row[open] .details-chevron::after {
+    top: 4px;
+    transform: rotate(225deg);
+  }
+
+  .details-body {
+    margin: 0;
+    padding: 0 2px 20px;
+    max-width: 68ch;
+    color: var(--ink-muted);
+  }
+
+  /* ---------- related ---------- */
+
+  .related-section { padding: 24px 0 32px; }
+
+  .section-title {
+    margin: 0 0 16px;
+    font-size: 19px;
+    font-weight: 650;
+  }
+
+  .related-list {
+    display: flex;
+    gap: 12px;
+    overflow-x: auto;
+    margin: 0;
+    padding: 0 var(--page-pad) 4px;
+    margin-inline: calc(-1 * var(--page-pad));
+    list-style: none;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: var(--page-pad);
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .related-card {
+    flex: 0 0 60%;
+    scroll-snap-align: start;
+    display: grid;
+    gap: 8px;
+    align-content: start;
+  }
+
+  .card-image {
+    aspect-ratio: 1;
+    border-radius: 12px;
+    background: linear-gradient(150deg, #d7dbd4, #9aa694);
+  }
+
+  .card-image-2 { background: linear-gradient(150deg, #e0d8c9, #b1a184); }
+  .card-image-3 { background: linear-gradient(150deg, #ccd4de, #8b9bad); }
+  .card-image-4 { background: linear-gradient(150deg, #e2d3d3, #b09292); }
+  .card-image-5 { background: linear-gradient(150deg, #d3dad9, #8fa3a1); }
+  .card-image-6 { background: linear-gradient(150deg, #ded9e2, #a096ab); }
+
+  /* two lines tall whatever the title is, so every card's price sits on one line */
+  .card-title {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-height: 37.8px;
+    margin: 0;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.35;
+  }
+
+  .card-price {
+    margin: 0;
+    font-size: 14px;
+    color: var(--ink-muted);
+  }
+
+  /* ---------- footer ---------- */
+
+  .site-footer {
+    border-top: 1px solid var(--line);
+    background: var(--surface-sunken);
+    padding: 28px 0 32px;
+  }
+
+  .footer-columns {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
+  .footer-column h3 {
+    margin: 0 0 10px;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+  }
+
+  .footer-column ul {
+    display: grid;
+    gap: 8px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .footer-column a {
+    color: var(--ink);
+    text-decoration: none;
+    font-size: 14px;
+  }
+
+  .footer-column a:hover { text-decoration: underline; }
+
+  .footer-legal {
+    margin: 24px 0 0;
+    font-size: 13px;
+    color: var(--ink-muted);
+  }
+
+  /* ---------- tablet ---------- */
+
+  @media (min-width: 720px) {
+    :root { --page-pad: 28px; }
+
+    .product {
+      grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+      align-items: start;
+      gap: 32px;
+    }
+
+    .gallery {
+      grid-template-areas: "thumbs stage";
+      grid-template-columns: 72px minmax(0, 1fr);
+      gap: 12px;
+    }
+
+    .gallery-thumbs {
+      grid-template-columns: 1fr;
+      align-content: start;
+    }
+
+    .related-list {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      overflow-x: visible;
+      padding: 0;
+      margin-inline: 0;
+    }
+
+    .related-card { flex: none; }
+
+    .footer-columns { grid-template-columns: repeat(3, 1fr); gap: 32px; }
+  }
+
+  /* ---------- desktop ---------- */
+
+  @media (min-width: 1024px) {
+    :root { --page-pad: 40px; }
+
+    .product {
+      gap: 48px;
+      padding: 32px 0 48px;
+    }
+
+    .gallery {
+      grid-template-columns: 84px minmax(0, 1fr);
+      gap: 14px;
+    }
+
+    /* a 4/5 stage this wide is taller than the whole screen on desktop */
+    .gallery-stage { aspect-ratio: 1; }
+
+    .product-title { font-size: 32px; }
+
+    .related-list { grid-template-columns: repeat(6, 1fr); gap: 16px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="page-shell header-bar">
+    <button class="icon-button" type="button" aria-label="Back to outerwear">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M19 12H5"></path>
+        <path d="m12 19-7-7 7-7"></path>
+      </svg>
+    </button>
+
+    <p class="shop-name">Alder &amp; Grain</p>
+
+    <button class="icon-button cart-button" type="button" aria-label="Cart, 3 items">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M6 6h15l-1.5 9h-12z"></path>
+        <path d="M6 6 5 2H2"></path>
+        <circle cx="9" cy="20" r="1.5"></circle>
+        <circle cx="18" cy="20" r="1.5"></circle>
+      </svg>
+      <span class="cart-count">3</span>
+    </button>
+  </div>
+</header>
+
+<main>
+  <div class="page-shell">
+
+    <section class="product" aria-label="Fenwick Wool Overshirt">
+      <div class="gallery">
+        <div class="gallery-stage" role="img" aria-label="Fenwick overshirt in moss, front view"></div>
+
+        <ul class="gallery-thumbs">
+          <li><button class="thumb thumb-1 is-selected" type="button" aria-label="Front view"></button></li>
+          <li><button class="thumb thumb-2" type="button" aria-label="Back view"></button></li>
+          <li><button class="thumb thumb-3" type="button" aria-label="Cuff detail"></button></li>
+          <li><button class="thumb thumb-4" type="button" aria-label="Worn on model"></button></li>
+        </ul>
+      </div>
+
+      <div class="product-info">
+        <div class="product-heading">
+          <h1 class="product-title">Fenwick Brushed Wool Overshirt in Moss</h1>
+
+          <p class="rating">
+            <span class="rating-stars" aria-hidden="true">★★★★☆</span>
+            <span>4.6</span>
+            <a class="rating-link" href="#reviews">218 reviews</a>
+          </p>
+        </div>
+
+        <div class="price-row">
+          <span class="price-now">$148.00</span>
+          <span class="price-was">$210.00</span>
+          <span class="price-note">Save 30% through Sunday</span>
+        </div>
+
+        <div class="option-group">
+          <p class="option-label">Color <span class="option-value">Moss</span></p>
+
+          <ul class="swatch-row">
+            <li><button class="swatch swatch-moss is-selected" type="button" aria-label="Moss"></button></li>
+            <li><button class="swatch swatch-clay" type="button" aria-label="Clay"></button></li>
+            <li><button class="swatch swatch-slate" type="button" aria-label="Slate"></button></li>
+            <li><button class="swatch swatch-bone" type="button" aria-label="Bone"></button></li>
+            <li><button class="swatch swatch-ink" type="button" aria-label="Ink"></button></li>
+          </ul>
+        </div>
+
+        <div class="option-group">
+          <p class="option-label">Size <span class="option-value">Medium</span></p>
+
+          <ul class="size-row">
+            <li><button class="size-pill" type="button">XS</button></li>
+            <li><button class="size-pill" type="button">S</button></li>
+            <li><button class="size-pill is-selected" type="button">M</button></li>
+            <li><button class="size-pill is-sold-out" type="button" disabled>L</button></li>
+            <li><button class="size-pill" type="button">XL</button></li>
+            <li><button class="size-pill" type="button">XXL</button></li>
+          </ul>
+        </div>
+
+        <div class="buy-row">
+          <div class="quantity-stepper">
+            <button class="quantity-button" type="button" aria-label="Decrease quantity">&minus;</button>
+            <span class="quantity-value">1</span>
+            <button class="quantity-button" type="button" aria-label="Increase quantity">+</button>
+          </div>
+
+          <button class="add-to-cart" type="button">Add to cart &mdash; $148.00</button>
+
+          <p class="delivery-note">Free delivery on orders over $75. Returns within 30 days.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="details-section" aria-label="Product details">
+      <details class="details-row" open>
+        <summary>Description<span class="details-chevron" aria-hidden="true"></span></summary>
+        <p class="details-body">Cut from a brushed lambswool blend milled in Yorkshire, the Fenwick sits between a shirt and a light jacket. It has a soft collar, a straight hem, and horn-look buttons that sit flat under a coat. We washed the cloth before cutting so it keeps its shape after the first few wears.</p>
+      </details>
+
+      <details class="details-row">
+        <summary>Fabric &amp; care<span class="details-chevron" aria-hidden="true"></span></summary>
+        <p class="details-body">70% lambswool, 30% recycled polyester. Dry clean, or hand wash cold and dry flat. Warm iron on the reverse.</p>
+      </details>
+
+      <details class="details-row">
+        <summary>Shipping &amp; returns<span class="details-chevron" aria-hidden="true"></span></summary>
+        <p class="details-body">Standard delivery takes two to four working days. Returns are free for 30 days from delivery, unworn and with the tags on.</p>
+      </details>
+    </section>
+
+    <section class="related-section" aria-label="You may also like">
+      <h2 class="section-title">You may also like</h2>
+
+      <ul class="related-list">
+        <li class="related-card">
+          <div class="card-image card-image-1"></div>
+          <p class="card-title">Halden Waffle Knit Henley</p>
+          <p class="card-price">$68.00</p>
+        </li>
+        <li class="related-card">
+          <div class="card-image card-image-2"></div>
+          <p class="card-title">Ridgeway Heavyweight Chore Jacket in Washed Canvas with Corduroy Collar</p>
+          <p class="card-price">$196.00</p>
+        </li>
+        <li class="related-card">
+          <div class="card-image card-image-3"></div>
+          <p class="card-title">Marlow Selvedge Denim Shirt</p>
+          <p class="card-price">$124.00</p>
+        </li>
+        <li class="related-card">
+          <div class="card-image card-image-4"></div>
+          <p class="card-title">Ashcombe Merino Beanie</p>
+          <p class="card-price">$38.00</p>
+        </li>
+        <li class="related-card">
+          <div class="card-image card-image-5"></div>
+          <p class="card-title">Tarn Quilted Vest</p>
+          <p class="card-price">$132.00</p>
+        </li>
+        <li class="related-card">
+          <div class="card-image card-image-6"></div>
+          <p class="card-title">Belmont Wool Blend Trouser</p>
+          <p class="card-price">$110.00</p>
+        </li>
+      </ul>
+    </section>
+
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="page-shell">
+    <div class="footer-columns">
+      <div class="footer-column">
+        <h3>Shop</h3>
+        <ul>
+          <li><a href="#">New arrivals</a></li>
+          <li><a href="#">Outerwear</a></li>
+          <li><a href="#">Knitwear</a></li>
+          <li><a href="#">Gift cards</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-column">
+        <h3>Help</h3>
+        <ul>
+          <li><a href="#">Shipping</a></li>
+          <li><a href="#">Returns</a></li>
+          <li><a href="#">Size guide</a></li>
+          <li><a href="#">Contact us</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-column">
+        <h3>About</h3>
+        <ul>
+          <li><a href="#">Our mills</a></li>
+          <li><a href="#">Sustainability</a></li>
+          <li><a href="#">Stores</a></li>
+          <li><a href="#">Careers</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <p class="footer-legal">&copy; 2026 Alder &amp; Grain Ltd. Registered in England, 09847331.</p>
+  </div>
+</footer>
+
+</body>
+</html>

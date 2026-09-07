@@ -1,0 +1,1125 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Ripple</title>
+  <style>
+    :root {
+      --accent: #5b4bdb;
+      --accent-soft: #ece9fb;
+      --ink: #14131a;
+      --ink-soft: #6b6880;
+      --line: #e6e4ee;
+      --bg: #ffffff;
+      --danger: #d92d3c;
+
+      --topbar-height: 52px;
+      --stories-height: 104px;
+      --header-height: 156px;
+      --tabbar-height: 62px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      max-width: 100%;
+      overflow-x: hidden;
+      background: var(--bg);
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      color: var(--ink);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ---------- top bar ---------- */
+
+    .app-header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 30;
+      background: var(--bg);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .top-bar {
+      height: var(--topbar-height);
+      padding: 0 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .logo {
+      font-size: 23px;
+      font-weight: 800;
+      letter-spacing: -0.6px;
+      line-height: 1;
+      color: var(--accent);
+    }
+
+    .top-bar-actions {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+    }
+
+    .icon-button {
+      position: relative;
+      width: 26px;
+      height: 26px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--ink);
+    }
+
+    .badge {
+      position: absolute;
+      top: -5px;
+      right: -7px;
+      min-width: 17px;
+      height: 17px;
+      padding: 0 4px;
+      border-radius: 9px;
+      background: var(--danger);
+      color: #fff;
+      font-size: 10px;
+      font-weight: 700;
+      line-height: 17px;
+      text-align: center;
+    }
+
+    /* ---------- stories ---------- */
+
+    .stories-row {
+      height: var(--stories-height);
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      padding: 8px 16px;
+      overflow-x: auto;
+      overflow-y: hidden;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+
+    .stories-row::-webkit-scrollbar {
+      display: none;
+    }
+
+    .story {
+      flex: 0 0 auto;
+      width: 66px;
+    }
+
+    .story-ring {
+      position: relative;
+      width: 66px;
+      height: 66px;
+      border-radius: 50%;
+      padding: 3px;
+      background: linear-gradient(135deg, #ff8a3d, #e8407a 55%, #7b3fe4);
+    }
+
+    .story-ring.is-own {
+      background: linear-gradient(135deg, #7b8cff, #5b4bdb 60%, #3b2fa8);
+    }
+
+    .story-avatar {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      border: 2px solid var(--bg);
+    }
+
+    .story-plus {
+      position: absolute;
+      right: 0;
+      bottom: 0;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: var(--accent);
+      border: 2px solid var(--bg);
+      color: #fff;
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 16px;
+      text-align: center;
+    }
+
+    .story-name {
+      margin-top: 6px;
+      width: 66px;
+      font-size: 11px;
+      line-height: 14px;
+      color: var(--ink-soft);
+      text-align: center;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* ---------- new posts pill ---------- */
+
+    .new-posts-pill {
+      position: fixed;
+      top: calc(var(--header-height) + 10px);
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 25;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      height: 34px;
+      padding: 0 16px;
+      border-radius: 17px;
+      background: var(--accent);
+      color: #fff;
+      font-size: 13px;
+      font-weight: 600;
+      box-shadow: 0 6px 18px rgba(91, 75, 219, 0.38);
+    }
+
+    /* ---------- feed ---------- */
+
+    .feed {
+      padding-top: calc(var(--header-height) + 54px);
+      padding-bottom: calc(var(--tabbar-height) + 24px);
+    }
+
+    .post {
+      padding: 14px 16px 8px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .post-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .avatar {
+      flex: 0 0 auto;
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+    }
+
+    .post-identity {
+      flex: 1 1 auto;
+      min-width: 0;
+    }
+
+    .post-name {
+      font-size: 15px;
+      font-weight: 700;
+      line-height: 19px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .post-meta {
+      font-size: 13px;
+      line-height: 17px;
+      color: var(--ink-soft);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .post-more {
+      flex: 0 0 auto;
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--ink-soft);
+      font-size: 17px;
+      font-weight: 700;
+      line-height: 1;
+      letter-spacing: 1px;
+    }
+
+    .post-text {
+      margin-top: 8px;
+      font-size: 15px;
+      line-height: 21px;
+    }
+
+    .post-image {
+      position: relative;
+      margin-top: 10px;
+      height: 190px;
+      border-radius: 14px;
+      overflow: hidden;
+    }
+
+    .gradient-a {
+      background: linear-gradient(140deg, #ffb457, #ff5f6d 45%, #6a3de8);
+    }
+
+    .gradient-b {
+      background: linear-gradient(140deg, #3ddad7, #3d7ce8 50%, #21226b);
+    }
+
+    .image-count {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      height: 20px;
+      padding: 0 8px;
+      border-radius: 10px;
+      background: rgba(15, 14, 25, 0.62);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 600;
+      line-height: 20px;
+    }
+
+    /* ---------- quoted post ---------- */
+
+    .quoted-post {
+      margin-top: 10px;
+      padding: 10px 12px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+    }
+
+    .quoted-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .quoted-avatar {
+      flex: 0 0 auto;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+    }
+
+    .quoted-name {
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 17px;
+    }
+
+    .quoted-handle {
+      flex: 1 1 auto;
+      min-width: 0;
+      font-size: 13px;
+      line-height: 17px;
+      color: var(--ink-soft);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .quoted-text {
+      margin-top: 6px;
+      font-size: 13px;
+      line-height: 18px;
+      color: var(--ink);
+    }
+
+    /* ---------- poll ---------- */
+
+    .poll {
+      margin-top: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .poll-option {
+      position: relative;
+      height: 36px;
+      border-radius: 10px;
+      border: 1px solid var(--line);
+      overflow: hidden;
+    }
+
+    .poll-fill {
+      position: absolute;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      background: var(--accent-soft);
+    }
+
+    .poll-fill.is-winner {
+      background: #cdc6f7;
+    }
+
+    .poll-row {
+      position: relative;
+      height: 100%;
+      padding: 0 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .poll-label {
+      min-width: 0;
+      font-size: 13px;
+      line-height: 17px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .poll-percent {
+      flex: 0 0 auto;
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 17px;
+    }
+
+    .poll-total {
+      margin-top: 8px;
+      font-size: 12px;
+      line-height: 16px;
+      color: var(--ink-soft);
+    }
+
+    /* ---------- action row ---------- */
+
+    .actions {
+      margin-top: 6px;
+      display: flex;
+      align-items: center;
+    }
+
+    .action {
+      flex: 1 1 0;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--ink-soft);
+      font-size: 12px;
+      line-height: 16px;
+    }
+
+    /* ---------- tab bar ---------- */
+
+    .tab-bar {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 90;
+      height: var(--tabbar-height);
+      display: flex;
+      align-items: flex-start;
+      background: var(--bg);
+      border-top: 1px solid var(--line);
+    }
+
+    .tab {
+      flex: 1 1 0;
+      height: var(--tabbar-height);
+      padding-top: 12px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+      color: var(--ink-soft);
+    }
+
+    .tab.is-active {
+      color: var(--accent);
+    }
+
+    .tab-label {
+      font-size: 10px;
+      line-height: 13px;
+    }
+
+    .tab-center {
+      position: relative;
+    }
+
+    .compose-button {
+      position: absolute;
+      top: -26px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--accent);
+      color: #fff;
+      box-shadow: 0 6px 16px rgba(91, 75, 219, 0.4);
+    }
+
+    /* ---------- bottom sheet ---------- */
+
+    .backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 70;
+      background: rgba(12, 11, 20, 0.45);
+    }
+
+    .sheet {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 80;
+      height: 400px;
+      padding: 10px 16px calc(var(--tabbar-height) + 20px);
+      border-radius: 20px 20px 0 0;
+      background: var(--bg);
+      box-shadow: 0 -8px 30px rgba(12, 11, 20, 0.22);
+    }
+
+    .sheet-handle {
+      width: 42px;
+      height: 5px;
+      margin: 0 auto;
+      border-radius: 3px;
+      background: var(--line);
+    }
+
+    .sheet-title {
+      margin-top: 31px;
+      margin-bottom: 15px;
+      font-size: 17px;
+      font-weight: 700;
+      line-height: 22px;
+    }
+
+    .sheet-action {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      height: 52px;
+      color: var(--ink);
+      font-size: 15px;
+      line-height: 20px;
+    }
+
+    .sheet-action.is-danger {
+      color: var(--danger);
+    }
+
+    .sheet-icon {
+      flex: 0 0 auto;
+      width: 22px;
+      height: 22px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* ---------- flat avatar fills ---------- */
+
+    .fill-1 {
+      background: linear-gradient(135deg, #ff9a6c, #d94f8a);
+    }
+
+    .fill-2 {
+      background: linear-gradient(135deg, #6ad3ff, #3a5bd9);
+    }
+
+    .fill-3 {
+      background: linear-gradient(135deg, #9be15d, #2f9e63);
+    }
+
+    .fill-4 {
+      background: linear-gradient(135deg, #ffd166, #f0803c);
+    }
+
+    .fill-5 {
+      background: linear-gradient(135deg, #c58bff, #6a3de8);
+    }
+
+    .fill-6 {
+      background: linear-gradient(135deg, #ff8fab, #c9184a);
+    }
+
+    .fill-7 {
+      background: linear-gradient(135deg, #7ee8c9, #1b8f83);
+    }
+
+    .fill-8 {
+      background: linear-gradient(135deg, #b0b8ff, #4b52c9);
+    }
+  </style>
+</head>
+
+<body>
+  <header class="app-header">
+    <div class="top-bar">
+      <div class="logo">Ripple</div>
+
+      <div class="top-bar-actions">
+        <div class="icon-button">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+            stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M18 8a6 6 0 1 0-12 0c0 6-2 7-2 7h16s-2-1-2-7" />
+            <path d="M10.5 19a2 2 0 0 0 3 0" />
+          </svg>
+          <span class="badge">7</span>
+        </div>
+
+        <div class="icon-button">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+            stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M3 6.5h18v13H3z" />
+            <path d="m3.5 7.5 8.5 6 8.5-6" />
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <div class="stories-row">
+      <div class="story">
+        <div class="story-ring is-own">
+          <div class="story-avatar fill-5"></div>
+          <div class="story-plus">+</div>
+        </div>
+        <div class="story-name">Your story</div>
+      </div>
+
+      <div class="story">
+        <div class="story-ring">
+          <div class="story-avatar fill-1"></div>
+        </div>
+        <div class="story-name">mara</div>
+      </div>
+
+      <div class="story">
+        <div class="story-ring">
+          <div class="story-avatar fill-2"></div>
+        </div>
+        <div class="story-name">devon_park</div>
+      </div>
+
+      <div class="story">
+        <div class="story-ring">
+          <div class="story-avatar fill-3"></div>
+        </div>
+        <div class="story-name">june</div>
+      </div>
+
+      <div class="story">
+        <div class="story-ring">
+          <div class="story-avatar fill-4"></div>
+        </div>
+        <div class="story-name">alexandra_v</div>
+      </div>
+
+      <div class="story">
+        <div class="story-ring">
+          <div class="story-avatar fill-6"></div>
+        </div>
+        <div class="story-name">kit</div>
+      </div>
+
+      <div class="story">
+        <div class="story-ring">
+          <div class="story-avatar fill-7"></div>
+        </div>
+        <div class="story-name">noor</div>
+      </div>
+
+      <div class="story">
+        <div class="story-ring">
+          <div class="story-avatar fill-8"></div>
+        </div>
+        <div class="story-name">tomasz</div>
+      </div>
+    </div>
+  </header>
+
+  <div class="new-posts-pill">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"
+      stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M12 19V5" />
+      <path d="m5 12 7-7 7 7" />
+    </svg>
+    New posts
+  </div>
+
+  <main class="feed">
+
+    <article class="post">
+      <div class="post-header">
+        <div class="avatar fill-2"></div>
+        <div class="post-identity">
+          <div class="post-name">Devon Park</div>
+          <div class="post-meta">@devon_park · 2h</div>
+        </div>
+        <div class="post-more">···</div>
+      </div>
+
+      <div class="post-text">
+        Spent the morning rewriting the sync layer and it went from 400 lines to 90. Deleting code is
+        still the best feeling in this job.
+      </div>
+
+      <div class="actions">
+        <div class="action">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+            stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21 11.5a8 8 0 0 1-11.6 7.1L4 20l1.4-5.1A8 8 0 1 1 21 11.5z" />
+          </svg>
+          24
+        </div>
+        <div class="action">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+            stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M4 8h12l-3-3" />
+            <path d="M20 16H8l3 3" />
+          </svg>
+          8
+        </div>
+        <div class="action">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+            stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M12 20s-7-4.4-7-9a4 4 0 0 1 7-2.6A4 4 0 0 1 19 11c0 4.6-7 9-7 9z" />
+          </svg>
+          142
+        </div>
+        <div class="action">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+            stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M12 16V4" />
+            <path d="m7 9 5-5 5 5" />
+            <path d="M5 15v4h14v-4" />
+          </svg>
+          3
+        </div>
+      </div>
+    </article>
+
+    <article class="post">
+      <div class="post-header">
+        <div class="avatar fill-1"></div>
+        <div class="post-identity">
+          <div class="post-name">Mara Ellis</div>
+          <div class="post-meta">@mara · 2h</div>
+        </div>
+        <div class="post-more">···</div>
+      </div>
+
+      <div class="post-text">
+        Sunrise over the harbour this morning. Worth the 5am alarm.
+      </div>
+
+      <div class="post-image gradient-a">
+        <div class="image-count">1/3</div>
+      </div>
+
+      <div class="actions">
+        <div class="action">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+            stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21 11.5a8 8 0 0 1-11.6 7.1L4 20l1.4-5.1A8 8 0 1 1 21 11.5z" />
+          </svg>
+          61
+        </div>
+        <div class="action">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+            stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M4 8h12l-3-3" />
+            <path d="M20 16H8l3 3" />
+          </svg>
+          19
+        </div>
+        <div class="action">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+            stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M12 20s-7-4.4-7-9a4 4 0 0 1 7-2.6A4 4 0 0 1 19 11c0 4.6-7 9-7 9z" />
+          </svg>
+          908
+        </div>
+        <div class="action">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+            stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M12 16V4" />
+            <path d="m7 9 5-5 5 5" />
+            <path d="M5 15v4h14v-4" />
+          </svg>
+          27
+        </div>
+      </div>
+    </article>
+
+    <article class="post">
+      <div class="post-header">
+        <div class="avatar fill-3"></div>
+        <div class="post-identity">
+          <div class="post-name">June Okafor</div>
+          <div class="post-meta">@june · 2h</div>
+        </div>
+        <div class="post-more">···</div>
+      </div>
+
+      <div class="post-text">
+        This is the take I keep coming back to.
+      </div>
+
+      <div class="quoted-post">
+        <div class="quoted-header">
+          <div class="quoted-avatar fill-8"></div>
+          <div class="quoted-name">Tomasz W.</div>
+          <div class="quoted-handle">@tomasz · 6h</div>
+        </div>
+        <div class="quoted-text">
+          A design system is not a component library. One is an agreement between people, the other
+          is a folder.
+        </div>
+      </div>
+
+      <div class="actions">
+        <div class="action">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+            stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21 11.5a8 8 0 0 1-11.6 7.1L4 20l1.4-5.1A8 8 0 1 1 21 11.5z" />
+          </svg>
+          12
+        </div>
+        <div class="action">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+            stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M4 8h12l-3-3" />
+            <path d="M20 16H8l3 3" />
+          </svg>
+          44
+        </div>
+        <div class="action">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+            stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M12 20s-7-4.4-7-9a4 4 0 0 1 7-2.6A4 4 0 0 1 19 11c0 4.6-7 9-7 9z" />
+          </svg>
+          310
+        </div>
+        <div class="action">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+            stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M12 16V4" />
+            <path d="m7 9 5-5 5 5" />
+            <path d="M5 15v4h14v-4" />
+          </svg>
+          9
+        </div>
+      </div>
+    </article>
+
+    <article class="post">
+      <div class="post-header">
+        <div class="avatar fill-4"></div>
+        <div class="post-identity">
+          <div class="post-name">Alexandra Voss</div>
+          <div class="post-meta">@alexandra_v · 2h</div>
+        </div>
+        <div class="post-more">···</div>
+      </div>
+
+      <div class="post-text">
+        New studio wall finally done. Three coats and a lot of tape.
+      </div>
+
+      <div class="post-image gradient-b">
+        <div class="image-count">1/3</div>
+      </div>
+
+      <div class="actions">
+        <div class="action">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+            stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21 11.5a8 8 0 0 1-11.6 7.1L4 20l1.4-5.1A8 8 0 1 1 21 11.5z" />
+          </svg>
+          33
+        </div>
+        <div class="action">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+            stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M4 8h12l-3-3" />
+            <path d="M20 16H8l3 3" />
+          </svg>
+          7
+        </div>
+        <div class="action">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+            stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M12 20s-7-4.4-7-9a4 4 0 0 1 7-2.6A4 4 0 0 1 19 11c0 4.6-7 9-7 9z" />
+          </svg>
+          476
+        </div>
+        <div class="action">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+            stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M12 16V4" />
+            <path d="m7 9 5-5 5 5" />
+            <path d="M5 15v4h14v-4" />
+          </svg>
+          11
+        </div>
+      </div>
+    </article>
+
+    <article class="post">
+      <div class="post-header">
+        <div class="avatar fill-7"></div>
+        <div class="post-identity">
+          <div class="post-name">Noor Haddad</div>
+          <div class="post-meta">@noor · 2h</div>
+        </div>
+        <div class="post-more">···</div>
+      </div>
+
+      <div class="post-text">
+        Settle it for me: what breaks your build the most?
+      </div>
+
+      <div class="poll">
+        <div class="poll-option">
+          <div class="poll-fill is-winner" style="width: 48%"></div>
+          <div class="poll-row">
+            <div class="poll-label">A dependency bump</div>
+            <div class="poll-percent">48%</div>
+          </div>
+        </div>
+
+        <div class="poll-option">
+          <div class="poll-fill" style="width: 27%"></div>
+          <div class="poll-row">
+            <div class="poll-label">Someone else's merge</div>
+            <div class="poll-percent">27%</div>
+          </div>
+        </div>
+
+        <div class="poll-option">
+          <div class="poll-fill" style="width: 16%"></div>
+          <div class="poll-row">
+            <div class="poll-label">A flaky test</div>
+            <div class="poll-percent">16%</div>
+          </div>
+        </div>
+
+        <div class="poll-option">
+          <div class="poll-fill" style="width: 9%"></div>
+          <div class="poll-row">
+            <div class="poll-label">CI ran out of disk</div>
+            <div class="poll-percent">9%</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="poll-total">2,481 votes · 6 hours left</div>
+
+      <div class="actions">
+        <div class="action">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+            stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21 11.5a8 8 0 0 1-11.6 7.1L4 20l1.4-5.1A8 8 0 1 1 21 11.5z" />
+          </svg>
+          88
+        </div>
+        <div class="action">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+            stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M4 8h12l-3-3" />
+            <path d="M20 16H8l3 3" />
+          </svg>
+          21
+        </div>
+        <div class="action">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+            stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M12 20s-7-4.4-7-9a4 4 0 0 1 7-2.6A4 4 0 0 1 19 11c0 4.6-7 9-7 9z" />
+          </svg>
+          254
+        </div>
+        <div class="action">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+            stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M12 16V4" />
+            <path d="m7 9 5-5 5 5" />
+            <path d="M5 15v4h14v-4" />
+          </svg>
+          5
+        </div>
+      </div>
+    </article>
+
+    <article class="post">
+      <div class="post-header">
+        <div class="avatar fill-6"></div>
+        <div class="post-identity">
+          <div class="post-name">Kit Nakamura</div>
+          <div class="post-meta">@kit · 2h</div>
+        </div>
+        <div class="post-more">···</div>
+      </div>
+
+      <div class="post-text">
+        Nobody tells you that half of shipping is deciding which twelve things you are not going to
+        do this week.
+      </div>
+
+      <div class="actions">
+        <div class="action">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+            stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21 11.5a8 8 0 0 1-11.6 7.1L4 20l1.4-5.1A8 8 0 1 1 21 11.5z" />
+          </svg>
+          16
+        </div>
+        <div class="action">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+            stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M4 8h12l-3-3" />
+            <path d="M20 16H8l3 3" />
+          </svg>
+          6
+        </div>
+        <div class="action">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+            stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M12 20s-7-4.4-7-9a4 4 0 0 1 7-2.6A4 4 0 0 1 19 11c0 4.6-7 9-7 9z" />
+          </svg>
+          199
+        </div>
+        <div class="action">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+            stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M12 16V4" />
+            <path d="m7 9 5-5 5 5" />
+            <path d="M5 15v4h14v-4" />
+          </svg>
+          4
+        </div>
+      </div>
+    </article>
+
+  </main>
+
+  <div class="backdrop"></div>
+
+  <div class="sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-title">Post options</div>
+
+    <div class="sheet-action">
+      <div class="sheet-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+          stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M6 4h12v16l-6-4-6 4z" />
+        </svg>
+      </div>
+      Save post
+    </div>
+
+    <div class="sheet-action">
+      <div class="sheet-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+          stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M9 15 20 4" />
+          <path d="M20 4v6h-6" />
+          <path d="M18 14v5H5V6h5" />
+        </svg>
+      </div>
+      Copy link
+    </div>
+
+    <div class="sheet-action">
+      <div class="sheet-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+          stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18z" />
+          <path d="M12 8v5" />
+          <path d="M12 16.5h.01" />
+        </svg>
+      </div>
+      Not interested
+    </div>
+
+    <div class="sheet-action is-danger">
+      <div class="sheet-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+          stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M4 7h16" />
+          <path d="M9 7V4h6v3" />
+          <path d="M6 7l1 13h10l1-13" />
+        </svg>
+      </div>
+      Report post
+    </div>
+  </div>
+
+  <nav class="tab-bar">
+    <div class="tab is-active">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+        stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="m3 10 9-7 9 7v10H3z" />
+        <path d="M9 20v-6h6v6" />
+      </svg>
+      <span class="tab-label">Home</span>
+    </div>
+
+    <div class="tab">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+        stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <circle cx="11" cy="11" r="7" />
+        <path d="m20 20-4-4" />
+      </svg>
+      <span class="tab-label">Search</span>
+    </div>
+
+    <div class="tab tab-center">
+      <div class="compose-button">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+          stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M12 5v14" />
+          <path d="M5 12h14" />
+        </svg>
+      </div>
+    </div>
+
+    <div class="tab">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+        stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M18 8a6 6 0 1 0-12 0c0 6-2 7-2 7h16s-2-1-2-7" />
+        <path d="M10.5 19a2 2 0 0 0 3 0" />
+      </svg>
+      <span class="tab-label">Alerts</span>
+    </div>
+
+    <div class="tab">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+        stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <circle cx="12" cy="8" r="4" />
+        <path d="M4.5 20a7.5 7.5 0 0 1 15 0" />
+      </svg>
+      <span class="tab-label">Profile</span>
+    </div>
+  </nav>
+</body>
+
+</html>

@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Pricing</title>
+<style>
+  body { margin: 0; padding-top: 64px; background: #ffffff; color: #111827;
+         font-family: -apple-system, "Segoe UI", Arial, sans-serif; }
+
+  .app-bar { position: fixed; top: 0; left: 0; right: 0; height: 64px; z-index: 20;
+             display: flex; align-items: center; gap: 24px; padding: 0 32px;
+             background: #ffffff; border-bottom: 1px solid #e5e7eb; }
+  .brand { font-size: 17px; font-weight: 700; }
+  .bar-link { font-size: 14px; color: #4b5563; text-decoration: none; }
+
+  .wrap { max-width: 880px; margin: 0 auto; padding: 0 24px; }
+
+  /* the intro band is 390 tall, its words all sit in the first 200 */
+  .intro { height: 390px; }
+  .intro h1 { margin: 0 0 12px; font-size: 34px; line-height: 42px; }
+  .intro p { margin: 0; font-size: 16px; line-height: 26px; color: #4b5563; max-width: 60ch; }
+
+  /* the planted defect: no scroll margin, so the bar lands on this heading */
+  .section-title { margin: 0 0 20px; font-size: 24px; line-height: 32px; }
+
+  .plans { display: flex; gap: 20px; }
+  .plan { flex: 1; border: 1px solid #e5e7eb; border-radius: 12px; padding: 20px; height: 560px; }
+  .plan h3 { margin: 0 0 8px; font-size: 16px; line-height: 22px; }
+  .plan p { margin: 0; font-size: 14px; line-height: 22px; color: #6b7280; }
+
+  .notes { padding: 40px 0 80px; font-size: 14px; line-height: 24px; color: #6b7280; }
+</style>
+</head>
+<body>
+
+<header class="app-bar">
+  <span class="brand">Ledgerly</span>
+  <a class="bar-link" href="#">Product</a>
+  <a class="bar-link" href="#">Pricing</a>
+  <a class="bar-link" href="#">Docs</a>
+</header>
+
+<div class="wrap">
+  <section class="intro">
+    <h1>Books that close themselves</h1>
+    <p>Ledgerly reconciles every account overnight and hands your accountant a
+       finished month on the first working day.</p>
+  </section>
+
+  <h2 class="section-title" id="pricing-heading">Pricing that scales</h2>
+
+  <div class="plans">
+    <div class="plan"><h3>Starter</h3><p>One entity, two seats, monthly close.</p></div>
+    <div class="plan"><h3>Team</h3><p>Five entities, ten seats, weekly close.</p></div>
+    <div class="plan"><h3>Scale</h3><p>Unlimited entities, audit exports, SSO.</p></div>
+  </div>
+
+  <p class="notes">Prices are billed yearly. Switching plans mid-term is prorated to the day.</p>
+</div>
+
+</body>
+</html>

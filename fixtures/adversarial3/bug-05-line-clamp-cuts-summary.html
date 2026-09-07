@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Review</title>
+<style>
+  body { margin: 0; background: #f6f7f9; color: #111827;
+         font-family: -apple-system, "Segoe UI", Arial, sans-serif; }
+
+  .screen { padding: 16px; }
+  .screen h1 { margin: 0 0 12px; font-size: 20px; line-height: 28px; }
+
+  .card { background: #ffffff; border-radius: 12px; padding: 16px; margin-bottom: 12px; }
+  .card h2 { margin: 0 0 2px; font-size: 15px; line-height: 20px; }
+  .stars { margin: 0 0 8px; font-size: 13px; line-height: 18px; color: #b45309; }
+
+  /* the planted defect: the clamp was left at 2 lines, the summary runs to 4 */
+  .summary { margin: 0; font-size: 14px; line-height: 20px; color: #374151;
+             display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2;
+             overflow: hidden; text-overflow: ellipsis; }
+
+  .rest .summary { -webkit-line-clamp: 4; }
+</style>
+</head>
+<body>
+
+<div class="screen">
+  <h1>Reviews</h1>
+
+  <div class="card">
+    <h2>Hana P.</h2>
+    <p class="stars">&starf;&starf;&starf;&starf;&star;</p>
+    <p class="summary" id="review-hana">The stroller folds down small enough for the boot of a hatchback,<br>
+      which was the whole reason we bought it in the first place.<br>
+      Assembly took twenty minutes and needed no tools at all.<br>
+      The rain cover is thin and we replaced it after one winter.</p>
+  </div>
+
+  <div class="card rest">
+    <h2>Idris M.</h2>
+    <p class="stars">&starf;&starf;&starf;&starf;&starf;</p>
+    <p class="summary">Bought it for a first baby and it has now done a second.<br>
+      The brake is stiff in the cold but everything else still works.</p>
+  </div>
+</div>
+
+</body>
+</html>

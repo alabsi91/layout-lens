@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Inbox</title>
+<style>
+  body { margin: 0; background: #f6f7f9; color: #111827;
+         font-family: -apple-system, "Segoe UI", Arial, sans-serif; }
+
+  .feed { padding: 16px 16px 110px; }
+  .note { background: #ffffff; border-radius: 12px; padding: 14px 16px; margin-bottom: 12px; }
+  .note h2 { margin: 0 0 4px; font-size: 15px; line-height: 20px; }
+  .note p { margin: 0; font-size: 13px; line-height: 18px; color: #6b7280; }
+
+  .tab-bar { position: fixed; inset-inline: 0; bottom: 0; height: 76px;
+             background: #ffffff; border-top: 1px solid #e5e7eb; }
+
+  .tab-row { display: flex; height: 76px; }
+  .tab { flex: 1; display: flex; flex-direction: column; align-items: center;
+         justify-content: center; gap: 4px; font-size: 11px; line-height: 14px;
+         color: #6b7280; text-decoration: none; }
+  .tab-dot { width: 20px; height: 20px; border-radius: 6px; background: #cbd5e1; }
+
+  /* the raised compose button, meant to sit on the middle of the bar */
+  .compose { position: absolute; top: -22px; width: 56px; height: 56px; border: none;
+             border-radius: 28px; background: #2563eb; color: #ffffff;
+             font-size: 26px; line-height: 56px; box-shadow: 0 6px 16px rgba(37,99,235,.35); }
+
+  /* the planted defect: half the bar less 30 instead of less 28 */
+  #compose { left: calc(50% - 30px); }
+</style>
+</head>
+<body>
+
+<main class="feed">
+  <article class="note"><h2>Deploy finished</h2><p>staging-4 is live, 2 minutes ago</p></article>
+  <article class="note"><h2>Nadia commented</h2><p>“can we push the copy change too?”</p></article>
+  <article class="note"><h2>Billing</h2><p>Your invoice for March is ready</p></article>
+  <article class="note"><h2>Weekly digest</h2><p>14 issues closed, 3 opened</p></article>
+</main>
+
+<nav class="tab-bar">
+  <div class="tab-row">
+    <a class="tab" href="#"><span class="tab-dot"></span>Inbox</a>
+    <a class="tab" href="#"><span class="tab-dot"></span>Teams</a>
+    <a class="tab" href="#"><span class="tab-dot"></span>Search</a>
+    <a class="tab" href="#"><span class="tab-dot"></span>You</a>
+  </div>
+  <button class="compose" id="compose" aria-label="Compose">+</button>
+</nav>
+
+</body>
+</html>

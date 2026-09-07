@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Northwind — Overview</title>
+<style>
+  body { margin: 0; background: #ffffff; color: #1a1a1a; font-family: Arial, Helvetica, sans-serif; }
+
+  .site-nav { display: flex; align-items: center; height: 56px; padding: 0 24px; border-bottom: 1px solid #e5e7eb; }
+  .brand { font-size: 17px; font-weight: 700; }
+
+  .nav-links { display: flex; align-items: center; gap: 24px; margin-left: auto; }
+  .nav-link { display: block; font-size: 14px; color: #4b5563; text-decoration: none; }
+
+  /* the planted defect */
+  #nav-settings { position: relative; top: 2px; }
+
+  .page { padding: 40px 24px; }
+  .page h1 { margin: 0 0 10px; font-size: 24px; }
+  .page p { margin: 0; max-width: 520px; font-size: 14px; line-height: 22px; color: #4b5563; }
+</style>
+</head>
+<body>
+
+<header class="site-nav">
+  <span class="brand">Northwind</span>
+  <nav class="nav-links">
+    <a class="nav-link" href="#">Overview</a>
+    <a class="nav-link" href="#">Reports</a>
+    <a class="nav-link" href="#">Pricing</a>
+    <a class="nav-link" id="nav-settings" href="#">Settings</a>
+  </nav>
+</header>
+
+<main class="page">
+  <h1>Overview</h1>
+  <p>Everything shipped in the last thirty days, grouped by team. Numbers update once an hour.</p>
+</main>
+
+</body>
+</html>

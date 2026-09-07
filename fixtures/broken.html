@@ -1,0 +1,31 @@
+<!doctype html>
+<html>
+<head>
+  <style>
+    body { margin: 0; font-family: sans-serif; }
+    .card { width: 300px; height: 100px; margin: 20px; border: 2px solid #333; padding: 10px; position: relative; display: flex; align-items: center; }
+    .card .label { padding: 5px; }
+    .card .badge { position: absolute; top: 7px; right: 10px; }
+    .clip { width: 200px; overflow: hidden; margin: 20px; border: 1px solid red; }
+    .clip .wide { width: 300px; margin-left: -8px; }
+    .ellipsis { width: 120px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin: 20px; }
+    .stack { margin: 20px; }
+    .stack .a, .stack .b { height: 30px; background: #ddd; }
+    .stack .b { margin-top: -6px; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <span class="label">Perfectly centered label</span>
+    <span class="badge">new</span>
+  </div>
+  <div class="clip">
+    <div class="wide">This is wider than its clipping parent and shifted left</div>
+  </div>
+  <div class="ellipsis">This text is definitely too long to fit in one hundred twenty pixels</div>
+  <div class="stack">
+    <div class="a">first</div>
+    <div class="b">second overlaps first</div>
+  </div>
+</body>
+</html>

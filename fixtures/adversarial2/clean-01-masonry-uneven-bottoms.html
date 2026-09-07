@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Boards</title>
+<style>
+  body { margin: 0; background: #f6f7f9; color: #111827;
+         font-family: -apple-system, "Segoe UI", Arial, sans-serif; }
+
+  .wrap { max-width: 1000px; margin: 0 auto; padding: 40px 24px; }
+  .wrap h1 { margin: 0 0 20px; font-size: 24px; line-height: 32px; }
+
+  /* columns keep their own height on purpose, they do not stretch to match */
+  .masonry { display: flex; align-items: flex-start; gap: 20px; }
+  .masonry-col { flex: 1; }
+
+  .tile { background: #ffffff; border-radius: 12px; padding: 16px; margin-bottom: 20px; }
+  .tile h2 { margin: 0 0 6px; font-size: 15px; line-height: 20px; }
+  .tile p { margin: 0; font-size: 13px; line-height: 20px; color: #6b7280; }
+  .tile:last-child { margin-bottom: 0; }
+
+  .tall { padding-bottom: 90px; }
+  .short { padding-bottom: 8px; }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <h1>Boards</h1>
+
+  <div class="masonry">
+    <div class="masonry-col" id="col-a">
+      <div class="tile tall"><h2>Onboarding</h2><p>Twelve cards, four of them blocked on legal review.</p></div>
+      <div class="tile"><h2>Bugs</h2><p>Two crashers left in the March build.</p></div>
+      <div class="tile short"><h2>Chores</h2><p>Dependency bumps.</p></div>
+    </div>
+
+    <div class="masonry-col" id="col-b">
+      <div class="tile"><h2>Design</h2><p>New empty states are in review with the writers.</p></div>
+      <div class="tile short"><h2>Research</h2><p>Six interviews booked.</p></div>
+    </div>
+
+    <div class="masonry-col" id="col-c">
+      <div class="tile tall"><h2>Platform</h2><p>Queue migration, half done, no rollback path yet.</p></div>
+      <div class="tile tall"><h2>Billing</h2><p>Proration rewrite waiting on the finance sign off.</p></div>
+      <div class="tile"><h2>Docs</h2><p>Webhook reference needs the retry table.</p></div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

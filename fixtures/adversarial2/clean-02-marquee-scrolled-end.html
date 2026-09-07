@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Customers</title>
+<style>
+  body { margin: 0; background: #ffffff; color: #111827;
+         font-family: -apple-system, "Segoe UI", Arial, sans-serif; }
+
+  .wrap { max-width: 720px; margin: 0 auto; padding: 48px 24px; }
+  .wrap h1 { margin: 0 0 8px; font-size: 26px; line-height: 34px; }
+  .wrap p { margin: 0 0 24px; font-size: 15px; line-height: 24px; color: #6b7280; }
+
+  /* a logo strip the reader drags sideways, parked at its far end */
+  .marquee { overflow-x: auto; overflow-y: hidden; white-space: nowrap; padding: 12px 0; }
+
+  .logo { display: inline-block; width: 132px; height: 44px; margin-right: 16px;
+          border: 1px solid #e5e7eb; border-radius: 8px;
+          font-size: 13px; line-height: 44px; text-align: center; color: #4b5563; }
+  .logo:last-child { margin-right: 0; }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <h1>Who runs on Ledgerly</h1>
+  <p>Eleven thousand finance teams, from two-person studios to listed groups.</p>
+
+  <div class="marquee" id="logo-strip">
+    <span class="logo">Kestrel</span>
+    <span class="logo">Northwind</span>
+    <span class="logo">Bellhaus</span>
+    <span class="logo">Orbit Foods</span>
+    <span class="logo">Marlow</span>
+    <span class="logo">Petronella</span>
+    <span class="logo">Vandermeer</span>
+    <span class="logo">Ardal Group</span>
+    <span class="logo">Sundry</span>
+    <span class="logo">Halcyon</span>
+  </div>
+</div>
+
+<script>document.getElementById('logo-strip').scrollLeft = 99999;</script>
+
+</body>
+</html>

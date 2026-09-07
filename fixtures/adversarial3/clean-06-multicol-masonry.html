@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Notes</title>
+<style>
+  body { margin: 0; background: #f6f7f9; color: #111827;
+         font-family: -apple-system, "Segoe UI", Arial, sans-serif; }
+
+  .page { width: 936px; margin: 0 auto; padding: 40px 0; }
+  .page h1 { margin: 0 0 20px; font-size: 22px; line-height: 30px; }
+
+  /* three columns filled in order, so each one ends where its last note ends */
+  .masonry { column-count: 3; column-gap: 24px; column-fill: auto; height: 520px; }
+
+  .tile { break-inside: avoid; box-sizing: border-box; margin-bottom: 24px;
+          background: #ffffff; border-radius: 12px; padding: 16px; }
+  .tile h2 { margin: 0 0 6px; font-size: 15px; line-height: 20px; }
+  .tile p { margin: 0; font-size: 13px; line-height: 20px; color: #6b7280; }
+
+  .h140 { height: 140px; }
+  .h200 { height: 200px; }
+  .h96  { height: 96px; }
+  .h168 { height: 168px; }
+  .h120 { height: 120px; }
+  .h240 { height: 240px; }
+  .h112 { height: 112px; }
+</style>
+</head>
+<body>
+
+<div class="page">
+  <h1>Notes</h1>
+
+  <div class="masonry" id="notes">
+    <div class="tile h140"><h2>Onboarding</h2><p>Four steps, two of them optional.</p></div>
+    <div class="tile h200"><h2>Pricing</h2><p>Annual only for the top tier.</p></div>
+    <div class="tile h96"><h2>Chores</h2><p>Dependency bumps.</p></div>
+    <div class="tile h168"><h2>Research</h2><p>Six interviews booked for April.</p></div>
+    <div class="tile h120"><h2>Bugs</h2><p>Two crashers left in the March build.</p></div>
+    <div class="tile h240"><h2>Design</h2><p>Empty states are with the writers.</p></div>
+    <div class="tile h112"><h2>Support</h2><p>Backlog is down to eleven.</p></div>
+  </div>
+</div>
+
+</body>
+</html>

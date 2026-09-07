@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>الإعدادات</title>
+<style>
+  body { margin: 0; background: #ffffff; color: #111827;
+         font-family: -apple-system, "Segoe UI", Arial, sans-serif; }
+
+  .shell { display: flex; gap: 24px; padding: 32px; }
+
+  .nav { width: 260px; padding: 8px 0; border-radius: 10px; background: #f6f7f9; }
+
+  .nav-item { display: block; margin-inline-start: 16px; padding: 8px 12px;
+              font-size: 14px; line-height: 22px; color: #1f2937; text-decoration: none; }
+
+  /* every item is indented 16 from the start edge, which is the right one here.
+     this one was written with a physical margin, so its indent landed on the left */
+  #nav-billing { margin-inline-start: 0; margin-left: 16px; }
+
+  .main h1 { margin: 0 0 8px; font-size: 22px; line-height: 30px; }
+  .main p { margin: 0; font-size: 14px; line-height: 22px; color: #4b5563; }
+</style>
+</head>
+<body>
+
+<div class="shell">
+  <nav class="nav">
+    <a class="nav-item" href="#a">لوحة التحكم</a>
+    <a class="nav-item" href="#b">المستخدمون</a>
+    <a class="nav-item" href="#c">الأمان</a>
+    <a class="nav-item" href="#d" id="nav-billing">الفواتير</a>
+    <a class="nav-item" href="#e">الإشعارات</a>
+  </nav>
+
+  <section class="main">
+    <h1>الإعدادات</h1>
+    <p>تسري التغييرات على أعضاء المساحة كلهم بعد الحفظ.</p>
+  </section>
+</div>
+
+</body>
+</html>

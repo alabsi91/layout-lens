@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Lighting</title>
+<style>
+  body { margin: 0; background: #ffffff; color: #111827;
+         font-family: -apple-system, "Segoe UI", Arial, sans-serif; }
+
+  .layout { display: grid; grid-template-columns: 280px 1fr; gap: 24px; padding: 24px; }
+
+  .drawer { box-sizing: border-box; padding: 16px; border-radius: 10px;
+            background: #eef2ff; }
+  .drawer h2 { margin: 0 0 12px; font-size: 15px; line-height: 22px; }
+  .drawer label { display: block; margin-bottom: 8px; font-size: 14px; line-height: 22px;
+                  color: #1f2937; }
+
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, 236px); gap: 32px; }
+
+  .card { box-sizing: border-box; padding: 16px; border-radius: 10px; background: #f6f7f9; }
+  .thumb { height: 120px; border-radius: 8px; background: #c7d2fe; color: #1e3a8a;
+           font-size: 12px; line-height: 120px; text-align: center; }
+  .card-title { margin: 12px 0 4px; font-size: 15px; line-height: 22px; }
+  .price { margin: 0; font-size: 14px; line-height: 20px; color: #4b5563; }
+
+  /* at the tablet width the panel turns into a drawer, and the transform that
+     keeps a closed drawer off screen was lost in a merge */
+  @media (max-width: 900px) {
+    .layout { display: block; }
+    .drawer { position: fixed; top: 0; left: 0; bottom: 0; width: 280px; border-radius: 0; }
+  }
+</style>
+</head>
+<body>
+
+<div class="layout">
+  <aside class="drawer" id="filter-drawer">
+    <h2>Filters</h2>
+    <label><input type="checkbox"> Desk</label>
+    <label><input type="checkbox"> Floor</label>
+    <label><input type="checkbox"> Wall</label>
+    <label><input type="checkbox"> Dimmable</label>
+  </aside>
+
+  <div class="grid">
+    <article class="card">
+      <div class="thumb">lamp</div>
+      <h3 class="card-title" id="lamp-title">Nordic desk lamp</h3>
+      <p class="price">$89.00</p>
+    </article>
+    <article class="card">
+      <div class="thumb">lamp</div>
+      <h3 class="card-title">Warehouse pendant</h3>
+      <p class="price">$140.00</p>
+    </article>
+    <article class="card">
+      <div class="thumb">lamp</div>
+      <h3 class="card-title">Reading floor lamp</h3>
+      <p class="price">$210.00</p>
+    </article>
+  </div>
+</div>
+
+</body>
+</html>

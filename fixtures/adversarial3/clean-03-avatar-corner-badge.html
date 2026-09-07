@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Team</title>
+<style>
+  body { margin: 0; background: #ffffff; color: #111827;
+         font-family: -apple-system, "Segoe UI", Arial, sans-serif; }
+
+  .page { width: 520px; margin: 0 auto; padding: 56px 0; }
+  .page h1 { margin: 0 0 20px; font-size: 22px; line-height: 30px; }
+
+  .peer { display: flex; align-items: center; gap: 14px; margin-bottom: 18px; }
+  .peer h2 { margin: 0 0 2px; font-size: 15px; line-height: 20px; }
+  .peer p { margin: 0; font-size: 13px; line-height: 18px; color: #6b7280; }
+
+  .avatar-wrap { position: relative; width: 48px; height: 48px; }
+  .avatar { display: block; width: 48px; height: 48px; border-radius: 24px; }
+
+  /* the count is pinned to the corner and hangs 6 outside the circle on purpose */
+  .badge { position: absolute; top: -6px; inset-inline-end: -6px;
+           width: 20px; height: 20px; border-radius: 10px; background: #ef4444;
+           color: #ffffff; font-size: 11px; font-weight: 600; line-height: 20px;
+           text-align: center; }
+</style>
+</head>
+<body>
+
+<div class="page">
+  <h1>Team</h1>
+
+  <div class="peer">
+    <div class="avatar-wrap" id="peer-avatar">
+      <img class="avatar" alt="Amara Kelly"
+           src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='96' height='96'%3E%3Crect width='96' height='96' fill='%23c7d2fe'/%3E%3C/svg%3E">
+      <span class="badge" id="msg-badge">3</span>
+    </div>
+    <div><h2>Amara Kelly</h2><p>Support &middot; online</p></div>
+  </div>
+
+  <div class="peer">
+    <div class="avatar-wrap">
+      <img class="avatar" alt="Malik Rahman"
+           src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='96' height='96'%3E%3Crect width='96' height='96' fill='%23bbf7d0'/%3E%3C/svg%3E">
+    </div>
+    <div><h2>Malik Rahman</h2><p>Support &middot; away</p></div>
+  </div>
+
+  <div class="peer">
+    <div class="avatar-wrap">
+      <img class="avatar" alt="Jo Devlin"
+           src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='96' height='96'%3E%3Crect width='96' height='96' fill='%23fde68a'/%3E%3C/svg%3E">
+    </div>
+    <div><h2>Jo Devlin</h2><p>Billing &middot; online</p></div>
+  </div>
+</div>
+
+</body>
+</html>

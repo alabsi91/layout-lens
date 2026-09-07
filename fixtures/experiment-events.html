@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wander — Events</title>
+<style>
+  :root {
+    --page-background: #f5f6f8;
+    --surface: #ffffff;
+    --ink: #12161d;
+    --ink-muted: #4b5563;
+    --line: #d8dce3;
+    --accent: #1f4bd8;
+    --accent-ink: #ffffff;
+    --radius: 12px;
+    --gutter: 16px;
+    --shell-width: 1216px;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+
+  body {
+    background: var(--page-background);
+    color: var(--ink);
+    font: 16px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  .shell {
+    width: 100%;
+    max-width: var(--shell-width);
+    margin: 0 auto;
+    padding: 0 var(--gutter);
+  }
+
+  /* header */
+
+  .site-header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .site-header-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    min-height: 60px;
+  }
+
+  .site-name {
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    margin: 0;
+  }
+
+  .site-nav-inline {
+    display: none;
+  }
+
+  .site-nav-inline a,
+  .site-nav-stacked a {
+    color: var(--ink-muted);
+    text-decoration: none;
+    font-size: 15px;
+  }
+
+  .menu-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--surface);
+    color: var(--ink);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 8px 12px;
+    font: inherit;
+    font-size: 14px;
+    line-height: 20px;
+    cursor: pointer;
+  }
+
+  .menu-bars {
+    display: block;
+    width: 16px;
+    height: 2px;
+    background: var(--ink);
+    box-shadow: 0 -5px 0 var(--ink), 0 5px 0 var(--ink);
+  }
+
+  .site-nav-stacked {
+    border-top: 1px solid var(--line);
+    padding: 8px 0 12px 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .site-nav-stacked a {
+    padding: 10px 2px;
+    font-size: 16px;
+  }
+
+  /* filters */
+
+  .filter-bar {
+    padding: 16px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    min-width: 0;
+  }
+
+  .search-field {
+    width: 100%;
+    min-width: 0;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: var(--surface);
+    color: var(--ink);
+    font: inherit;
+    font-size: 15px;
+    line-height: 22px;
+    padding: 10px 14px;
+  }
+
+  .search-field::placeholder {
+    color: var(--ink-muted);
+  }
+
+  .filter-buttons {
+    display: flex;
+    gap: 10px;
+    min-width: 0;
+    overflow-x: auto;
+    padding-bottom: 4px;
+  }
+
+  .filter-button {
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap;
+    background: var(--surface);
+    color: var(--ink);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 10px 14px;
+    font: inherit;
+    font-size: 15px;
+    line-height: 22px;
+    cursor: pointer;
+  }
+
+  .caret {
+    width: 8px;
+    height: 8px;
+    border-right: 2px solid var(--ink-muted);
+    border-bottom: 2px solid var(--ink-muted);
+    transform: rotate(45deg) translate(-2px, -2px);
+  }
+
+  /* layout */
+
+  .page-body {
+    display: block;
+    padding-bottom: 40px;
+  }
+
+  .event-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+    min-width: 0;
+  }
+
+  /* cards */
+
+  .event-card {
+    display: flex;
+    flex-direction: column;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    overflow: hidden;
+    min-width: 0;
+  }
+
+  .card-image {
+    position: relative;
+    aspect-ratio: 16 / 10;
+    background: linear-gradient(135deg, #4b5fd6, #8f6ad4);
+  }
+
+  .event-card:nth-child(2) .card-image { background: linear-gradient(135deg, #1f7a6b, #58b39a); }
+  .event-card:nth-child(3) .card-image { background: linear-gradient(135deg, #b4531f, #dd9a4a); }
+  .event-card:nth-child(4) .card-image { background: linear-gradient(135deg, #2b5f8a, #63a7cd); }
+  .event-card:nth-child(5) .card-image { background: linear-gradient(135deg, #6a2f6f, #b46bb8); }
+  .event-card:nth-child(6) .card-image { background: linear-gradient(135deg, #3c4657, #7c8798); }
+  .event-card:nth-child(7) .card-image { background: linear-gradient(135deg, #1f6b3f, #6bbd7f); }
+  .event-card:nth-child(8) .card-image { background: linear-gradient(135deg, #8a2f45, #cf6f83); }
+  .event-card:nth-child(9) .card-image { background: linear-gradient(135deg, #2f4a8a, #6f8ecf); }
+
+  .date-badge {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: #12161d;
+    color: #ffffff;
+    border-radius: 10px;
+    padding: 6px 10px;
+    text-align: center;
+    line-height: 1.1;
+  }
+
+  .date-badge .date-month {
+    display: block;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .date-badge .date-day {
+    display: block;
+    font-size: 18px;
+    font-weight: 700;
+  }
+
+  .sold-out-ribbon {
+    position: absolute;
+    top: 18px;
+    right: -42px;
+    width: 170px;
+    transform: rotate(45deg);
+    background: #b91c1c;
+    color: #ffffff;
+    text-align: center;
+    font-size: 12px;
+    line-height: 24px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    font-weight: 700;
+  }
+
+  .card-body {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+    gap: 8px;
+    padding: 14px;
+    min-width: 0;
+  }
+
+  .category-pill {
+    align-self: flex-start;
+    background: #e6ecfb;
+    color: #1b3f9e;
+    border-radius: 999px;
+    padding: 4px 10px;
+    font-size: 12px;
+    line-height: 16px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+
+  .card-title {
+    margin: 0;
+    min-height: 48px;
+    font-size: 17px;
+    line-height: 24px;
+    font-weight: 700;
+  }
+
+  .card-venue {
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+    color: var(--ink-muted);
+    font-size: 14px;
+    line-height: 20px;
+    min-width: 0;
+  }
+
+  .pin-icon {
+    flex: 0 0 auto;
+    width: 14px;
+    height: 20px;
+    fill: var(--ink-muted);
+  }
+
+  .card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-top: auto;
+    padding-top: 12px;
+    border-top: 1px solid var(--line);
+  }
+
+  .card-price {
+    font-size: 16px;
+    line-height: 24px;
+    font-weight: 700;
+  }
+
+  .save-button {
+    background: var(--surface);
+    color: var(--accent);
+    border: 1px solid var(--accent);
+    border-radius: 8px;
+    padding: 7px 14px;
+    font: inherit;
+    font-size: 14px;
+    line-height: 20px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .save-button[disabled] {
+    color: #4b5563;
+    border-color: var(--line);
+    background: #f1f2f5;
+    cursor: not-allowed;
+  }
+
+  /* sidebar */
+
+  .nearby-panel {
+    margin-top: 16px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 14px;
+    min-width: 0;
+  }
+
+  .panel-title {
+    margin: 0 0 12px 0;
+    font-size: 16px;
+    line-height: 24px;
+    font-weight: 700;
+  }
+
+  .map-placeholder {
+    height: 180px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #cfe0d6, #9fc0e0 55%, #b9a9d8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #23303f;
+    font-size: 13px;
+    line-height: 20px;
+    font-weight: 600;
+  }
+
+  .nearby-list {
+    list-style: none;
+    margin: 14px 0 0 0;
+    padding: 0;
+  }
+
+  .nearby-list li {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 10px 0;
+    border-top: 1px solid var(--line);
+    min-width: 0;
+  }
+
+  .nearby-name {
+    font-size: 14px;
+    line-height: 20px;
+  }
+
+  .nearby-distance {
+    flex: 0 0 auto;
+    color: var(--ink-muted);
+    font-size: 13px;
+    line-height: 20px;
+  }
+
+  /* pagination */
+
+  .pagination {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 28px 0 24px 0;
+  }
+
+  .page-button {
+    min-width: 40px;
+    height: 40px;
+    padding: 0 10px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--surface);
+    color: var(--ink);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    font: inherit;
+    font-size: 15px;
+    line-height: 20px;
+    cursor: pointer;
+  }
+
+  .page-button.is-current {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--accent-ink);
+    font-weight: 700;
+  }
+
+  /* back to top */
+
+  .back-to-top {
+    position: fixed;
+    right: 16px;
+    bottom: 16px;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: var(--accent-ink);
+    border: none;
+    font: inherit;
+    font-size: 18px;
+    line-height: 18px;
+    cursor: pointer;
+    box-shadow: 0 4px 14px rgba(18, 22, 29, 0.28);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* tablet */
+
+  @media (min-width: 768px) {
+    .menu-button,
+    .site-nav-stacked {
+      display: none;
+    }
+
+    .site-nav-inline {
+      display: flex;
+      align-items: center;
+      gap: 22px;
+    }
+
+    .filter-buttons {
+      overflow-x: visible;
+      padding-bottom: 0;
+    }
+
+    .filter-button {
+      flex: 1 1 0;
+      justify-content: center;
+    }
+
+    .event-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .nearby-panel {
+      margin-top: 18px;
+    }
+  }
+
+  /* desktop */
+
+  @media (min-width: 1100px) {
+    .filter-bar {
+      flex-direction: row;
+      align-items: center;
+      gap: 12px;
+      padding: 20px 0;
+    }
+
+    .search-field {
+      flex: 1 1 auto;
+    }
+
+    .filter-buttons {
+      flex: 0 0 auto;
+    }
+
+    .filter-button {
+      flex: 0 0 auto;
+    }
+
+    .page-body {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 300px;
+      align-items: start;
+      gap: 20px;
+    }
+
+    .event-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 20px;
+    }
+
+    .nearby-panel {
+      margin-top: 0;
+      position: sticky;
+      top: 20px;
+    }
+  }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="shell">
+    <div class="site-header-bar">
+      <p class="site-name">Wander</p>
+
+      <nav class="site-nav-inline">
+        <a href="#">Events</a>
+        <a href="#">Places</a>
+        <a href="#">Guides</a>
+        <a href="#">About</a>
+      </nav>
+
+      <button class="menu-button" type="button" aria-expanded="true">
+        <span class="menu-bars"></span>
+        Menu
+      </button>
+    </div>
+  </div>
+
+  <div class="shell">
+    <nav class="site-nav-stacked">
+      <a href="#">Events</a>
+      <a href="#">Places</a>
+      <a href="#">Guides</a>
+      <a href="#">About</a>
+    </nav>
+  </div>
+</header>
+
+<div class="shell">
+  <div class="filter-bar">
+    <input class="search-field" type="search" placeholder="Search events, venues, artists" aria-label="Search events">
+
+    <div class="filter-buttons">
+      <button class="filter-button" type="button">Date <span class="caret"></span></button>
+      <button class="filter-button" type="button">Category <span class="caret"></span></button>
+      <button class="filter-button" type="button">Price <span class="caret"></span></button>
+    </div>
+  </div>
+
+  <div class="page-body">
+    <main class="event-grid">
+
+      <article class="event-card">
+        <div class="card-image">
+          <div class="date-badge"><span class="date-month">Sep</span><span class="date-day">12</span></div>
+        </div>
+        <div class="card-body">
+          <span class="category-pill">Music</span>
+          <h2 class="card-title">Riverside Late Summer Night Sessions</h2>
+          <p class="card-venue">
+            <svg class="pin-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a7 7 0 0 0-7 7c0 5.2 7 13 7 13s7-7.8 7-13a7 7 0 0 0-7-7zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5z"/></svg>
+            Old Docks Amphitheatre, Harbour Quarter
+          </p>
+          <div class="card-footer">
+            <span class="card-price">$24</span>
+            <button class="save-button" type="button">Save</button>
+          </div>
+        </div>
+      </article>
+
+      <article class="event-card">
+        <div class="card-image">
+          <div class="date-badge"><span class="date-month">Sep</span><span class="date-day">14</span></div>
+        </div>
+        <div class="card-body">
+          <span class="category-pill">Food</span>
+          <h2 class="card-title">Night Market</h2>
+          <p class="card-venue">
+            <svg class="pin-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a7 7 0 0 0-7 7c0 5.2 7 13 7 13s7-7.8 7-13a7 7 0 0 0-7-7zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5z"/></svg>
+            Canal Street Yard
+          </p>
+          <div class="card-footer">
+            <span class="card-price">Free</span>
+            <button class="save-button" type="button">Save</button>
+          </div>
+        </div>
+      </article>
+
+      <article class="event-card">
+        <div class="card-image">
+          <div class="date-badge"><span class="date-month">Sep</span><span class="date-day">15</span></div>
+        </div>
+        <div class="card-body">
+          <span class="category-pill">Art</span>
+          <h2 class="card-title">Paper &amp; Ink: A Printmaking Weekend</h2>
+          <p class="card-venue">
+            <svg class="pin-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a7 7 0 0 0-7 7c0 5.2 7 13 7 13s7-7.8 7-13a7 7 0 0 0-7-7zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5z"/></svg>
+            Foundry Gallery, West Bank
+          </p>
+          <div class="card-footer">
+            <span class="card-price">$12</span>
+            <button class="save-button" type="button">Save</button>
+          </div>
+        </div>
+      </article>
+
+      <article class="event-card">
+        <div class="card-image">
+          <div class="date-badge"><span class="date-month">Sep</span><span class="date-day">18</span></div>
+        </div>
+        <div class="card-body">
+          <span class="category-pill">Talks</span>
+          <h2 class="card-title">How Cities Sleep</h2>
+          <p class="card-venue">
+            <svg class="pin-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a7 7 0 0 0-7 7c0 5.2 7 13 7 13s7-7.8 7-13a7 7 0 0 0-7-7zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5z"/></svg>
+            Central Library, Reading Room 2
+          </p>
+          <div class="card-footer">
+            <span class="card-price">$8</span>
+            <button class="save-button" type="button">Save</button>
+          </div>
+        </div>
+      </article>
+
+      <article class="event-card">
+        <div class="card-image">
+          <div class="date-badge"><span class="date-month">Sep</span><span class="date-day">20</span></div>
+        </div>
+        <div class="card-body">
+          <span class="category-pill">Theatre</span>
+          <h2 class="card-title">The Long Walk Home, Part Two</h2>
+          <p class="card-venue">
+            <svg class="pin-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a7 7 0 0 0-7 7c0 5.2 7 13 7 13s7-7.8 7-13a7 7 0 0 0-7-7zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5z"/></svg>
+            Playhouse on Mill Row
+          </p>
+          <div class="card-footer">
+            <span class="card-price">$31</span>
+            <button class="save-button" type="button">Save</button>
+          </div>
+        </div>
+      </article>
+
+      <article class="event-card">
+        <div class="card-image">
+          <div class="date-badge"><span class="date-month">Sep</span><span class="date-day">21</span></div>
+          <div class="sold-out-ribbon">Sold out</div>
+        </div>
+        <div class="card-body">
+          <span class="category-pill">Music</span>
+          <h2 class="card-title">Brass Band in the Botanic Glasshouse</h2>
+          <p class="card-venue">
+            <svg class="pin-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a7 7 0 0 0-7 7c0 5.2 7 13 7 13s7-7.8 7-13a7 7 0 0 0-7-7zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5z"/></svg>
+            Botanic Gardens Glasshouse
+          </p>
+          <div class="card-footer">
+            <span class="card-price">$18</span>
+            <button class="save-button" type="button" disabled>Save</button>
+          </div>
+        </div>
+      </article>
+
+      <article class="event-card">
+        <div class="card-image">
+          <div class="date-badge"><span class="date-month">Sep</span><span class="date-day">24</span></div>
+        </div>
+        <div class="card-body">
+          <span class="category-pill">Outdoors</span>
+          <h2 class="card-title">Dawn Run Along the Ridge</h2>
+          <p class="card-venue">
+            <svg class="pin-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a7 7 0 0 0-7 7c0 5.2 7 13 7 13s7-7.8 7-13a7 7 0 0 0-7-7zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5z"/></svg>
+            North Ridge Trailhead
+          </p>
+          <div class="card-footer">
+            <span class="card-price">Free</span>
+            <button class="save-button" type="button">Save</button>
+          </div>
+        </div>
+      </article>
+
+      <article class="event-card">
+        <div class="card-image">
+          <div class="date-badge"><span class="date-month">Sep</span><span class="date-day">26</span></div>
+        </div>
+        <div class="card-body">
+          <span class="category-pill">Film</span>
+          <h2 class="card-title">Rooftop Screening: Three Short Films</h2>
+          <p class="card-venue">
+            <svg class="pin-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a7 7 0 0 0-7 7c0 5.2 7 13 7 13s7-7.8 7-13a7 7 0 0 0-7-7zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5z"/></svg>
+            Warehouse 9 Rooftop
+          </p>
+          <div class="card-footer">
+            <span class="card-price">$15</span>
+            <button class="save-button" type="button">Save</button>
+          </div>
+        </div>
+      </article>
+
+      <article class="event-card">
+        <div class="card-image">
+          <div class="date-badge"><span class="date-month">Sep</span><span class="date-day">28</span></div>
+        </div>
+        <div class="card-body">
+          <span class="category-pill">Markets</span>
+          <h2 class="card-title">Sunday Flea at the Old Station</h2>
+          <p class="card-venue">
+            <svg class="pin-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a7 7 0 0 0-7 7c0 5.2 7 13 7 13s7-7.8 7-13a7 7 0 0 0-7-7zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5z"/></svg>
+            Old Station Concourse
+          </p>
+          <div class="card-footer">
+            <span class="card-price">Free</span>
+            <button class="save-button" type="button">Save</button>
+          </div>
+        </div>
+      </article>
+
+    </main>
+
+    <aside class="nearby-panel">
+      <h2 class="panel-title">Nearby</h2>
+      <div class="map-placeholder">Map of the Harbour Quarter</div>
+      <ul class="nearby-list">
+        <li><span class="nearby-name">Harbour Quarter</span><span class="nearby-distance">0.4 km</span></li>
+        <li><span class="nearby-name">Canal Street Yard</span><span class="nearby-distance">0.9 km</span></li>
+        <li><span class="nearby-name">Foundry Gallery</span><span class="nearby-distance">1.6 km</span></li>
+        <li><span class="nearby-name">Botanic Gardens</span><span class="nearby-distance">2.3 km</span></li>
+        <li><span class="nearby-name">North Ridge Trailhead</span><span class="nearby-distance">4.8 km</span></li>
+      </ul>
+    </aside>
+  </div>
+
+  <nav class="pagination" aria-label="Pagination">
+    <button class="page-button" type="button" aria-label="Previous page">&#8592;</button>
+    <button class="page-button is-current" type="button">1</button>
+    <button class="page-button" type="button">2</button>
+    <button class="page-button" type="button">3</button>
+    <button class="page-button" type="button">4</button>
+    <button class="page-button" type="button">5</button>
+    <button class="page-button" type="button" aria-label="Next page">&#8594;</button>
+  </nav>
+</div>
+
+<button class="back-to-top" type="button" aria-label="Back to top">&#8593;</button>
+
+</body>
+</html>

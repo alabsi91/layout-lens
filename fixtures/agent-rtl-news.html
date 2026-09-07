@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>شبكة الخبر — الصفحة الرئيسية</title>
+<style>
+  :root {
+    --brand: #0e5c4a;
+    --brand-dark: #073b2f;
+    --accent: #c0392b;
+    --ink: #16202a;
+    --muted: #5c6b7a;
+    --line: #dfe4e8;
+    --bg: #f4f6f8;
+    --card: #ffffff;
+    --radius: 6px;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: "Geeza Pro", "Al Bayan", "Damascus", "Segoe UI", Tahoma, sans-serif;
+    font-size: 15px;
+    line-height: 1.7;
+  }
+
+  a { color: inherit; text-decoration: none; }
+  a:hover { color: var(--accent); }
+
+  .shell {
+    max-width: 1180px;
+    margin-inline: auto;
+    padding-inline: 16px;
+  }
+
+  /* الشريط العلوي */
+  .topbar {
+    background: var(--brand-dark);
+    color: #cfe3dd;
+    font-size: 13px;
+  }
+  .topbar-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding-block: 6px;
+  }
+  .topbar-date { display: flex; align-items: center; gap: 8px; }
+  .topbar-links { display: flex; gap: 14px; }
+  .weather {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding-inline: 10px;
+    border-inline-start: 1px solid #1d5346;
+  }
+  .weather-temp { color: #fff; font-weight: 700; }
+
+  /* الترويسة */
+  .masthead {
+    background: var(--card);
+    border-block-end: 3px solid var(--brand);
+  }
+  .masthead-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    padding-block: 18px;
+  }
+  .logo { display: flex; align-items: center; gap: 12px; }
+  .logo-mark {
+    inline-size: 46px;
+    block-size: 46px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #0e5c4a 0%, #17916f 60%, #7ac9a8 100%);
+    display: grid;
+    place-items: center;
+    color: #fff;
+    font-weight: 800;
+    font-size: 20px;
+  }
+  .logo-text strong { display: block; font-size: 26px; letter-spacing: -0.5px; }
+  .logo-text span { display: block; font-size: 12px; color: var(--muted); }
+  .masthead-ad {
+    flex: 1;
+    max-inline-size: 480px;
+    block-size: 60px;
+    border: 1px dashed var(--line);
+    border-radius: var(--radius);
+    display: grid;
+    place-items: center;
+    color: var(--muted);
+    font-size: 12px;
+    background: linear-gradient(90deg, #fafbfc, #eef2f5);
+  }
+  .search {
+    display: flex;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+  .search input {
+    border: 0;
+    padding: 8px 10px;
+    inline-size: 150px;
+    font: inherit;
+    font-size: 13px;
+    outline: none;
+  }
+  .search button {
+    border: 0;
+    background: var(--brand);
+    color: #fff;
+    padding-inline: 14px;
+    font: inherit;
+    font-size: 13px;
+    cursor: pointer;
+  }
+
+  /* التنقل */
+  .mainnav {
+    background: var(--brand);
+    position: sticky;
+    inset-block-start: 0;
+    z-index: 40;
+  }
+  .mainnav ul {
+    display: flex;
+    flex-wrap: wrap;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .mainnav a {
+    display: block;
+    color: #eaf4f0;
+    padding: 11px 15px;
+    font-size: 14px;
+    font-weight: 600;
+    border-inline-start: 1px solid rgba(255,255,255,.12);
+  }
+  .mainnav a:hover { background: var(--brand-dark); color: #fff; }
+  .mainnav .is-active { background: var(--accent); color: #fff; }
+
+  /* الشريط العاجل */
+  .ticker {
+    background: #fff;
+    border-block-end: 1px solid var(--line);
+  }
+  .ticker-inner {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    block-size: 42px;
+    overflow: hidden;
+  }
+  .ticker-label {
+    background: var(--accent);
+    color: #fff;
+    font-weight: 800;
+    font-size: 13px;
+    padding-inline: 14px;
+    align-self: stretch;
+    display: grid;
+    place-items: center;
+    white-space: nowrap;
+  }
+  .ticker-track {
+    flex: 1;
+    overflow: hidden;
+    position: relative;
+  }
+  .ticker-list {
+    display: flex;
+    gap: 40px;
+    list-style: none;
+    margin: 0;
+    padding-inline: 16px;
+    white-space: nowrap;
+    animation: slide 38s linear infinite;
+  }
+  .ticker-list li { font-size: 14px; }
+  .ticker-list b { color: var(--accent); margin-inline-end: 6px; }
+  @keyframes slide {
+    from { transform: translateX(-100%); }
+    to { transform: translateX(100%); }
+  }
+  .ticker-time {
+    font-size: 12px;
+    color: var(--muted);
+    padding-inline: 12px;
+    border-inline-start: 1px solid var(--line);
+    align-self: stretch;
+    display: grid;
+    place-items: center;
+  }
+
+  /* التخطيط */
+  .layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 320px;
+    gap: 28px;
+    padding-block: 24px;
+    align-items: start;
+  }
+
+  /* الواجهة */
+  .hero {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+    margin-block-end: 30px;
+  }
+  .hero-lead { grid-column: span 4; }
+
+  .card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+  .thumb { display: block; }
+  .thumb-lead { block-size: 300px; background: linear-gradient(120deg, #123f6d 0%, #2b6ca3 45%, #86b7d8 100%); }
+  .thumb-a { block-size: 130px; background: linear-gradient(140deg, #6d1f2b 0%, #b6444f 100%); }
+  .thumb-b { block-size: 130px; background: linear-gradient(140deg, #14504a 0%, #37a08f 100%); }
+  .thumb-c { block-size: 130px; background: linear-gradient(140deg, #4a3a12 0%, #b08b2e 100%); }
+  .thumb-d { block-size: 130px; background: linear-gradient(140deg, #33245c 0%, #7a5fb5 100%); }
+  .thumb-sm { inline-size: 108px; block-size: 78px; border-radius: 4px; flex: none; }
+  .thumb-s1 { background: linear-gradient(135deg, #1f4d7a, #74a6cd); }
+  .thumb-s2 { background: linear-gradient(135deg, #7a2f1f, #cd8f74); }
+  .thumb-s3 { background: linear-gradient(135deg, #1f7a5c, #74cdb0); }
+  .thumb-s4 { background: linear-gradient(135deg, #5c1f7a, #b074cd); }
+  .thumb-s5 { background: linear-gradient(135deg, #7a6a1f, #cdc074); }
+  .thumb-s6 { background: linear-gradient(135deg, #1f2f7a, #7481cd); }
+
+  .card-body { padding: 12px 14px 16px; display: flex; flex-direction: column; gap: 6px; }
+  .kicker {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--accent);
+    letter-spacing: .2px;
+  }
+  .card h2 { margin: 0; font-size: 26px; line-height: 1.45; }
+  .card h3 { margin: 0; font-size: 16px; line-height: 1.55; }
+  .card p { margin: 0; color: var(--muted); font-size: 14px; }
+  .meta {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 12px;
+    color: var(--muted);
+    margin-block-start: 4px;
+  }
+  .meta .dot { inline-size: 4px; block-size: 4px; border-radius: 50%; background: var(--line); }
+
+  /* الأقسام */
+  .section { margin-block-end: 30px; }
+  .section-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    border-block-end: 2px solid var(--brand);
+    padding-block-end: 6px;
+    margin-block-end: 14px;
+  }
+  .section-head h2 { margin: 0; font-size: 19px; }
+  .section-head a { font-size: 13px; color: var(--muted); }
+  .section-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px 20px;
+  }
+  .row {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    padding-block-end: 12px;
+    border-block-end: 1px dotted var(--line);
+  }
+  .row h3 { margin: 0 0 4px; font-size: 15px; line-height: 1.6; }
+  .row .meta { margin: 0; }
+
+  /* العمود الجانبي */
+  .sidebar { display: flex; flex-direction: column; gap: 20px; }
+  .widget {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 16px;
+  }
+  .widget-title {
+    margin: 0 0 12px;
+    font-size: 17px;
+    border-inline-start: 4px solid var(--accent);
+    padding-inline-start: 10px;
+  }
+  .mostread { list-style: none; margin: 0; padding: 0; counter-reset: rank; }
+  .mostread li {
+    counter-increment: rank;
+    display: flex;
+    gap: 10px;
+    padding-block: 10px;
+    border-block-end: 1px solid var(--line);
+  }
+  .mostread li:last-child { border-block-end: 0; }
+  .mostread li::before {
+    content: counter(rank);
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--brand);
+    min-inline-size: 26px;
+    line-height: 1.3;
+  }
+  .mostread a { font-size: 14px; line-height: 1.6; }
+
+  .newsletter {
+    background: linear-gradient(160deg, #0e5c4a, #12growth 0%, #0b4438 100%);
+    background: linear-gradient(160deg, #0e5c4a 0%, #0b4438 100%);
+    color: #fff;
+    border-color: transparent;
+  }
+  .newsletter .widget-title { border-color: #fff; color: #fff; }
+  .newsletter p { margin: 0 0 12px; font-size: 13px; color: #cbe0da; }
+  .newsletter-form { display: flex; flex-direction: column; gap: 8px; }
+  .newsletter input {
+    padding: 9px 10px;
+    border: 1px solid rgba(255,255,255,.3);
+    border-radius: 4px;
+    background: rgba(255,255,255,.1);
+    color: #fff;
+    font: inherit;
+    font-size: 13px;
+  }
+  .newsletter input::placeholder { color: #a9c8c0; }
+  .newsletter button {
+    padding: 9px;
+    border: 0;
+    border-radius: 4px;
+    background: var(--accent);
+    color: #fff;
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  .newsletter small { display: block; margin-block-start: 8px; font-size: 11px; color: #a9c8c0; }
+
+  .tags { display: flex; flex-wrap: wrap; gap: 8px; }
+  .tag {
+    font-size: 12px;
+    padding: 4px 10px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    color: var(--muted);
+  }
+
+  .adslot {
+    position: sticky;
+    inset-block-start: 62px;
+    block-size: 260px;
+    display: grid;
+    place-items: center;
+    background: linear-gradient(160deg, #eef2f5, #dde5ea);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    color: var(--muted);
+    font-size: 12px;
+    text-align: center;
+  }
+
+  /* التذييل */
+  .footer {
+    background: var(--brand-dark);
+    color: #b9d3cb;
+    margin-block-start: 20px;
+    padding-block: 32px 0;
+    font-size: 14px;
+  }
+  .footer-cols {
+    display: grid;
+    grid-template-columns: 1.4fr repeat(3, 1fr);
+    gap: 28px;
+    padding-block-end: 26px;
+  }
+  .footer h4 { margin: 0 0 12px; color: #fff; font-size: 15px; }
+  .footer ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 7px; }
+  .footer p { margin: 0 0 12px; line-height: 1.9; font-size: 13px; }
+  .social { display: flex; gap: 8px; }
+  .social span {
+    inline-size: 32px;
+    block-size: 32px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    background: rgba(255,255,255,.1);
+    color: #fff;
+    font-size: 12px;
+  }
+  .footer-bottom {
+    border-block-start: 1px solid rgba(255,255,255,.12);
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding-block: 14px;
+    font-size: 12px;
+  }
+
+  @media (max-width: 900px) {
+    .layout { grid-template-columns: 1fr; }
+    .hero { grid-template-columns: repeat(2, 1fr); }
+    .hero-lead { grid-column: span 2; }
+    .section-grid { grid-template-columns: 1fr; }
+    .footer-cols { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="shell topbar-inner">
+    <div class="topbar-date">
+      <span>الأحد ٦ سبتمبر / أيلول ٢٠٢٦</span>
+      <span>—</span>
+      <span>٢٤ ربيع الأول ١٤٤٨ هـ</span>
+    </div>
+    <div class="weather">
+      <span>الرياض</span>
+      <span class="weather-temp">٣٨°</span>
+      <span>مشمس صافٍ</span>
+    </div>
+    <nav class="topbar-links">
+      <a href="#">اتصل بنا</a>
+      <a href="#">أعلن معنا</a>
+      <a href="#">تسجيل الدخول</a>
+    </nav>
+  </div>
+</div>
+
+<header class="masthead">
+  <div class="shell masthead-inner">
+    <a class="logo" href="#">
+      <span class="logo-mark">خ</span>
+      <span class="logo-text">
+        <strong>شبكة الخبر</strong>
+        <span>صحيفة إلكترونية يومية مستقلة</span>
+      </span>
+    </a>
+    <div class="masthead-ad">مساحة إعلانية ٧٢٨ × ٩٠</div>
+    <form class="search" onsubmit="return false">
+      <input type="search" placeholder="ابحث في الموقع…" aria-label="بحث">
+      <button type="submit">بحث</button>
+    </form>
+  </div>
+</header>
+
+<nav class="mainnav">
+  <ul class="shell">
+    <li><a class="is-active" href="#">الرئيسية</a></li>
+    <li><a href="#">سياسة</a></li>
+    <li><a href="#">اقتصاد</a></li>
+    <li><a href="#">رياضة</a></li>
+    <li><a href="#">تقنية</a></li>
+    <li><a href="#">ثقافة وفنون</a></li>
+    <li><a href="#">صحة</a></li>
+    <li><a href="#">تحقيقات</a></li>
+    <li><a href="#">رأي</a></li>
+    <li><a href="#">فيديو</a></li>
+  </ul>
+</nav>
+
+<div class="ticker">
+  <div class="shell ticker-inner">
+    <div class="ticker-label">عاجل</div>
+    <div class="ticker-track">
+      <ul class="ticker-list">
+        <li><b>•</b> مجلس الوزراء يقر حزمة تحفيز بقيمة ١٢ مليار ريال لدعم الصناعات التحويلية</li>
+        <li><b>•</b> ارتفاع أسعار النفط ٢٫٤٪ بعد بيانات المخزونات الأمريكية</li>
+        <li><b>•</b> الأخضر يواجه اليابان الثلاثاء في تصفيات كأس العالم</li>
+        <li><b>•</b> هيئة الأرصاد تحذر من موجة غبار على المنطقة الشرقية حتى مساء غد</li>
+      </ul>
+    </div>
+    <div class="ticker-time">آخر تحديث ١١:٤٢ م</div>
+  </div>
+</div>
+
+<main class="shell layout">
+  <div>
+
+    <div class="hero">
+      <article class="card hero-lead">
+        <a class="thumb thumb-lead" href="#" aria-label="صورة الخبر الرئيسي"></a>
+        <div class="card-body">
+          <span class="kicker">اقتصاد</span>
+          <h2><a href="#">الحكومة تعلن خطة استثمارية لتوطين صناعة أشباه الموصلات خلال خمس سنوات</a></h2>
+          <p>تتضمن الخطة إنشاء ثلاثة مجمعات صناعية وشراكات مع أربع شركات عالمية، على أن يبدأ الإنتاج التجريبي مطلع ٢٠٢٨، بحسب مصادر مطلعة تحدثت إلى «شبكة الخبر».</p>
+          <div class="meta">
+            <span>محمد العتيبي</span>
+            <i class="dot"></i>
+            <span>قبل ٣٥ دقيقة</span>
+            <i class="dot"></i>
+            <span>٤ دقائق قراءة</span>
+          </div>
+        </div>
+      </article>
+
+      <article class="card">
+        <a class="thumb thumb-a" href="#" aria-label="صورة"></a>
+        <div class="card-body">
+          <span class="kicker">سياسة</span>
+          <h3><a href="#">جولة مفاوضات جديدة في جنيف وسط تفاؤل حذر</a></h3>
+          <div class="meta"><span>قبل ساعة</span></div>
+        </div>
+      </article>
+
+      <article class="card">
+        <a class="thumb thumb-b" href="#" aria-label="صورة"></a>
+        <div class="card-body">
+          <span class="kicker">رياضة</span>
+          <h3><a href="#">الهلال يحسم الديربي بهدف قاتل في الدقيقة ٩٣</a></h3>
+          <div class="meta"><span>قبل ساعتين</span></div>
+        </div>
+      </article>
+
+      <article class="card">
+        <a class="thumb thumb-c" href="#" aria-label="صورة"></a>
+        <div class="card-body">
+          <span class="kicker">تقنية</span>
+          <h3><a href="#">تطبيقات الذكاء الاصطناعي تدخل المدارس الحكومية العام المقبل</a></h3>
+          <div class="meta"><span>قبل ٣ ساعات</span></div>
+        </div>
+      </article>
+
+      <article class="card">
+        <a class="thumb thumb-d" href="#" aria-label="صورة"></a>
+        <div class="card-body">
+          <span class="kicker">صحة</span>
+          <h3><a href="#">دراسة: النوم أقل من ست ساعات يضاعف خطر أمراض القلب</a></h3>
+          <div class="meta"><span>قبل ٤ ساعات</span></div>
+        </div>
+      </article>
+    </div>
+
+    <section class="section">
+      <div class="section-head">
+        <h2>سياسة</h2>
+        <a href="#">كل الأخبار ←</a>
+      </div>
+      <div class="section-grid">
+        <article class="row">
+          <a class="thumb thumb-sm thumb-s1" href="#" aria-label="صورة"></a>
+          <div>
+            <h3><a href="#">وزير الخارجية يبحث مع نظيره الفرنسي ملف الطاقة والأمن الإقليمي</a></h3>
+            <div class="meta"><span>باريس</span><i class="dot"></i><span>قبل ٥ ساعات</span></div>
+          </div>
+        </article>
+        <article class="row">
+          <a class="thumb thumb-sm thumb-s2" href="#" aria-label="صورة"></a>
+          <div>
+            <h3><a href="#">البرلمان يصوّت غدًا على تعديلات قانون الاستثمار الأجنبي</a></h3>
+            <div class="meta"><span>محلي</span><i class="dot"></i><span>قبل ٦ ساعات</span></div>
+          </div>
+        </article>
+        <article class="row">
+          <a class="thumb thumb-sm thumb-s3" href="#" aria-label="صورة"></a>
+          <div>
+            <h3><a href="#">قمة ثلاثية في القاهرة لبحث ملف إعادة الإعمار</a></h3>
+            <div class="meta"><span>القاهرة</span><i class="dot"></i><span>أمس</span></div>
+          </div>
+        </article>
+        <article class="row">
+          <a class="thumb thumb-sm thumb-s4" href="#" aria-label="صورة"></a>
+          <div>
+            <h3><a href="#">تقرير أممي يوثق تحسنًا في مؤشرات الأمن الغذائي بالمنطقة</a></h3>
+            <div class="meta"><span>نيويورك</span><i class="dot"></i><span>أمس</span></div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-head">
+        <h2>اقتصاد وأعمال</h2>
+        <a href="#">كل الأخبار ←</a>
+      </div>
+      <div class="section-grid">
+        <article class="row">
+          <a class="thumb thumb-sm thumb-s5" href="#" aria-label="صورة"></a>
+          <div>
+            <h3><a href="#">مؤشر السوق الرئيسي يغلق مرتفعًا ٠٫٨٪ بسيولة ٦٫٣ مليارات</a></h3>
+            <div class="meta"><span>أسواق</span><i class="dot"></i><span>قبل ساعة</span></div>
+          </div>
+        </article>
+        <article class="row">
+          <a class="thumb thumb-sm thumb-s6" href="#" aria-label="صورة"></a>
+          <div>
+            <h3><a href="#">شركة عقارية كبرى تطرح ٣٠٪ من أسهمها للاكتتاب العام</a></h3>
+            <div class="meta"><span>اكتتابات</span><i class="dot"></i><span>قبل ٣ ساعات</span></div>
+          </div>
+        </article>
+        <article class="row">
+          <a class="thumb thumb-sm thumb-s1" href="#" aria-label="صورة"></a>
+          <div>
+            <h3><a href="#">التضخم السنوي يتراجع إلى ٢٫١٪ للشهر الثالث على التوالي</a></h3>
+            <div class="meta"><span>بيانات</span><i class="dot"></i><span>قبل ٧ ساعات</span></div>
+          </div>
+        </article>
+        <article class="row">
+          <a class="thumb thumb-sm thumb-s2" href="#" aria-label="صورة"></a>
+          <div>
+            <h3><a href="#">اتفاقية لتصدير الأسمدة إلى ثلاث دول أفريقية بقيمة ٩٠٠ مليون دولار</a></h3>
+            <div class="meta"><span>تجارة</span><i class="dot"></i><span>أمس</span></div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-head">
+        <h2>رياضة</h2>
+        <a href="#">كل الأخبار ←</a>
+      </div>
+      <div class="section-grid">
+        <article class="row">
+          <a class="thumb thumb-sm thumb-s3" href="#" aria-label="صورة"></a>
+          <div>
+            <h3><a href="#">المنتخب يختتم تحضيراته في معسكر مدريد قبل مواجهة اليابان</a></h3>
+            <div class="meta"><span>كرة قدم</span><i class="dot"></i><span>قبل ساعتين</span></div>
+          </div>
+        </article>
+        <article class="row">
+          <a class="thumb thumb-sm thumb-s4" href="#" aria-label="صورة"></a>
+          <div>
+            <h3><a href="#">النصر يتعاقد مع مهاجم برتغالي في صفقة قياسية</a></h3>
+            <div class="meta"><span>انتقالات</span><i class="dot"></i><span>قبل ٤ ساعات</span></div>
+          </div>
+        </article>
+        <article class="row">
+          <a class="thumb thumb-sm thumb-s5" href="#" aria-label="صورة"></a>
+          <div>
+            <h3><a href="#">بطولة العالم لألعاب القوى: ذهبية جديدة في سباق ٨٠٠ متر</a></h3>
+            <div class="meta"><span>ألعاب قوى</span><i class="dot"></i><span>أمس</span></div>
+          </div>
+        </article>
+        <article class="row">
+          <a class="thumb thumb-sm thumb-s6" href="#" aria-label="صورة"></a>
+          <div>
+            <h3><a href="#">جدول الدوري: أربع مباريات مؤجلة بسبب المشاركات القارية</a></h3>
+            <div class="meta"><span>الدوري</span><i class="dot"></i><span>أمس</span></div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-head">
+        <h2>ثقافة وفنون</h2>
+        <a href="#">كل الأخبار ←</a>
+      </div>
+      <div class="section-grid">
+        <article class="row">
+          <a class="thumb thumb-sm thumb-s1" href="#" aria-label="صورة"></a>
+          <div>
+            <h3><a href="#">افتتاح معرض الكتاب الدولي بمشاركة ٩٠٠ دار نشر</a></h3>
+            <div class="meta"><span>كتب</span><i class="dot"></i><span>قبل ٨ ساعات</span></div>
+          </div>
+        </article>
+        <article class="row">
+          <a class="thumb thumb-sm thumb-s2" href="#" aria-label="صورة"></a>
+          <div>
+            <h3><a href="#">فيلم عربي ينافس على جائزة أفضل عمل روائي في مهرجان البندقية</a></h3>
+            <div class="meta"><span>سينما</span><i class="dot"></i><span>أمس</span></div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+  </div>
+
+  <aside class="sidebar">
+    <section class="widget">
+      <h3 class="widget-title">الأكثر قراءة</h3>
+      <ol class="mostread">
+        <li><a href="#">تفاصيل نظام العمل الجديد وأثره على عقود القطاع الخاص</a></li>
+        <li><a href="#">خريطة الطرق الجديدة تختصر الرحلة بين المدينتين إلى ساعتين</a></li>
+        <li><a href="#">لماذا تتراجع أسعار الشحن البحري للشهر الرابع؟</a></li>
+        <li><a href="#">١٠ أخطاء شائعة عند تقديم طلب التمويل العقاري</a></li>
+        <li><a href="#">مقابلة: مدير المشروع يكشف موعد تشغيل الخط الأزرق</a></li>
+        <li><a href="#">الطقس الأسبوع المقبل: انخفاض ملموس في درجات الحرارة</a></li>
+      </ol>
+    </section>
+
+    <section class="widget newsletter">
+      <h3 class="widget-title">النشرة البريدية</h3>
+      <p>ملخص يومي لأهم الأخبار يصلك كل صباح الساعة السابعة.</p>
+      <form class="newsletter-form" onsubmit="return false">
+        <input type="text" placeholder="الاسم">
+        <input type="email" placeholder="بريدك الإلكتروني">
+        <button type="submit">اشترك الآن</button>
+      </form>
+      <small>يمكنك إلغاء الاشتراك في أي وقت.</small>
+    </section>
+
+    <section class="widget">
+      <h3 class="widget-title">الأكثر تداولًا</h3>
+      <div class="tags">
+        <a class="tag" href="#">أشباه الموصلات</a>
+        <a class="tag" href="#">تصفيات المونديال</a>
+        <a class="tag" href="#">أسعار النفط</a>
+        <a class="tag" href="#">الذكاء الاصطناعي</a>
+        <a class="tag" href="#">مهرجان البندقية</a>
+        <a class="tag" href="#">التضخم</a>
+        <a class="tag" href="#">معرض الكتاب</a>
+      </div>
+    </section>
+
+    <div class="adslot">
+      <span>مساحة إعلانية ثابتة<br>٣٠٠ × ٢٥٠</span>
+    </div>
+  </aside>
+</main>
+
+<footer class="footer">
+  <div class="shell">
+    <div class="footer-cols">
+      <div>
+        <h4>شبكة الخبر</h4>
+        <p>صحيفة إلكترونية مستقلة تصدر منذ ٢٠١١، تغطي الشأن المحلي والعربي والدولي بفرق تحرير في ست مدن.</p>
+        <div class="social">
+          <span>ف</span>
+          <span>ت</span>
+          <span>إن</span>
+          <span>يت</span>
+        </div>
+      </div>
+      <div>
+        <h4>الأقسام</h4>
+        <ul>
+          <li><a href="#">سياسة</a></li>
+          <li><a href="#">اقتصاد</a></li>
+          <li><a href="#">رياضة</a></li>
+          <li><a href="#">تقنية</a></li>
+          <li><a href="#">ثقافة وفنون</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>خدمات</h4>
+        <ul>
+          <li><a href="#">النشرة البريدية</a></li>
+          <li><a href="#">تطبيق الجوال</a></li>
+          <li><a href="#">خدمة RSS</a></li>
+          <li><a href="#">الأرشيف</a></li>
+          <li><a href="#">التنبيهات العاجلة</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>عن الشبكة</h4>
+        <ul>
+          <li><a href="#">من نحن</a></li>
+          <li><a href="#">سياسة التحرير</a></li>
+          <li><a href="#">الخصوصية</a></li>
+          <li><a href="#">الوظائف</a></li>
+          <li><a href="#">اتصل بنا</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>جميع الحقوق محفوظة © ٢٠٢٦ شبكة الخبر</span>
+      <span>ترخيص وزارة الإعلام رقم ٤٤٩٢١</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  document.querySelectorAll('form').forEach(function (form) {
+    form.addEventListener('submit', function (event) {
+      event.preventDefault();
+    });
+  });
+
+  var tickerList = document.querySelector('.ticker-list');
+  tickerList.addEventListener('mouseenter', function () {
+    tickerList.style.animationPlayState = 'paused';
+  });
+  tickerList.addEventListener('mouseleave', function () {
+    tickerList.style.animationPlayState = 'running';
+  });
+</script>
+
+</body>
+</html>

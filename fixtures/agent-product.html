@@ -1,0 +1,1294 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Marlowe Field Jacket — Warbler &amp; Co.</title>
+<style>
+  :root {
+    --ink: #14120f;
+    --ink-soft: #55504a;
+    --ink-faint: #8b857d;
+    --rule: #e2ddd5;
+    --paper: #fbf9f5;
+    --paper-raised: #ffffff;
+    --accent: #7a3b2e;
+    --accent-soft: #f0e6e2;
+    --gold: #b4832a;
+    --serif: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, "Times New Roman", serif;
+    --sans: ui-sans-serif, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --shadow: 0 1px 2px rgba(20, 18, 15, .06), 0 8px 24px rgba(20, 18, 15, .06);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 15px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1, h2, h3, h4 {
+    font-family: var(--serif);
+    font-weight: 400;
+    letter-spacing: -0.01em;
+    margin: 0;
+  }
+
+  a { color: inherit; text-decoration: none; }
+
+  .shell {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 0 32px;
+  }
+
+  .eyebrow {
+    font-size: 11px;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+  }
+
+  /* ---------- header ---------- */
+
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    background: rgba(251, 249, 245, .92);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .announce {
+    background: var(--ink);
+    color: #f4efe6;
+    font-size: 12px;
+    letter-spacing: .08em;
+    text-align: center;
+    padding: 9px 16px;
+  }
+
+  .header-bar {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: 24px;
+    padding: 18px 0;
+  }
+
+  .wordmark {
+    font-family: var(--serif);
+    font-size: 22px;
+    letter-spacing: .04em;
+  }
+
+  .wordmark small {
+    display: block;
+    font-family: var(--sans);
+    font-size: 9px;
+    letter-spacing: .3em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+  }
+
+  .primary-nav {
+    display: flex;
+    gap: 30px;
+    justify-self: center;
+    font-size: 13px;
+    letter-spacing: .09em;
+    text-transform: uppercase;
+  }
+
+  .nav-item { position: relative; padding: 10px 0; }
+
+  .nav-item > a { position: relative; }
+
+  .nav-item > a::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -4px;
+    height: 1px;
+    background: var(--ink);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform .25s ease;
+  }
+
+  .nav-item:hover > a::after,
+  .nav-item.is-open > a::after { transform: scaleX(1); }
+
+  .header-actions {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 20px;
+    font-size: 13px;
+    color: var(--ink-soft);
+  }
+
+  .cart-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    border: 1px solid var(--rule);
+    border-radius: 999px;
+    padding: 6px 14px;
+    background: var(--paper-raised);
+    transition: transform .2s ease, border-color .2s ease;
+  }
+
+  .cart-pill:hover { transform: translateY(-1px); border-color: var(--ink); }
+
+  .cart-count {
+    background: var(--accent);
+    color: #fff;
+    font-size: 11px;
+    border-radius: 999px;
+    padding: 0 6px;
+  }
+
+  /* ---------- mega menu ---------- */
+
+  .mega {
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%) translateY(6px);
+    width: 880px;
+    background: var(--paper-raised);
+    border: 1px solid var(--rule);
+    box-shadow: var(--shadow);
+    padding: 34px 38px;
+    display: none;
+    grid-template-columns: repeat(3, 1fr) 1.15fr;
+    gap: 36px;
+    text-transform: none;
+    letter-spacing: 0;
+  }
+
+  .nav-item.is-open .mega { display: grid; }
+
+  .mega h4 {
+    font-family: var(--sans);
+    font-size: 10px;
+    letter-spacing: .2em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin-bottom: 14px;
+  }
+
+  .mega ul { list-style: none; margin: 0; padding: 0; }
+
+  .mega li { margin-bottom: 9px; }
+
+  .mega li a {
+    font-size: 14px;
+    color: var(--ink-soft);
+    display: inline-block;
+    transition: transform .18s ease, color .18s ease;
+  }
+
+  .mega li a:hover { color: var(--ink); transform: translateX(3px); }
+
+  .mega-feature {
+    border-left: 1px solid var(--rule);
+    padding-left: 32px;
+  }
+
+  .mega-swatch {
+    height: 132px;
+    border-radius: 2px;
+    background:
+      radial-gradient(120% 90% at 20% 10%, #d8c9ae 0%, #b79a72 45%, #6f5a3d 100%);
+    margin-bottom: 14px;
+  }
+
+  .mega-feature p {
+    margin: 6px 0 0;
+    font-size: 13px;
+    color: var(--ink-soft);
+  }
+
+  /* ---------- breadcrumbs ---------- */
+
+  .breadcrumbs {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    padding: 26px 0 10px;
+    font-size: 12px;
+    color: var(--ink-faint);
+  }
+
+  .breadcrumbs span[aria-current] { color: var(--ink); }
+
+  .crumb-sep { opacity: .5; }
+
+  /* ---------- product layout ---------- */
+
+  .product {
+    display: grid;
+    grid-template-columns: minmax(0, 1.35fr) minmax(340px, .8fr);
+    gap: 64px;
+    align-items: start;
+    padding-bottom: 72px;
+  }
+
+  .gallery {
+    display: grid;
+    grid-template-columns: 76px minmax(0, 1fr);
+    gap: 18px;
+  }
+
+  .thumbs {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .thumb {
+    height: 92px;
+    border: 1px solid var(--rule);
+    border-radius: 2px;
+    padding: 0;
+    cursor: pointer;
+    background-color: transparent;
+    transition: transform .2s ease, border-color .2s ease;
+  }
+
+  .thumb:hover { transform: translateY(-2px); }
+
+  .thumb.is-active { border-color: var(--ink); }
+
+  .stage {
+    position: relative;
+    aspect-ratio: 4 / 5;
+    border: 1px solid var(--rule);
+    border-radius: 2px;
+    overflow: hidden;
+    background: #efe9df;
+  }
+
+  .stage-image {
+    position: absolute;
+    inset: 0;
+    transition: opacity .35s ease, transform .6s ease;
+    opacity: 0;
+  }
+
+  .stage-image.is-active { opacity: 1; }
+
+  .stage:hover .stage-image.is-active { transform: scale(1.04); }
+
+  .shot-1 { background: linear-gradient(155deg, #e6ded0 0%, #c2ab86 42%, #6c5a3e 100%); }
+  .shot-2 { background: radial-gradient(90% 70% at 70% 25%, #f2ece0 0%, #b9a684 55%, #4c4535 100%); }
+  .shot-3 { background: linear-gradient(20deg, #3f4a3d 0%, #7b8a6c 48%, #d9d6c2 100%); }
+  .shot-4 { background: conic-gradient(from 200deg at 40% 60%, #cbb894, #8d7a58, #e8e0d0, #6a5b41, #cbb894); }
+  .shot-5 { background: linear-gradient(115deg, #f6f2ea 0%, #ddd0b7 38%, #8a795a 78%, #33301f 100%); }
+
+  .stage-tag {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    background: rgba(20, 18, 15, .82);
+    color: #f6f1e8;
+    font-size: 10px;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    padding: 6px 12px;
+    border-radius: 999px;
+  }
+
+  .gallery-note {
+    grid-column: 2;
+    font-size: 12px;
+    color: var(--ink-faint);
+    display: flex;
+    justify-content: space-between;
+  }
+
+  /* ---------- buy box ---------- */
+
+  .buy-box {
+    position: sticky;
+    top: 96px;
+    background: var(--paper-raised);
+    border: 1px solid var(--rule);
+    border-radius: 3px;
+    padding: 32px;
+    box-shadow: var(--shadow);
+  }
+
+  .buy-box h1 {
+    font-size: 34px;
+    line-height: 1.15;
+    margin: 10px 0 8px;
+  }
+
+  .subtitle {
+    color: var(--ink-soft);
+    font-size: 14px;
+    margin: 0 0 18px;
+  }
+
+  .rating-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .stars { display: inline-flex; gap: 2px; color: var(--gold); font-size: 15px; letter-spacing: 1px; }
+
+  .star-dim { color: var(--rule); }
+
+  .rating-count { font-size: 13px; color: var(--ink-faint); }
+
+  .price-row {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    padding: 20px 0 4px;
+  }
+
+  .price {
+    font-family: var(--serif);
+    font-size: 30px;
+  }
+
+  .price-was {
+    color: var(--ink-faint);
+    text-decoration: line-through;
+    font-size: 15px;
+  }
+
+  .price-save {
+    font-size: 11px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--accent);
+    background: var(--accent-soft);
+    padding: 3px 9px;
+    border-radius: 999px;
+  }
+
+  .price-note { font-size: 12px; color: var(--ink-faint); margin: 0 0 22px; }
+
+  .field { margin-bottom: 22px; }
+
+  .field-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 10px;
+  }
+
+  .field-label {
+    font-size: 11px;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+  }
+
+  .size-guide {
+    font-size: 12px;
+    color: var(--ink-soft);
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .sizes { display: flex; flex-wrap: wrap; gap: 8px; }
+
+  .size-pill {
+    font: inherit;
+    font-size: 13px;
+    min-width: 52px;
+    padding: 9px 12px;
+    border: 1px solid var(--rule);
+    border-radius: 999px;
+    background: var(--paper-raised);
+    color: var(--ink);
+    cursor: pointer;
+    transition: transform .18s ease, border-color .18s ease, background .18s ease;
+  }
+
+  .size-pill:hover { transform: translateY(-2px); border-color: var(--ink-soft); }
+
+  .size-pill.is-selected { background: var(--ink); border-color: var(--ink); color: #f7f2e9; }
+
+  .size-pill[disabled] {
+    color: var(--ink-faint);
+    background: repeating-linear-gradient(-45deg, transparent 0 5px, var(--rule) 5px 6px);
+    cursor: not-allowed;
+  }
+
+  .colors { display: flex; gap: 10px; }
+
+  .color-dot {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: 1px solid var(--rule);
+    padding: 0;
+    cursor: pointer;
+    transition: transform .2s ease;
+  }
+
+  .color-dot:hover { transform: scale(1.12); }
+
+  .color-dot.is-selected { outline: 1px solid var(--ink); outline-offset: 3px; }
+
+  .dot-khaki { background: linear-gradient(135deg, #cbb894, #97815c); }
+  .dot-olive { background: linear-gradient(135deg, #77835f, #444d33); }
+  .dot-slate { background: linear-gradient(135deg, #8e97a1, #4a525c); }
+  .dot-clay  { background: linear-gradient(135deg, #c08466, #7a4433); }
+
+  .buy-actions { display: grid; grid-template-columns: auto 1fr; gap: 12px; }
+
+  .stepper {
+    display: inline-flex;
+    align-items: center;
+    border: 1px solid var(--rule);
+    border-radius: 999px;
+    overflow: hidden;
+  }
+
+  .stepper button {
+    font: inherit;
+    font-size: 17px;
+    width: 40px;
+    height: 46px;
+    border: 0;
+    background: transparent;
+    color: var(--ink);
+    cursor: pointer;
+    transition: background .18s ease;
+  }
+
+  .stepper button:hover { background: #f1ece3; }
+
+  .qty-value { min-width: 26px; text-align: center; font-size: 14px; }
+
+  .add-to-cart {
+    font: inherit;
+    font-size: 13px;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+    height: 46px;
+    border: 0;
+    border-radius: 999px;
+    background: var(--ink);
+    color: #f7f2e9;
+    cursor: pointer;
+    transition: transform .2s ease, background .2s ease;
+  }
+
+  .add-to-cart:hover { transform: translateY(-2px); background: #2b2621; }
+
+  .secondary-action {
+    margin-top: 12px;
+    width: 100%;
+    font: inherit;
+    font-size: 13px;
+    height: 44px;
+    border: 1px solid var(--rule);
+    border-radius: 999px;
+    background: transparent;
+    color: var(--ink);
+    cursor: pointer;
+    transition: border-color .2s ease;
+  }
+
+  .secondary-action:hover { border-color: var(--ink); }
+
+  .perks {
+    list-style: none;
+    margin: 24px 0 0;
+    padding: 20px 0 0;
+    border-top: 1px solid var(--rule);
+    font-size: 13px;
+    color: var(--ink-soft);
+    display: grid;
+    gap: 8px;
+  }
+
+  .perks li::before { content: "— "; color: var(--ink-faint); }
+
+  /* ---------- tabs ---------- */
+
+  .detail-block { padding-bottom: 76px; }
+
+  .tab-strip {
+    display: flex;
+    gap: 34px;
+    border-bottom: 1px solid var(--rule);
+    margin-bottom: 34px;
+  }
+
+  .tab {
+    font: inherit;
+    font-size: 12px;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+    background: none;
+    border: 0;
+    border-bottom: 2px solid transparent;
+    color: var(--ink-faint);
+    padding: 0 0 14px;
+    cursor: pointer;
+    transition: color .2s ease, border-color .2s ease;
+  }
+
+  .tab:hover { color: var(--ink); }
+
+  .tab.is-active { color: var(--ink); border-bottom-color: var(--ink); }
+
+  .tab-panel { display: none; }
+
+  .tab-panel.is-active { display: block; }
+
+  .prose {
+    max-width: 62ch;
+    font-size: 16px;
+    line-height: 1.75;
+    color: var(--ink-soft);
+  }
+
+  .prose h3 {
+    color: var(--ink);
+    font-size: 22px;
+    margin: 34px 0 10px;
+  }
+
+  .prose p { margin: 0 0 16px; }
+
+  .pull-quote {
+    font-family: var(--serif);
+    font-size: 21px;
+    line-height: 1.5;
+    color: var(--ink);
+    border-left: 2px solid var(--accent);
+    padding-left: 22px;
+    margin: 30px 0;
+  }
+
+  .spec-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 0 48px;
+    max-width: 900px;
+  }
+
+  .spec-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 13px 0;
+    border-bottom: 1px solid var(--rule);
+    font-size: 14px;
+  }
+
+  .spec-row dt { color: var(--ink-faint); }
+
+  .spec-row dd { margin: 0; text-align: right; }
+
+  /* ---------- reviews ---------- */
+
+  .review-summary {
+    display: grid;
+    grid-template-columns: 190px 1fr;
+    gap: 44px;
+    align-items: start;
+    padding-bottom: 34px;
+    margin-bottom: 34px;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .score-big {
+    font-family: var(--serif);
+    font-size: 56px;
+    line-height: 1;
+  }
+
+  .bar-row {
+    display: grid;
+    grid-template-columns: 42px 1fr 40px;
+    align-items: center;
+    gap: 12px;
+    font-size: 12px;
+    color: var(--ink-faint);
+    margin-bottom: 7px;
+  }
+
+  .bar-track {
+    height: 6px;
+    background: var(--rule);
+    border-radius: 999px;
+    overflow: hidden;
+  }
+
+  .bar-fill { height: 100%; background: var(--gold); }
+
+  .review-list { display: grid; gap: 28px; max-width: 820px; }
+
+  .review {
+    display: grid;
+    grid-template-columns: 46px 1fr;
+    gap: 18px;
+    padding-bottom: 26px;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .avatar {
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    font-family: var(--serif);
+    font-size: 17px;
+    color: #fdfbf7;
+  }
+
+  .avatar-a { background: linear-gradient(135deg, #8d6b4f, #4c3527); }
+  .avatar-b { background: linear-gradient(135deg, #6d7f68, #33402f); }
+  .avatar-c { background: linear-gradient(135deg, #7c7f92, #3b3e50); }
+  .avatar-d { background: linear-gradient(135deg, #a8724f, #5d3220); }
+
+  .review-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 10px;
+    margin-bottom: 4px;
+  }
+
+  .review-name { font-weight: 600; font-size: 14px; }
+
+  .verified {
+    font-size: 10px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: #4c6b4a;
+    background: #e9f0e6;
+    padding: 2px 8px;
+    border-radius: 999px;
+  }
+
+  .review-date { font-size: 12px; color: var(--ink-faint); margin-left: auto; }
+
+  .review h4 { font-size: 17px; margin: 6px 0 4px; }
+
+  .review p { margin: 0 0 8px; font-size: 14px; color: var(--ink-soft); }
+
+  .review-meta { font-size: 12px; color: var(--ink-faint); }
+
+  /* ---------- recommendations ---------- */
+
+  .rail-section { padding-bottom: 80px; }
+
+  .rail-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 24px;
+  }
+
+  .rail-head h2 { font-size: 27px; }
+
+  .rail {
+    display: flex;
+    gap: 22px;
+    overflow-x: scroll;
+    padding-bottom: 18px;
+    scroll-snap-type: x mandatory;
+  }
+
+  .card {
+    flex: 0 0 262px;
+    scroll-snap-align: start;
+    transition: transform .25s ease;
+  }
+
+  .card:hover { transform: translateY(-6px); }
+
+  .card-art {
+    height: 300px;
+    border-radius: 2px;
+    border: 1px solid var(--rule);
+    margin-bottom: 12px;
+  }
+
+  .art-1 { background: linear-gradient(160deg, #e9e1d2, #a99madd 0%, #9a8865 60%, #4b4231 100%); }
+  .art-2 { background: radial-gradient(80% 60% at 30% 30%, #f2ebdc, #8c9a7c 60%, #3c4633 100%); }
+  .art-3 { background: linear-gradient(200deg, #f6f1e7, #c9b7a0 45%, #6d5b48 100%); }
+  .art-4 { background: conic-gradient(from 120deg at 60% 40%, #dcd2bd, #7f7360, #efe9dc, #55503f, #dcd2bd); }
+  .art-5 { background: linear-gradient(135deg, #dfe2e6, #97a0aa 50%, #3f4650 100%); }
+  .art-6 { background: linear-gradient(45deg, #f3e7dd, #c48f6d 55%, #6b3a26 100%); }
+
+  .card-name { font-family: var(--serif); font-size: 17px; }
+
+  .card-meta { font-size: 13px; color: var(--ink-faint); }
+
+  .card-price { font-size: 14px; margin-top: 4px; }
+
+  /* ---------- footer ---------- */
+
+  .site-footer {
+    border-top: 1px solid var(--rule);
+    background: #f4f0e8;
+    padding: 60px 0 30px;
+  }
+
+  .footer-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 44px;
+  }
+
+  .footer-grid h4 {
+    font-family: var(--sans);
+    font-size: 10px;
+    letter-spacing: .2em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin-bottom: 14px;
+  }
+
+  .footer-grid ul { list-style: none; margin: 0; padding: 0; }
+
+  .footer-grid li { margin-bottom: 9px; font-size: 14px; color: var(--ink-soft); }
+
+  .footer-grid li a { transition: color .18s ease; }
+
+  .footer-grid li a:hover { color: var(--ink); }
+
+  .newsletter { display: flex; gap: 8px; margin-top: 12px; }
+
+  .newsletter input {
+    font: inherit;
+    font-size: 13px;
+    flex: 1;
+    min-width: 0;
+    padding: 10px 14px;
+    border: 1px solid var(--rule);
+    border-radius: 999px;
+    background: var(--paper-raised);
+  }
+
+  .newsletter button {
+    font: inherit;
+    font-size: 12px;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    padding: 0 18px;
+    border: 0;
+    border-radius: 999px;
+    background: var(--ink);
+    color: #f7f2e9;
+    cursor: pointer;
+  }
+
+  .footer-bottom {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 48px;
+    padding-top: 22px;
+    border-top: 1px solid var(--rule);
+    font-size: 12px;
+    color: var(--ink-faint);
+  }
+
+  @media (max-width: 900px) {
+    .product { grid-template-columns: 1fr; gap: 40px; }
+    .buy-box { position: static; }
+    .footer-grid { grid-template-columns: repeat(2, 1fr); }
+    .mega { width: 92vw; grid-template-columns: repeat(2, 1fr); }
+  }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="announce">Complimentary shipping over $150 · Free returns within 45 days</div>
+  <div class="shell header-bar">
+    <a class="wordmark" href="#">Warbler &amp; Co.<small>Est. 1974 · Portland</small></a>
+
+    <nav class="primary-nav">
+      <div class="nav-item"><a href="#">New In</a></div>
+      <div class="nav-item is-open">
+        <a href="#">Outerwear</a>
+        <div class="mega">
+          <div>
+            <h4>By Style</h4>
+            <ul>
+              <li><a href="#">Field &amp; Chore Jackets</a></li>
+              <li><a href="#">Waxed Cotton</a></li>
+              <li><a href="#">Trench &amp; Mac</a></li>
+              <li><a href="#">Shearling</a></li>
+              <li><a href="#">Quilted Liners</a></li>
+              <li><a href="#">Rain Shells</a></li>
+            </ul>
+          </div>
+          <div>
+            <h4>By Weight</h4>
+            <ul>
+              <li><a href="#">Transitional</a></li>
+              <li><a href="#">Three Season</a></li>
+              <li><a href="#">Deep Winter</a></li>
+              <li><a href="#">Packable</a></li>
+              <li><a href="#">Layering Systems</a></li>
+            </ul>
+          </div>
+          <div>
+            <h4>Collections</h4>
+            <ul>
+              <li><a href="#">The Marlowe Archive</a></li>
+              <li><a href="#">Coastal Program</a></li>
+              <li><a href="#">Made in Japan</a></li>
+              <li><a href="#">Last Chance</a></li>
+              <li><a href="#">Gift Guide</a></li>
+            </ul>
+          </div>
+          <div class="mega-feature">
+            <div class="mega-swatch"></div>
+            <span class="eyebrow">Feature</span>
+            <h4 style="font-family: var(--serif); font-size: 17px; text-transform: none; letter-spacing: 0; color: var(--ink); margin: 6px 0 0;">Waxed for a Wet Coast</h4>
+            <p>Four jackets cut from British Millerain, broken in by rain and time.</p>
+          </div>
+        </div>
+      </div>
+      <div class="nav-item"><a href="#">Shirting</a></div>
+      <div class="nav-item"><a href="#">Trousers</a></div>
+      <div class="nav-item"><a href="#">Archive</a></div>
+    </nav>
+
+    <div class="header-actions">
+      <a href="#">Search</a>
+      <a href="#">Account</a>
+      <a class="cart-pill" href="#">Bag <span class="cart-count">2</span></a>
+    </div>
+  </div>
+</header>
+
+<main class="shell">
+
+  <nav class="breadcrumbs">
+    <a href="#">Home</a><span class="crumb-sep">/</span>
+    <a href="#">Men</a><span class="crumb-sep">/</span>
+    <a href="#">Outerwear</a><span class="crumb-sep">/</span>
+    <a href="#">Field Jackets</a><span class="crumb-sep">/</span>
+    <span aria-current="page">Marlowe Field Jacket</span>
+  </nav>
+
+  <section class="product">
+
+    <div class="gallery">
+      <div class="thumbs">
+        <button class="thumb shot-1 is-active" data-shot="1" aria-label="Front view"></button>
+        <button class="thumb shot-2" data-shot="2" aria-label="Back view"></button>
+        <button class="thumb shot-3" data-shot="3" aria-label="Olive colorway"></button>
+        <button class="thumb shot-4" data-shot="4" aria-label="Fabric detail"></button>
+        <button class="thumb shot-5" data-shot="5" aria-label="Worn on model"></button>
+      </div>
+
+      <div class="stage">
+        <div class="stage-image shot-1 is-active" data-shot="1"></div>
+        <div class="stage-image shot-2" data-shot="2"></div>
+        <div class="stage-image shot-3" data-shot="3"></div>
+        <div class="stage-image shot-4" data-shot="4"></div>
+        <div class="stage-image shot-5" data-shot="5"></div>
+        <span class="stage-tag">Restocked</span>
+      </div>
+
+      <div class="gallery-note">
+        <span>Model is 6'1", wearing a Medium</span>
+        <span id="shotCounter">1 / 5</span>
+      </div>
+    </div>
+
+    <aside class="buy-box">
+      <span class="eyebrow">Outerwear · Style M-4271</span>
+      <h1>Marlowe Field Jacket</h1>
+      <p class="subtitle">Ten-wale waxed cotton, cut long, with a detachable wool liner.</p>
+
+      <div class="rating-row">
+        <span class="stars">★★★★<span class="star-dim">★</span></span>
+        <strong>4.6</strong>
+        <span class="rating-count">· 218 reviews</span>
+      </div>
+
+      <div class="price-row">
+        <span class="price">$298</span>
+        <span class="price-was">$365</span>
+        <span class="price-save">Save 18%</span>
+      </div>
+      <p class="price-note">or 4 interest-free payments of $74.50</p>
+
+      <div class="field">
+        <div class="field-head">
+          <span class="field-label">Colour — Field Khaki</span>
+        </div>
+        <div class="colors">
+          <button class="color-dot dot-khaki is-selected" aria-label="Field Khaki"></button>
+          <button class="color-dot dot-olive" aria-label="Deep Olive"></button>
+          <button class="color-dot dot-slate" aria-label="Storm Slate"></button>
+          <button class="color-dot dot-clay" aria-label="Burnt Clay"></button>
+        </div>
+      </div>
+
+      <div class="field">
+        <div class="field-head">
+          <span class="field-label">Size</span>
+          <a class="size-guide" href="#">Size &amp; fit guide</a>
+        </div>
+        <div class="sizes">
+          <button class="size-pill">XS</button>
+          <button class="size-pill">S</button>
+          <button class="size-pill is-selected">M</button>
+          <button class="size-pill">L</button>
+          <button class="size-pill" disabled>XL</button>
+          <button class="size-pill">XXL</button>
+        </div>
+      </div>
+
+      <div class="buy-actions">
+        <div class="stepper">
+          <button id="qtyDown" aria-label="Decrease quantity">−</button>
+          <span class="qty-value" id="qtyValue">1</span>
+          <button id="qtyUp" aria-label="Increase quantity">+</button>
+        </div>
+        <button class="add-to-cart" id="addToCart">Add to bag — $298</button>
+      </div>
+      <button class="secondary-action">Save to wishlist</button>
+
+      <ul class="perks">
+        <li>Ships within two business days from Portland</li>
+        <li>Free returns and exchanges for 45 days</li>
+        <li>Repairs handled in house for the life of the jacket</li>
+        <li>Only 9 left in Medium</li>
+      </ul>
+    </aside>
+  </section>
+
+  <section class="detail-block">
+    <div class="tab-strip">
+      <button class="tab is-active" data-tab="description">Description</button>
+      <button class="tab" data-tab="specs">Specifications</button>
+      <button class="tab" data-tab="reviews">Reviews (218)</button>
+    </div>
+
+    <div class="tab-panel is-active" data-panel="description">
+      <div class="prose">
+        <p>The Marlowe began as a pattern we found in a Ministry of Supply catalogue from 1948, cut for dispatch riders who needed a coat that would survive a winter of bad weather and worse roads. We kept the long body and the bellows pockets, dropped the wool storm collar, and moved the hand warmers up two inches so they land where your hands actually sit.</p>
+        <p>The shell is a ten-wale waxed cotton milled in Lancashire. It arrives stiff and a little unfriendly. Six weeks in, it holds the shape of your shoulders and the creases at your elbows, and it stops looking like something bought and starts looking like something owned.</p>
+
+        <blockquote class="pull-quote">"A jacket should be worse in the shop than it is after a year. This one is."</blockquote>
+
+        <h3>The liner</h3>
+        <p>A quilted lambswool liner buttons in along the placket and at both cuffs. On its own it wears as a vest under a suit. Buttoned in, the jacket handles about twenty degrees colder than the shell alone, which covers most of the year almost anywhere with a real autumn.</p>
+
+        <h3>Fit</h3>
+        <p>Cut straight through the body with room for a heavy knit. If you are between sizes and plan to wear the liner most days, take the larger one. The sleeves run long by design and can be shortened at any of our shops at no charge.</p>
+
+        <h3>Care</h3>
+        <p>Never wash it. Brush the dirt off with a stiff brush and cold water. Re-wax once a year, or every second year if it lives mostly indoors, using the tin we include in the box.</p>
+      </div>
+    </div>
+
+    <div class="tab-panel" data-panel="specs">
+      <div class="spec-grid">
+        <dl>
+          <div class="spec-row"><dt>Shell</dt><dd>10 oz waxed cotton, Lancashire</dd></div>
+          <div class="spec-row"><dt>Lining</dt><dd>Cotton twill, tartan body</dd></div>
+          <div class="spec-row"><dt>Liner</dt><dd>Quilted lambswool, detachable</dd></div>
+          <div class="spec-row"><dt>Hardware</dt><dd>Antiqued brass, YKK Excella</dd></div>
+          <div class="spec-row"><dt>Pockets</dt><dd>Two bellows, two hand, one internal</dd></div>
+          <div class="spec-row"><dt>Collar</dt><dd>Corduroy, stand or fold</dd></div>
+        </dl>
+        <dl>
+          <div class="spec-row"><dt>Back length (M)</dt><dd>31 in / 79 cm</dd></div>
+          <div class="spec-row"><dt>Chest (M, flat)</dt><dd>22.5 in / 57 cm</dd></div>
+          <div class="spec-row"><dt>Sleeve (M)</dt><dd>26 in / 66 cm</dd></div>
+          <div class="spec-row"><dt>Weight</dt><dd>1.9 kg with liner</dd></div>
+          <div class="spec-row"><dt>Made in</dt><dd>Porto, Portugal</dd></div>
+          <div class="spec-row"><dt>Style code</dt><dd>M-4271-KHK</dd></div>
+        </dl>
+      </div>
+    </div>
+
+    <div class="tab-panel" data-panel="reviews">
+      <div class="review-summary">
+        <div>
+          <div class="score-big">4.6</div>
+          <span class="stars">★★★★<span class="star-dim">★</span></span>
+          <p class="rating-count">Based on 218 reviews</p>
+        </div>
+        <div>
+          <div class="bar-row"><span>5 star</span><span class="bar-track"><span class="bar-fill" style="width: 71%"></span></span><span>154</span></div>
+          <div class="bar-row"><span>4 star</span><span class="bar-track"><span class="bar-fill" style="width: 19%"></span></span><span>41</span></div>
+          <div class="bar-row"><span>3 star</span><span class="bar-track"><span class="bar-fill" style="width: 6%"></span></span><span>13</span></div>
+          <div class="bar-row"><span>2 star</span><span class="bar-track"><span class="bar-fill" style="width: 3%"></span></span><span>7</span></div>
+          <div class="bar-row"><span>1 star</span><span class="bar-track"><span class="bar-fill" style="width: 1%"></span></span><span>3</span></div>
+        </div>
+      </div>
+
+      <div class="review-list">
+        <article class="review">
+          <div class="avatar avatar-a">DR</div>
+          <div>
+            <div class="review-head">
+              <span class="review-name">Daniel R.</span>
+              <span class="verified">Verified buyer</span>
+              <span class="review-date">14 March</span>
+            </div>
+            <span class="stars">★★★★★</span>
+            <h4>Two winters in, still the one I reach for</h4>
+            <p>Bought it stiff as cardboard and hated it for a month. Now the collar sits right and the wax has gone patchy in all the places it should. Wore it through a full Seattle February with the liner in and never got cold.</p>
+            <span class="review-meta">Size M · usually wears M · 6'0", 180 lb</span>
+          </div>
+        </article>
+
+        <article class="review">
+          <div class="avatar avatar-b">MK</div>
+          <div>
+            <div class="review-head">
+              <span class="review-name">Marta K.</span>
+              <span class="verified">Verified buyer</span>
+              <span class="review-date">2 March</span>
+            </div>
+            <span class="stars">★★★★<span class="star-dim">★</span></span>
+            <h4>Great coat, sleeves are long</h4>
+            <p>Sizing is honest but the sleeves cover half my hand. The shop shortened them for free in about a week, so no real complaint, just plan for it. The liner is nicer than the price suggests.</p>
+            <span class="review-meta">Size S · 5'6", 135 lb</span>
+          </div>
+        </article>
+
+        <article class="review">
+          <div class="avatar avatar-c">JT</div>
+          <div>
+            <div class="review-head">
+              <span class="review-name">Joseph T.</span>
+              <span class="verified">Verified buyer</span>
+              <span class="review-date">19 February</span>
+            </div>
+            <span class="stars">★★★★★</span>
+            <h4>Pockets that actually hold things</h4>
+            <p>The bellows pockets take a paperback and a pair of gloves without looking stuffed. Hand warmers are lined in something soft. Brass has gone dull in a good way already.</p>
+            <span class="review-meta">Size L · Deep Olive</span>
+          </div>
+        </article>
+
+        <article class="review">
+          <div class="avatar avatar-d">AH</div>
+          <div>
+            <div class="review-head">
+              <span class="review-name">Amara H.</span>
+              <span class="verified">Verified buyer</span>
+              <span class="review-date">28 January</span>
+            </div>
+            <span class="stars">★★★<span class="star-dim">★★</span></span>
+            <h4>The wax smell is real</h4>
+            <p>Nobody warned me it would smell like a tackle shop for the first three weeks. It faded and I like the jacket now, but I could not wear it in the office at first. Four stars for the coat, three for the surprise.</p>
+            <span class="review-meta">Size M · Storm Slate</span>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="rail-section">
+    <div class="rail-head">
+      <h2>You may also like</h2>
+      <a class="size-guide" href="#">View the full collection</a>
+    </div>
+    <div class="rail">
+      <a class="card" href="#">
+        <div class="card-art art-1"></div>
+        <div class="card-name">Ashcroft Chore Coat</div>
+        <div class="card-meta">Undyed canvas · 4 colours</div>
+        <div class="card-price">$215</div>
+      </a>
+      <a class="card" href="#">
+        <div class="card-art art-2"></div>
+        <div class="card-name">Halden Quilted Liner</div>
+        <div class="card-meta">Lambswool · sold separately</div>
+        <div class="card-price">$140</div>
+      </a>
+      <a class="card" href="#">
+        <div class="card-art art-3"></div>
+        <div class="card-name">Farrier Moleskin Trouser</div>
+        <div class="card-meta">Brushed cotton · 8 sizes</div>
+        <div class="card-price">$168</div>
+      </a>
+      <a class="card" href="#">
+        <div class="card-art art-4"></div>
+        <div class="card-name">Wexford Cable Knit</div>
+        <div class="card-meta">Donegal wool · Made in Ireland</div>
+        <div class="card-price">$245</div>
+      </a>
+      <a class="card" href="#">
+        <div class="card-art art-5"></div>
+        <div class="card-name">Grange Rain Shell</div>
+        <div class="card-meta">Packable · 3-layer</div>
+        <div class="card-price">$310</div>
+      </a>
+      <a class="card" href="#">
+        <div class="card-art art-6"></div>
+        <div class="card-name">Bellamy Wax Tin</div>
+        <div class="card-meta">Reproofing compound · 200 ml</div>
+        <div class="card-price">$24</div>
+      </a>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="shell">
+    <div class="footer-grid">
+      <div>
+        <h4>Shop</h4>
+        <ul>
+          <li><a href="#">New arrivals</a></li>
+          <li><a href="#">Outerwear</a></li>
+          <li><a href="#">Shirting</a></li>
+          <li><a href="#">Knitwear</a></li>
+          <li><a href="#">Trousers</a></li>
+          <li><a href="#">Gift cards</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Service</h4>
+        <ul>
+          <li><a href="#">Shipping &amp; delivery</a></li>
+          <li><a href="#">Returns &amp; exchanges</a></li>
+          <li><a href="#">Repairs and re-waxing</a></li>
+          <li><a href="#">Size &amp; fit guide</a></li>
+          <li><a href="#">Track an order</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>House</h4>
+        <ul>
+          <li><a href="#">Our story</a></li>
+          <li><a href="#">Mills and makers</a></li>
+          <li><a href="#">Shops</a></li>
+          <li><a href="#">Careers</a></li>
+          <li><a href="#">Journal</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Letters</h4>
+        <ul>
+          <li>One note a month. New pieces, restocks, and the occasional essay about wool.</li>
+        </ul>
+        <form class="newsletter" onsubmit="return false;">
+          <input type="email" placeholder="you@example.com" aria-label="Email address">
+          <button type="submit">Join</button>
+        </form>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 1974–2026 Warbler &amp; Co. Portland, Oregon.</span>
+      <span>Privacy · Terms · Accessibility · Do not sell my information</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  const gallery = document.querySelector(".gallery");
+  const shotCounter = document.getElementById("shotCounter");
+
+  gallery.addEventListener("click", event => {
+    const thumb = event.target.closest(".thumb");
+    if (!thumb) return;
+
+    const shot = thumb.dataset.shot;
+
+    for (const node of gallery.querySelectorAll(".thumb, .stage-image")) {
+      node.classList.toggle("is-active", node.dataset.shot === shot);
+    }
+
+    shotCounter.textContent = shot + " / 5";
+  });
+
+  const sizes = document.querySelector(".sizes");
+
+  sizes.addEventListener("click", event => {
+    const pill = event.target.closest(".size-pill");
+    if (!pill || pill.disabled) return;
+
+    for (const node of sizes.children) {
+      node.classList.toggle("is-selected", node === pill);
+    }
+  });
+
+  const colors = document.querySelector(".colors");
+
+  colors.addEventListener("click", event => {
+    const dot = event.target.closest(".color-dot");
+    if (!dot) return;
+
+    for (const node of colors.children) {
+      node.classList.toggle("is-selected", node === dot);
+    }
+  });
+
+  const unitPriceInDollars = 298;
+  const quantityValue = document.getElementById("qtyValue");
+  const addToCartButton = document.getElementById("addToCart");
+  let quantity = 1;
+
+  function renderQuantity() {
+    quantityValue.textContent = quantity;
+    addToCartButton.textContent = "Add to bag — $" + unitPriceInDollars * quantity;
+  }
+
+  document.getElementById("qtyUp").addEventListener("click", () => {
+    if (quantity >= 9) return;
+    quantity += 1;
+    renderQuantity();
+  });
+
+  document.getElementById("qtyDown").addEventListener("click", () => {
+    if (quantity <= 1) return;
+    quantity -= 1;
+    renderQuantity();
+  });
+
+  const tabStrip = document.querySelector(".tab-strip");
+
+  tabStrip.addEventListener("click", event => {
+    const tab = event.target.closest(".tab");
+    if (!tab) return;
+
+    for (const node of tabStrip.children) {
+      node.classList.toggle("is-active", node === tab);
+    }
+
+    for (const panel of document.querySelectorAll(".tab-panel")) {
+      panel.classList.toggle("is-active", panel.dataset.panel === tab.dataset.tab);
+    }
+  });
+
+  for (const navItem of document.querySelectorAll(".nav-item")) {
+    navItem.addEventListener("mouseenter", () => {
+      for (const other of document.querySelectorAll(".nav-item")) {
+        other.classList.toggle("is-open", other === navItem && other.querySelector(".mega") !== null);
+      }
+    });
+  }
+</script>
+</body>
+</html>

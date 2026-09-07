@@ -1,0 +1,218 @@
+[
+  {
+    "file": "bug-01-rtl-accent-wrong-side.html",
+    "kind": "bug",
+    "width": 1280,
+    "height": 720,
+    "scroll": 0,
+    "expect": "span#accent-reports.accent must read `[pos: centered-block 8, end 3]` while every other span.accent in the rail reads `start 0`: in this rtl page the bar was pinned to the end edge instead of the start edge. The near-miss alignment finding `start edge N further end than span.accent in a.nav-item` only fires within 24 and the two positions are ~200 apart, so the `[pos]` line is the signal that has to be right.",
+    "mustNotReport": null
+  },
+  {
+    "file": "bug-02-tabbar-center-off.html",
+    "kind": "bug",
+    "width": 390,
+    "height": 844,
+    "scroll": 0,
+    "expect": "button#compose.compose must report `off-center-inline 2 toward start` inside nav.tab-bar, the raised compose button being placed at half the bar less 30 where the button is 56 wide.",
+    "mustNotReport": null
+  },
+  {
+    "file": "bug-03-scrolled-header-covers-heading.html",
+    "kind": "bug",
+    "width": 1280,
+    "height": 720,
+    "scroll": 400,
+    "expect": "At scroll 400 h2#pricing-heading.section-title must report `text \"Pricing that scales\" 31% hidden by header.app-bar`, the fixed bar taking the top 10 of its 32 tall line. Nothing is wrong with this page at scroll 0.",
+    "mustNotReport": null
+  },
+  {
+    "file": "bug-04-grid-thumb-shorter.html",
+    "kind": "bug",
+    "width": 1280,
+    "height": 720,
+    "scroll": 0,
+    "expect": "div#thumb-c.card-thumb must report `2 shorter than div.card-thumb`, the three image boxes holding no children and no words so the size comparison applies. Its div.card-body may also say `2 higher than div.card-body in article.card`, the same defect one level down.",
+    "mustNotReport": null
+  },
+  {
+    "file": "bug-05-tab-underline-wide.html",
+    "kind": "bug",
+    "width": 1280,
+    "height": 720,
+    "scroll": 0,
+    "expect": "span#general-underline.tab-underline must read `[pos: bottom 0, start 0, end -2]`: the marker runs 2 past the end of a.tab.is-active, and a negative offset is how pos says an element pokes out. No `content overflows` anywhere for it. An absolute child is placed against the padding box on its own, so it is not the tab's content, and the tab's own words are not what pokes out.",
+    "mustNotReport": null
+  },
+  {
+    "file": "bug-06-rtl-label-baseline-high.html",
+    "kind": "bug",
+    "width": 1280,
+    "height": 720,
+    "scroll": 0,
+    "expect": "label#label-city.row-label must report `3 higher than label.row-label in div.form-row`, and its `[text: ... ink top, baseline]` sits 3 above the text of input#city.row-input in the same row.",
+    "mustNotReport": null
+  },
+  {
+    "file": "bug-07-icon-off-center-both.html",
+    "kind": "bug",
+    "width": 390,
+    "height": 844,
+    "scroll": 0,
+    "expect": "The svg inside button#clear-search.icon-btn must report `off-center-block 1 down, off-center-inline 1 toward end`, 9 of slack on the top and start and 7 on the bottom and end of a 40x40 button.",
+    "mustNotReport": null
+  },
+  {
+    "file": "bug-08-seen-gap-padding.html",
+    "kind": "bug",
+    "width": 390,
+    "height": 844,
+    "scroll": 0,
+    "expect": "ul.log-list must report `uneven spacing, 5 between li.log-row and li#row-retry.log-row, others 12`, from the seen gaps only: the rows paint nothing but their words and the box gaps are all 0.",
+    "mustNotReport": null
+  },
+  {
+    "file": "bug-09-footer-link-contrast-dark.html",
+    "kind": "bug",
+    "width": 1280,
+    "height": 720,
+    "scroll": 0,
+    "expect": "a#privacy-link.footer-link must report `contrast 4.4 under 4.5, #7e7e7e on #14171c`, the only link in the footer still on the old grey. The other a.footer-link siblings sit near 10 and must stay quiet.",
+    "mustNotReport": null
+  },
+  {
+    "file": "bug-10-cell-left-in-right-column.html",
+    "kind": "bug",
+    "width": 1280,
+    "height": 720,
+    "scroll": 0,
+    "expect": "The span.amount inside td#cell-march.num must report `start edge 11 further start than span.amount in td.num`, the whole Billed column being right aligned and this one cell left aligned. The amounts are monospace and all eight characters, so both edges are comparable and the finding lands once, on the odd cell.",
+    "mustNotReport": null
+  },
+  {
+    "file": "bug-11-sticky-sidebar-under-bar.html",
+    "kind": "bug",
+    "width": 1280,
+    "height": 720,
+    "scroll": 400,
+    "expect": "At scroll 400 aside#toc.toc is stuck at viewport 56 under a 64 tall fixed bar and must report `top 8 covered by header.app-bar (overlay)`. Its own words start at viewport 72, so no text is hidden, only the box. The bar covering the page background is the bar doing its job.",
+    "mustNotReport": null
+  },
+  {
+    "file": "bug-12-modal-off-center-block.html",
+    "kind": "bug",
+    "width": 390,
+    "height": 844,
+    "scroll": 0,
+    "expect": "div#cancel-modal.modal must report `off-center-block 12 up`: 180 tall in an 844 viewport, 320 above and 344 below where centered is 332 and 332. It sits further from the top edge than it is tall, so the pinned-element exception must not swallow it.",
+    "mustNotReport": null
+  },
+  {
+    "file": "clean-01-masonry-uneven-bottoms.html",
+    "kind": "clean",
+    "width": 1280,
+    "height": 720,
+    "scroll": 0,
+    "expect": "Nothing on div#col-a.masonry-col, div#col-b.masonry-col or div#col-c.masonry-col. The columns are `align-items: flex-start`, each is its own height, and the bottoms ending 100 or more apart is what a masonry looks like.",
+    "mustNotReport": "`110 free after, none in the sibling div.masonry-col` on any column (no column is stretched, none has free room under its last child), and `N shorter than div.masonry-col` or a bottom-edge `lower than` between them."
+  },
+  {
+    "file": "clean-02-marquee-scrolled-end.html",
+    "kind": "clean",
+    "width": 1280,
+    "height": 720,
+    "scroll": 0,
+    "expect": "div#logo-strip.marquee must carry `[scroll: x ... in ..., bar ...]` and `N of 10 children out`, the strip being parked at its far end so the logos that are out are out at the start side, at negative offsets.",
+    "mustNotReport": "`scrolled out` or `clipped` on any span.logo, the direct children of the scroll box, in either direction, and any `content overflows ... at start` on div#logo-strip.marquee."
+  },
+  {
+    "file": "clean-03-right-aligned-markers.html",
+    "kind": "clean",
+    "width": 1280,
+    "height": 720,
+    "scroll": 0,
+    "expect": "Nothing on span#marker-8.marker through span#marker-12.marker, the one and two digit numbers share their end edge in a 28 wide gutter and so start in two places by design.",
+    "mustNotReport": "`start edge 8 further end than span.marker in li.step` (or any direction of it) between the span.marker siblings, and `N wider than span.marker`."
+  },
+  {
+    "file": "clean-04-hero-corner-shape.html",
+    "kind": "clean",
+    "width": 1280,
+    "height": 720,
+    "scroll": 0,
+    "expect": "Nothing on div#hero-blob.hero-blob beyond section.hero saying `160x160 covered by div#hero-blob.hero-blob (overlay)`, which the reader can skip. It is absolute, 24 from the top of the band and 32 from the end, closer to both edges than it is big.",
+    "mustNotReport": "`off-center-block` or `off-center-inline` on div#hero-blob.hero-blob, and `empty painted box` on it (it paints a background image)."
+  },
+  {
+    "file": "clean-05-bubble-tail.html",
+    "kind": "clean",
+    "width": 390,
+    "height": 844,
+    "scroll": 0,
+    "expect": "div#bubble-out.bubble must read `[pos: ..., start N, end 0]`, alone on the inline axis and touching the end edge, and carry no finding. Its tail is a pseudo element with no rect and nothing may be said about it.",
+    "mustNotReport": "`off-center-inline` on div#bubble-out.bubble, and any `content overflows ... at end` or `outside viewport` from the 5px the tail pokes past the bubble."
+  },
+  {
+    "file": "clean-06-toggle-knob-end.html",
+    "kind": "clean",
+    "width": 1280,
+    "height": 720,
+    "scroll": 0,
+    "expect": "Nothing on span#digest-knob.knob or span#digest-switch.switch beyond at most `18x18 covered by span#digest-knob.knob (overlay)` on the track. The knob resting 2 from the end of a 44 wide track is what on looks like.",
+    "mustNotReport": "`off-center-inline` or `off-center-block` on span#digest-knob.knob (it sits closer to an edge than it is big on both axes), `empty painted box` on either (both under 24), and `overlaps` between them."
+  },
+  {
+    "file": "clean-07-progress-fill.html",
+    "kind": "clean",
+    "width": 1280,
+    "height": 720,
+    "scroll": 0,
+    "expect": "Nothing on div#import-track.progress-track or div#import-fill.progress-fill. The fill is 249 in a 372 track because two thirds of the work is done, and it starts at the start edge with 123 of slack after it.",
+    "mustNotReport": "`empty painted box` on either (both are 8 tall, under the 24 floor), `off-center-inline` on div#import-fill.progress-fill, and any `free after` or `uneven spacing` on the track."
+  },
+  {
+    "file": "clean-08-title-wrap-offset.html",
+    "kind": "clean",
+    "width": 1280,
+    "height": 720,
+    "scroll": 0,
+    "expect": "Nothing on p#desc-cash.card-desc or p#desc-ageing.card-desc. The second title wraps to two lines, so the description under it starts 28 lower, a whole line and past the 24 the near-miss check looks at.",
+    "mustNotReport": "`28 lower than p.card-desc in article.card` or the same on a.card-link, and `N shorter than article.card` between the two cards."
+  },
+  {
+    "file": "clean-09-rtl-start-aligned-prices.html",
+    "kind": "clean",
+    "width": 1280,
+    "height": 720,
+    "scroll": 0,
+    "expect": "Nothing on span#price-setup.price through span#price-audit.price. In this rtl page every amount is aligned to the start edge of its 130 wide column, so they all start in one place and end in five.",
+    "mustNotReport": "`end edge N further start than span.price in li.price-row` (or any direction of it) between the span.price siblings, and `N wider than span.price`."
+  },
+  {
+    "file": "clean-10-sheet-grab-handle.html",
+    "kind": "clean",
+    "width": 390,
+    "height": 844,
+    "scroll": 0,
+    "expect": "Nothing on div#sheet-handle.sheet-handle, a 36x4 bar centred with auto margins at the top of section#route-sheet.sheet. At most the sheet covering the lower part of div.map reads as `covered by section#route-sheet.sheet (overlay)`.",
+    "mustNotReport": "`empty painted box` on div#sheet-handle.sheet-handle (4 tall, under the 24 floor), and any `off-center-inline` on it."
+  },
+  {
+    "file": "clean-11-fab-corner.html",
+    "kind": "clean",
+    "width": 390,
+    "height": 844,
+    "scroll": 0,
+    "expect": "Nothing on button#new-note.fab, a 56x56 fixed button pinned 16 from the corner, sitting over blank page below the last note.",
+    "mustNotReport": "`off-center-block` or `off-center-inline` on button#new-note.fab (fixed and closer to both edges than it is big), and `empty painted box` on it (it holds an svg)."
+  },
+  {
+    "file": "clean-12-breadcrumb-separators.html",
+    "kind": "clean",
+    "width": 1280,
+    "height": 720,
+    "scroll": 0,
+    "expect": "Nothing on nav#crumbs.breadcrumb or its children beyond `[line: 7 inline children on one line]`. The a.crumb links and the span.sep slashes are inline and sit where the words leave room.",
+    "mustNotReport": "`start edge N further ...` or `N lower than` between the a.crumb siblings or the span.sep siblings (never said for an inline element), `overlaps` between any two of them, and `uneven spacing` on nav#crumbs.breadcrumb from the slashes."
+  }
+]

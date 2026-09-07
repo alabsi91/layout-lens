@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>قائمة الأسعار</title>
+<style>
+  body { margin: 0; background: #ffffff; color: #111827;
+         font-family: "Segoe UI", Tahoma, Arial, sans-serif; }
+
+  .card { width: 520px; margin: 56px auto; border: 1px solid #e5e7eb; border-radius: 12px;
+          padding: 20px 24px; }
+  .card h1 { margin: 0 0 16px; font-size: 20px; line-height: 28px; }
+
+  .price-list { list-style: none; margin: 0; padding: 0; }
+
+  .price-row { display: grid; grid-template-columns: 1fr 130px; align-items: baseline;
+               padding: 10px 0; border-bottom: 1px solid #f3f4f6; }
+
+  .item { font-size: 15px; line-height: 22px; color: #374151; }
+
+  /* the amounts share their start edge on purpose, so they end in five places */
+  .price { justify-self: start; font-size: 15px; line-height: 22px; color: #111827;
+           font-variant-numeric: tabular-nums; }
+</style>
+</head>
+<body>
+
+<section class="card">
+  <h1>قائمة الأسعار</h1>
+
+  <ul class="price-list">
+    <li class="price-row"><span class="item">تركيب أساسي</span><span class="price" id="price-setup">450 ر.س</span></li>
+    <li class="price-row"><span class="item">صيانة شهرية</span><span class="price" id="price-care">1,200 ر.س</span></li>
+    <li class="price-row"><span class="item">زيارة طارئة</span><span class="price" id="price-callout">85 ر.س</span></li>
+    <li class="price-row"><span class="item">تمديد الضمان</span><span class="price" id="price-warranty">2,750 ر.س</span></li>
+    <li class="price-row"><span class="item">فحص سنوي</span><span class="price" id="price-audit">640 ر.س</span></li>
+  </ul>
+</section>
+
+</body>
+</html>

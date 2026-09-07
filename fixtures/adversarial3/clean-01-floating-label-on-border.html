@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Company</title>
+<style>
+  body { margin: 0; background: #ffffff; color: #111827;
+         font-family: -apple-system, "Segoe UI", Arial, sans-serif; }
+
+  .form { width: 320px; margin: 0 auto; padding: 64px 0; }
+  .form h1 { margin: 0 0 24px; font-size: 22px; line-height: 30px; }
+
+  .field-wrap { position: relative; width: 320px; margin-bottom: 28px; }
+
+  .field { width: 320px; height: 48px; box-sizing: border-box; padding: 0 12px;
+           border: 1px solid #9ca3af; border-radius: 8px;
+           font-family: inherit; font-size: 15px; }
+
+  /* the label is meant to sit on the top border of its field, half above and half
+     inside it, with a white background cutting the line */
+  .float-label { position: absolute; top: -8px; left: 10px; height: 16px; padding: 0 6px;
+                 background: #ffffff; color: #4b5563;
+                 font-size: 12px; line-height: 16px; pointer-events: none; }
+
+  .hint { margin: 0; font-size: 13px; line-height: 18px; color: #6b7280; }
+</style>
+</head>
+<body>
+
+<section class="form">
+  <h1>Billing details</h1>
+
+  <div class="field-wrap">
+    <input class="field" id="company-name" value="Northwind Traders">
+    <label class="float-label" id="company-name-label" for="company-name">Company name</label>
+  </div>
+
+  <div class="field-wrap">
+    <input class="field" id="vat-number" value="GB 412 8890 21">
+    <label class="float-label" for="vat-number">VAT number</label>
+  </div>
+
+  <p class="hint">We put both on every invoice.</p>
+</section>
+
+</body>
+</html>
