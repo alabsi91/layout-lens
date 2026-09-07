@@ -51,6 +51,9 @@ export function inspectLayout({ walkShadowRoots, httpStatus }: InspectOptions): 
   // A box thinner than this on one axis is a bar: a slider track, a progress rail, a divider.
   const thinBarThreshold = 8;
   const skippedTags = new Set(['SCRIPT', 'STYLE', 'NOSCRIPT', 'TEMPLATE', 'HEAD', 'COLGROUP', 'COL']);
+  // Every ancestor's opacity multiplied together. Asked for repeatedly about the same elements, and
+  // the walk up is the same every time, so it is kept.
+  const effectiveOpacityByElement = new Map<Element, number>();
   const imageTags = new Set(['IMG', 'VIDEO', 'CANVAS', 'svg', 'PICTURE', 'IFRAME', 'OBJECT', 'EMBED']);
   const controlTags = new Set(['BUTTON', 'A', 'INPUT', 'SELECT', 'TEXTAREA']);
   // Direction is inherited, so it belongs to the box being measured, not to the page. Reading it
@@ -147,7 +150,20 @@ export function inspectLayout({ walkShadowRoots, httpStatus }: InspectOptions): 
 
   // Where the element is drawn, which is not where the markup put it. A shadow child sits inside the
   // host, and a slotted element sits where its slot is.
+  // `display: contents` draws no box of its own, so its children are laid out by the grandparent.
+  // Measuring against it gave a box of zero size at the corner of the window, and every offset came
+  // out as a distance from that corner. Grid and flex wrappers and web component hosts do this.
+  function generatesNoBox(element: Element): boolean {
+    return getComputedStyle(element).display === 'contents';
+  }
+
   function getRenderedParent(element: Element): Element | null {
+    const parent = getMarkupParent(element);
+    if (parent && generatesNoBox(parent)) return getRenderedParent(parent);
+    return parent;
+  }
+
+  function getMarkupParent(element: Element): Element | null {
     if (!walkShadowRoots) return element.parentElement;
 
     const slot = element.assignedSlot;
@@ -389,15 +405,28 @@ export function inspectLayout({ walkShadowRoots, httpStatus }: InspectOptions): 
     return values.join(' ');
   }
 
+  // How much bigger the element is drawn than it was laid out. Under a scaled ancestor a 40px
+  // padding is drawn at 20, and taking the written 40 off a drawn rect put every child 20 out.
+  function getDrawnScale(element: Element, rect: DOMRect): { x: number; y: number } {
+    const layoutWidth = (element as HTMLElement).offsetWidth;
+    const layoutHeight = (element as HTMLElement).offsetHeight;
+    const x = typeof layoutWidth === 'number' && layoutWidth > 0 ? rect.width / layoutWidth : 1;
+    const y = typeof layoutHeight === 'number' && layoutHeight > 0 ? rect.height / layoutHeight : 1;
+    return { x, y };
+  }
+
   function getInsetBox(element: Element, includePadding: boolean): Box {
     const rect = element.getBoundingClientRect();
     const style = getComputedStyle(element);
     const paddingFactor = includePadding ? 1 : 0;
+    const scale = getDrawnScale(element, rect);
+    const inset = (border: string, padding: string, along: number) => (parseFloat(border) + paddingFactor * parseFloat(padding)) * along;
+
     return {
-      top: rect.top + parseFloat(style.borderTopWidth) + paddingFactor * parseFloat(style.paddingTop),
-      right: rect.right - parseFloat(style.borderRightWidth) - paddingFactor * parseFloat(style.paddingRight),
-      bottom: rect.bottom - parseFloat(style.borderBottomWidth) - paddingFactor * parseFloat(style.paddingBottom),
-      left: rect.left + parseFloat(style.borderLeftWidth) + paddingFactor * parseFloat(style.paddingLeft),
+      top: rect.top + inset(style.borderTopWidth, style.paddingTop, scale.y),
+      right: rect.right - inset(style.borderRightWidth, style.paddingRight, scale.x),
+      bottom: rect.bottom - inset(style.borderBottomWidth, style.paddingBottom, scale.y),
+      left: rect.left + inset(style.borderLeftWidth, style.paddingLeft, scale.x),
     };
   }
 
@@ -1871,12 +1900,13 @@ export function inspectLayout({ walkShadowRoots, httpStatus }: InspectOptions): 
   }
 
   function getEffectiveOpacity(element: Element): number {
-    let opacity = 1;
-    let current: Element | null = element;
-    while (current) {
-      opacity *= parseFloat(getComputedStyle(current).opacity);
-      current = getRenderedParent(current);
-    }
+    const known = effectiveOpacityByElement.get(element);
+    if (known !== undefined) return known;
+
+    const parent = getRenderedParent(element);
+    const own = parseFloat(getComputedStyle(element).opacity);
+    const opacity = parent ? own * getEffectiveOpacity(parent) : own;
+    effectiveOpacityByElement.set(element, opacity);
     return opacity;
   }
 
@@ -1929,20 +1959,32 @@ export function inspectLayout({ walkShadowRoots, httpStatus }: InspectOptions): 
 
   // A knob on a bar: something lifted out of the flow sitting on a sibling a few px thick. A slider
   // thumb on its track, or on the fill drawn behind it, which is a second bar under the same knob.
+  function isBarUnderKnob(bar: Element, knobRect: DOMRect): boolean {
+    const barRect = bar.getBoundingClientRect();
+    const isBar = barRect.height < thinBarThreshold || barRect.width < thinBarThreshold;
+    return isBar && getIntersectionArea(knobRect, barRect) > 0;
+  }
+
+  // A slider thumb sits on its track and on the filled part of it. Both are bars under the same
+  // knob, so asking about one of them cannot be answered by finding the other.
   function isKnobOnBar(knob: Element, bar: Element): boolean {
     if (knob === bar || getRenderedParent(knob) !== getRenderedParent(bar)) return false;
 
     const position = getComputedStyle(knob).position;
     if (position !== 'absolute' && position !== 'fixed') return false;
 
-    const barRect = bar.getBoundingClientRect();
-    const isBar = barRect.height < thinBarThreshold || barRect.width < thinBarThreshold;
-    return isBar && getIntersectionArea(knob.getBoundingClientRect(), barRect) > 0;
+    return isBarUnderKnob(bar, knob.getBoundingClientRect());
   }
 
-  // Any bar this element is a knob on. A knob is empty because that is what a knob is.
+  // Any bar this element is a knob on. A knob is empty because that is what a knob is. Whether the
+  // element is a knob at all does not depend on the sibling, so it is settled once rather than
+  // re-read for every sibling in the row.
   function findBarUnder(element: Element): Element | null {
-    return getRenderedSiblings(element).find((sibling) => isKnobOnBar(element, sibling)) ?? null;
+    const position = getComputedStyle(element).position;
+    if (position !== 'absolute' && position !== 'fixed') return null;
+
+    const knobRect = element.getBoundingClientRect();
+    return getRenderedSiblings(element).find((sibling) => sibling !== element && isBarUnderKnob(sibling, knobRect)) ?? null;
   }
 
   // One of a row of overlapping avatars. Sitting on the one before it is the design.
@@ -2511,12 +2553,17 @@ export function inspectLayout({ walkShadowRoots, httpStatus }: InspectOptions): 
       for (const sibling of getRenderedChildren(parent)) {
         if (sibling === element) break;
         if (skippedTags.has(sibling.tagName)) continue;
+
+        // Cheapest test first. Most siblings in a long list do not touch each other at all, and
+        // walking their ancestors to work out whether they are painted came to seconds on a page
+        // with a few hundred rows.
+        const siblingRect = sibling.getBoundingClientRect();
+        if (isFlat(siblingRect) || !isOverlapping(rect, siblingRect) || isOffscreen(siblingRect)) continue;
+
         const siblingStyle = getComputedStyle(sibling);
         if (siblingStyle.float !== 'none' || siblingStyle.display === 'inline') continue;
         if (siblingStyle.position === 'fixed') continue;
-        const siblingRect = sibling.getBoundingClientRect();
-        if (isFlat(siblingRect) || isOffscreen(siblingRect) || !isPainted(sibling)) continue;
-        if (!isOverlapping(rect, siblingRect)) continue;
+        if (!isPainted(sibling)) continue;
         if (isPlacedOverSibling(element, sibling) || isPlacedOverSibling(sibling, element)) continue;
 
         // Two boxes crossing is not two things colliding. What each one draws is.

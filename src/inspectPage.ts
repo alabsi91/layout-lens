@@ -339,9 +339,13 @@ function getPreviousRunPath(runKey: string): string {
   return join(previousRunDirectory, createHash('sha1').update(runKey).digest('hex').slice(0, 16) + '.json');
 }
 
+// Anything could be sitting at that path. It is a shared temp directory, and whatever comes back is
+// printed as the last run's findings, so it has to be the shape we wrote.
 function readPreviousRun(path: string): string[] | null {
   try {
-    return JSON.parse(readFileSync(path, 'utf8')) as string[];
+    const stored: unknown = JSON.parse(readFileSync(path, 'utf8'));
+    if (!Array.isArray(stored) || stored.some((line) => typeof line !== 'string')) return null;
+    return stored as string[];
   } catch {
     return null;
   }
@@ -440,7 +444,11 @@ const networkIdleShare = 0.25;
 export async function loadPage(page: Page, url: string, timeout: number): Promise<LoadResult> {
   try {
     const response = await page.goto(url, { waitUntil: 'load', timeout });
-    await page.waitForLoadState('networkidle', { timeout: timeout * networkIdleShare }).catch(() => {});
+    // A local file has no network to go quiet. Waiting for it spent half a second on every run of
+    // the thing an agent is told to call after every change.
+    if (!url.startsWith('file:')) {
+      await page.waitForLoadState('networkidle', { timeout: timeout * networkIdleShare }).catch(() => {});
+    }
     return { httpStatus: response?.status() ?? null, failure: null };
   } catch {
     // ignored, the second try is the real answer
@@ -570,11 +578,23 @@ export async function inspectPage(options: InspectPageOptions): Promise<string> 
         await page.evaluate(finishAnimations);
         await page.evaluate(() => document.fonts.ready);
 
-        const { header, headerFindings, root } = await page.evaluate(inspectLayout, { walkShadowRoots: shadow, httpStatus });
+        // The walk runs in the page and a page with thousands of siblings can take minutes. Give it
+        // the same ceiling the load got, so one call cannot hang for ever.
+        const walk = page.evaluate(inspectLayout, { walkShadowRoots: shadow, httpStatus });
+        let giveUpTimer: ReturnType<typeof setTimeout> | undefined;
+        const gaveUp = new Promise<null>((resolve) => {
+          giveUpTimer = setTimeout(() => resolve(null), timeout);
+        });
+        const measured = await Promise.race([walk, gaveUp]).finally(() => clearTimeout(giveUpTimer));
+        if (!measured) return `${loadFailurePrefix}measure ${target}: the page is too large to walk within ${timeout}ms`;
+
+        const { header, headerFindings, root } = measured;
 
         // A page that sends you somewhere else is measured at the place you landed, not the one you asked for.
+        // Compared as urls, so the slash a browser adds to a bare host is not a redirect.
         const finalUrl = page.url();
-        const headerWithRedirect = finalUrl === url ? header : `${header}, redirected to ${finalUrl}`;
+        const isSamePlace = finalUrl === url || finalUrl === new URL(url).href;
+        const headerWithRedirect = isSamePlace ? header : `${header}, redirected to ${finalUrl}`;
 
         // The page-level findings count like the rest. A 404 page said `findings: none` under them.
         const pageEntries = headerFindings.map((finding) => ({ identifier: 'page', finding }));

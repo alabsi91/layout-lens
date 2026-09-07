@@ -13,15 +13,24 @@ import { legend } from './legend.ts';
 // The full legend is a tool of its own.
 const description = `Measure the layout of a rendered web page and get the numbers back as text.
 
-Opens the page or local file in headless Chromium at a given viewport, waits for fonts and
-animations to settle, and prints one indented line per element. It measures the page as the browser
-draws it, never the source, and answers "is this label 3px off center", "is this card clipped",
-"what covers this button", "does this text run past its box" with pixel numbers. Run it first after
-every CSS change, before taking a screenshot. findings_only keeps just the flagged lines and the
-path down to them. When the page has a dark mode, pass schemes ["light", "dark"] and check both, a
-fix in one scheme is often a bug in the other.
+Reading the HTML or the CSS cannot answer these questions. The browser resolves the cascade, fonts,
+flex and grid at run time, and only the drawn box has numbers. If you are about to open a file to
+check spacing, alignment, clipping, overlap or contrast, call this instead.
 
-Every number is px. A line is tag#id.class "first words" WxH, then tags.
+Opens the page or local file in headless Chromium at a given viewport, waits for fonts and
+animations to settle, and prints one indented line per element. It answers "is this label 3px off
+center", "is this card clipped", "what covers this button", "does this text run past its box" with
+pixel numbers. Run it first after every CSS change, before taking a screenshot. findings_only keeps
+just the flagged lines and the path down to them. When the page has a dark mode, pass schemes
+["light", "dark"] and check both, a fix in one scheme is often a bug in the other.
+
+Every number is px. A line is tag#id.class "first words" WxH, then tags. One looks like this:
+
+  span.badge "Popular" 57.4x18 [pad: 2 8] [pos: top -6, end -10] [text: Helvetica 12/14, contrast
+  3.8] [!!: clipped top 6, clipped right 10, contrast 3.8 under 4.5, #ffffff on #ef4444]
+
+The badge sits 6px above its card and 10px past its end, so that corner is cut off on two sides,
+and the white on red fails contrast.
 
 The first line is the page: viewport, scroll, page size, painted to (how far down anything is
 drawn), http status, dpr, direction, color scheme. Read it before the findings. Painted to 200 on a page 4000
@@ -35,10 +44,9 @@ CSS centers things in. [bleed] wider than the parent on purpose. [gaps] space be
 are its shadow tree. [sr-only] [offscreen] [oversized] [rotated] [scaled] [not painted] measured,
 and left out of the checks. [!!] what looks wrong.
 
-Findings say: off-center-block/inline N, text off-center, covered by X, text hidden by X, control
-hidden by X, clipped, scrolled out, outside viewport, all clipped by X, empty painted box, content
-truncated, content overflows, text truncated, text overflows, N free after, uneven spacing,
-overlaps X, edge N lower than X, N wider than X, contrast N under 4.5.
+[!!] carries what looks wrong: off center, covered, hidden, clipped, scrolled out, outside the
+viewport, truncated, overflowing, misaligned, mismatched in size, unevenly spaced, low contrast.
+layout_legend spells out every one of them.
 
 Under the first line every kind of finding is summarized once with a count, then since last run
 says what went away and what appeared against the previous run of the same page.
@@ -51,7 +59,14 @@ Call layout_legend once for the full syntax.`;
 // Read from package.json. A second copy here would drift from the published one.
 const { version } = createRequire(import.meta.url)('../package.json') as { version: string };
 
-const server = new McpServer({ name: 'layout-lens', version });
+// Loaded once by the client rather than with every tool listing. It carries the standing habit,
+// which is the part an agent needs before it has decided to call anything.
+const instructions = `layout-lens measures a rendered page in a real browser. Run inspect_layout
+after every CSS change, before deciding a fix worked, and before taking a screenshot, since reading
+the file cannot tell you what the browser drew. Its syntax is dense: call layout_legend once per
+session and keep it, it never changes.`;
+
+const server = new McpServer({ name: 'layout-lens', version }, { instructions });
 
 server.registerTool(
   'inspect_layout',
@@ -59,10 +74,11 @@ server.registerTool(
     description,
     inputSchema: {
       target: z.string().describe('A url, or a path to a local html file.'),
-      width: z.number().default(1280).describe('Viewport width in px.'),
-      height: z.number().default(720).describe('Viewport height in px.'),
+      width: z.number().int().min(1).max(10000).default(1280).describe('Viewport width in px.'),
+      height: z.number().int().min(1).max(10000).default(720).describe('Viewport height in px.'),
       widths: z
         .array(z.union([z.number(), z.string()]))
+        .max(10)
         .optional()
         .describe(
           'Measure the page at several viewports and compare them, as [390, 820, 1280] or ["390x844", "1280x720"]. A width on its own gets 844 at 390, 1180 at 820, 720 at 1280, and the height option anywhere else. Width is ignored when this is given.',
@@ -77,6 +93,9 @@ server.registerTool(
       findings_only: z.boolean().default(false).describe('Print only the lines that carry a finding, with the lines above them in the tree.'),
       timeout: z
         .number()
+        .int()
+        .min(1000)
+        .max(120000)
         .default(30000)
         .describe(
           'How long to wait for the page to load, in ms. The network then gets a quarter of it to go quiet and the page is measured either way. A page that never loads comes back as a "could not load" line.',
@@ -108,11 +127,11 @@ server.registerTool(
     description: screenshotDescription,
     inputSchema: {
       target: z.string().describe('A url, or a path to a local html file.'),
-      width: z.number().default(1280).describe('Viewport width in px.'),
-      height: z.number().default(720).describe('Viewport height in px.'),
+      width: z.number().int().min(1).max(10000).default(1280).describe('Viewport width in px.'),
+      height: z.number().int().min(1).max(10000).default(720).describe('Viewport height in px.'),
       scheme: z.enum(['light', 'dark']).default('light').describe('The color scheme the page is rendered in.'),
       scroll: z.union([z.number(), z.literal('bottom')]).default(0).describe('How far down the page is scrolled before the shot, in px, or "bottom".'),
-      timeout: z.number().default(30000).describe('How long to wait for the page to load, in ms. The network then gets a quarter of it to go quiet.'),
+      timeout: z.number().int().min(1000).max(120000).default(30000).describe('How long to wait for the page to load, in ms. The network then gets a quarter of it to go quiet.'),
       element: z.string().optional().describe('A CSS selector. Given, only the box of the first element matching it is captured. Left out, the whole page is.'),
     },
   },
