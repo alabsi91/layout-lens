@@ -8,7 +8,7 @@ import { inspectPage, loadFailurePrefix } from './inspectPage.ts';
 import { getPngSize, screenshotPage } from './screenshotPage.ts';
 import { legend } from './legend.ts';
 
-const usage = `usage: layout-lens <url|file> [--width 1280] [--height 720] [--widths 390,820,1280] [--scheme light|dark] [--schemes light,dark] [--scroll 0|bottom] [--timeout 30000] [--no-shadow] [--findings] [--screenshot out.png] [--element selector] [--legend]
+const usage = `usage: layout-lens <url|file> [--width 1280] [--height 720] [--widths 390,820,1280] [--scheme light|dark] [--schemes light,dark] [--scroll 0|bottom] [--timeout 30000] [--no-shadow] [--findings] [--colors] [--element selector] [--no-children] [--screenshot out.png] [--legend]
   <url|file>    a url, or a path to a local html file
   --width       viewport width in px, 1280 by default
   --height      viewport height in px, 720 by default
@@ -19,8 +19,11 @@ const usage = `usage: layout-lens <url|file> [--width 1280] [--height 720] [--wi
   --timeout     how long to wait for the page to load, in ms, 30000 by default
   --no-shadow   walk the markup children instead of open shadow roots
   --findings    print only the lines that carry a finding, plus the path down to each one
+  --colors      write the rendered color of what each element paints, as hex
+  --element     print only the elements matching this css selector, with the path down to each one
+  --no-children with --element, leave out what is inside the matched elements
   --screenshot  write a png of the whole page to this path instead of printing the tree
-  --element     with --screenshot, shoot only the box of the first element matching this selector
+                with --element, shoot only the box of the first element matching it
   --legend      print the legend that explains the output and exit
   --help        print this
 
@@ -41,8 +44,10 @@ function parseCommandLine() {
         timeout: { type: 'string', default: '30000' },
         'no-shadow': { type: 'boolean', default: false },
         findings: { type: 'boolean', default: false },
+        colors: { type: 'boolean', default: false },
         screenshot: { type: 'string' },
         element: { type: 'string' },
+        'no-children': { type: 'boolean', default: false },
         legend: { type: 'boolean', default: false },
         help: { type: 'boolean', default: false },
       },
@@ -112,8 +117,8 @@ if (!isColorScheme(values.scheme) || !schemes.every(isColorScheme)) {
   process.exit(1);
 }
 
-if (values.element && !values.screenshot) {
-  console.error('--element does nothing without --screenshot, ignoring it');
+if (values['no-children'] && !values.element) {
+  console.error('--no-children does nothing without --element, ignoring it');
 }
 
 if (values.screenshot) {
@@ -151,6 +156,9 @@ const text = await inspectPage({
   timeout,
   shadow: !values['no-shadow'],
   findingsOnly: values.findings,
+  colors: values.colors,
+  selector: values.element,
+  withChildren: !values['no-children'],
 });
 
 console.log(text);

@@ -8,6 +8,8 @@ export type ElementReport = {
   /** The findings inside the `[!!: ...]` tag, unjoined. A finding can contain a comma itself. */
   findings: string[];
   children: ElementReport[];
+  /** The element matches the `selector` option. Only these elements and their ancestors are printed. */
+  isSelected?: boolean;
 };
 
 export type LayoutReport = {
@@ -15,6 +17,8 @@ export type LayoutReport = {
   /** The findings on the first line. They belong to the page, not to any element. */
   headerFindings: string[];
   root: ElementReport;
+  /** False when `selector` is not valid css. Nothing was matched, and the caller made a typo. */
+  isSelectorValid: boolean;
 };
 
 export type InspectOptions = {
@@ -22,13 +26,17 @@ export type InspectOptions = {
   walkShadowRoots: boolean;
   /** The status the server answered the page itself with. `null` when there was no response. */
   httpStatus: number | null;
+  /** Write the rendered color of what each element paints, as hex. Default `false`. */
+  colors?: boolean;
+  /** Mark the elements matching this css selector. The caller then prints only those. */
+  selector?: string;
 };
 
 /**
  * Runs inside the page. Everything it needs lives inside the function body
  * because Playwright serializes it as source text.
  */
-export function inspectLayout({ walkShadowRoots, httpStatus }: InspectOptions): LayoutReport {
+export function inspectLayout({ walkShadowRoots, httpStatus, colors = false, selector }: InspectOptions): LayoutReport {
   const tolerance = 1;
   const nearlyCenteredThreshold = 8;
   const freeSpaceThreshold = 8;
@@ -575,11 +583,36 @@ export function inspectLayout({ walkShadowRoots, httpStatus }: InspectOptions): 
     return getBorderSides(style).length > 0;
   }
 
-  function describeBorder(style: CSSStyleDeclaration): string | null {
+  function describeBorder(element: Element, style: CSSStyleDeclaration): string | null {
     const sides = getBorderSides(style);
     if (sides.length === 0) return null;
-    if (sides.length === 4) return 'border';
-    return sides.map((side) => `border-${side}`).join(', ');
+
+    // A translucent border is painted over the element's own background, so that is what it blends into.
+    const sideColors = sides.map((side) => (colors ? getRenderedColor(style.getPropertyValue(`border-${side}-color`), element) : null));
+    const isOneColor = new Set(sideColors).size === 1;
+    if (sides.length === 4 && isOneColor) return withColor('border', sideColors[0] ?? null);
+
+    return sides.map((side, index) => withColor(`border-${side}`, sideColors[index] ?? null)).join(', ');
+  }
+
+  function withColor(name: string, color: string | null): string {
+    return color ? `${name} ${color}` : name;
+  }
+
+  /**
+   * The color as it comes out on screen, translucency blended into what is painted behind it.
+   * `behindElement` is the element whose painted background sits under this color. Null when the
+   * color is see-through and what is behind it is a picture or a gradient, which makes it a guess.
+   */
+  function getRenderedColor(color: string, behindElement: Element | null): string | null {
+    const parsed = parseColor(color);
+    if (parsed[3] === 0) return null;
+    if (parsed[3] >= 1) return toHexColor([parsed[0], parsed[1], parsed[2]]);
+
+    const behind = behindElement ? getPaintedBackground(behindElement) : null;
+    if (!behind || behind.isApproximate) return null;
+
+    return toHexColor(blendOnto(parsed, behind.color));
   }
 
   const colorCanvas = document.createElement('canvas');
@@ -757,6 +790,18 @@ export function inspectLayout({ walkShadowRoots, httpStatus }: InspectOptions): 
 
     const textColor = style.webkitTextFillColor || style.color;
     const background = getPaintedBackground(element);
+
+    // What the words come out as, and what they are painted on. Reading it here beats looking at a
+    // screenshot, the pixels of a glyph are antialiased and the color of a thin letter is not in them.
+    if (colors) {
+      const inkColor = getRenderedColor(textColor, element);
+      if (inkColor && background && !background.isApproximate) {
+        parts.push(`color ${inkColor} on ${toHexColor(background.color)}`);
+      } else if (inkColor) {
+        parts.push(`color ${inkColor}`);
+      }
+    }
+
     if (background && parseColor(textColor)[3] > 0) {
       const contrast = getContrastRatio(textColor, background.color);
       const isLargeText = fontSize >= 24 || (fontSize >= 18.66 && parseInt(style.fontWeight) >= 700);
@@ -796,8 +841,14 @@ export function inspectLayout({ walkShadowRoots, httpStatus }: InspectOptions): 
 
   function describeRenders(element: Element, style: CSSStyleDeclaration): string | null {
     const painted: string[] = [];
-    if (parseColor(style.backgroundColor)[3] > 0 || style.backgroundImage !== 'none') painted.push('background');
-    const border = describeBorder(style);
+    const paintsPicture = style.backgroundImage !== 'none';
+    if (parseColor(style.backgroundColor)[3] > 0 || paintsPicture) {
+      // A gradient or an image has no one color. Nothing is said rather than a color picked out of it.
+      const backgroundColor = colors && !paintsPicture ? getRenderedColor(style.backgroundColor, getRenderedParent(element)) : null;
+      painted.push(withColor('background', backgroundColor));
+    }
+
+    const border = describeBorder(element, style);
     if (border) painted.push(border);
     if (style.boxShadow !== 'none') painted.push('shadow');
     if (imageTags.has(element.tagName)) painted.push('image');
@@ -2764,6 +2815,21 @@ export function inspectLayout({ walkShadowRoots, httpStatus }: InspectOptions): 
     return { report: { label: getLabel(element), identifier, shapeKey, tags, findings: keptFindings, children: [] }, context };
   }
 
+  // A mistyped selector throws on every element it is tried against. It is checked once, here.
+  let isSelectorValid = true;
+  if (selector !== undefined) {
+    try {
+      document.querySelector(selector);
+    } catch {
+      isSelectorValid = false;
+    }
+  }
+
+  function isSelectedElement(element: Element): boolean {
+    if (selector === undefined || !isSelectorValid) return false;
+    return element.matches(selector);
+  }
+
   function walk(element: Element, parentReport: ElementReport, parentContext: WalkContext): void {
     if (skippedTags.has(element.tagName)) return;
 
@@ -2778,6 +2844,7 @@ export function inspectLayout({ walkShadowRoots, httpStatus }: InspectOptions): 
       if (!described.report) return;
       report = described.report;
       context = described.context;
+      if (isSelectedElement(element)) report.isSelected = true;
       reportByElement.set(element, report);
       parentReport.children.push(report);
     }
@@ -2880,5 +2947,5 @@ export function inspectLayout({ walkShadowRoots, httpStatus }: InspectOptions): 
   let header = `${viewportSize}, ${pageSize}${scrollLock}${status}, dpr ${devicePixelRatio}, ${direction}, ${colorScheme}`;
   if (headerFindings.length > 0) header += ` [!!: ${headerFindings.join(', ')}]`;
 
-  return { header, headerFindings, root: root.children[0]! };
+  return { header, headerFindings, root: root.children[0]!, isSelectorValid };
 }

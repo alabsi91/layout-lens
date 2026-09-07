@@ -51,10 +51,24 @@ layout_legend spells out every one of them.
 Under the first line every kind of finding is summarized once with a count, then since last run
 says what went away and what appeared against the previous run of the same page.
 
+colors adds the rendered color of everything that paints one, as hex, blended the way the browser
+blended it: [renders: background #1e2530, border #3a4250] and color #e6edf3 on #1e2530 inside [text].
+That is the answer to "what color did this end up", and it is a better one than a screenshot, where a
+glyph is antialiased and a swatch is a few pixels you have to guess at. Ask for the hex first, and
+take a screenshot after it if what you need is how the page looks rather than what a color is.
+A gradient or an image has no one color, so nothing is said about it and a picture is where a
+screenshot earns its place.
+
+element takes a CSS selector and prints only the elements matching it, with the path down to each
+one, which is the cheap way to look at one component on a big page. children false leaves out what is
+inside them. The whole page is still measured either way, so the summary and since last run above the
+tree stay the page's.
+
 Every finding is a measurement of what the browser drew, not a guess. The number happened. What is
-still yours to judge is whether it matters: a badge 6px outside its card may be the design. Judge
-that from the page, not by assuming the tool is wrong, and say which of the two you decided. An
-element with no finding is not thereby correct, the tool only reports what it measures.
+still yours to judge is whether it matters: a marquee clips its content on purpose, a badge may sit
+outside its card by design. Decide that from the page rather than by assuming the tool is wrong.
+Say it once, then leave it alone, the same finding will be there on every run and repeating that it
+is fine adds nothing. An element with no finding is not thereby correct.
 
 Call layout_legend once for the full syntax.`;
 
@@ -66,8 +80,18 @@ const { version } = createRequire(import.meta.url)('../package.json') as { versi
 const instructions = `layout-lens measures a rendered page in a real browser. Run inspect_layout
 after every CSS change, before deciding a fix worked, and before taking a screenshot, since reading
 the file cannot tell you what the browser drew. Its syntax is dense: call layout_legend once per
-session and keep it, it never changes. What it reports was measured off the rendered page, so treat
-a finding as true and decide whether it matters, rather than waving it away as a false positive.`;
+session and keep it, it never changes.
+
+To check what color something came out as, ask inspect_layout with colors true rather than looking at
+a screenshot. It gives you the hex the browser painted, translucency and everything under it already
+blended in, which reading pixels off a picture cannot do. Take the screenshot after that, when the
+question is how the page looks rather than what a color is.
+
+What it reports was measured off the rendered page, so treat a finding as true and decide whether it
+matters, rather than waving it away as a false positive. Once you have decided a finding is the
+design, say so once and then stop mentioning it. It will be in every run of that page for as long as
+the design stands, and repeating "this one is fine" on every reply is noise. Report what changed and
+what you are acting on, not the list you already dismissed.`;
 
 const server = new McpServer({ name: 'layout-lens', version }, { instructions });
 
@@ -94,6 +118,14 @@ server.registerTool(
       scroll: z.union([z.number(), z.literal('bottom')]).default(0).describe('How far down the page is scrolled before measuring, in px, or "bottom".'),
       shadow: z.boolean().default(true).describe('Walk open shadow roots. False shows the markup children instead.'),
       findings_only: z.boolean().default(false).describe('Print only the lines that carry a finding, with the lines above them in the tree.'),
+      colors: z
+        .boolean()
+        .default(false)
+        .describe(
+          'Write the rendered color of what each element paints, as hex, blended over what is behind it. Use this instead of a screenshot to check what color something ended up as.',
+        ),
+      element: z.string().optional().describe('A CSS selector. Given, only the elements matching it are printed, with the path down to each one. The whole page is still measured.'),
+      children: z.boolean().default(true).describe('With element, print what is inside the matched elements too.'),
       timeout: z
         .number()
         .int()
@@ -105,8 +137,22 @@ server.registerTool(
         ),
     },
   },
-  async ({ target, width, height, widths, scheme, schemes, scroll, shadow, findings_only, timeout }) => {
-    const text = await inspectPage({ target, width, height, widths, scheme, schemes, scroll, shadow, findingsOnly: findings_only, timeout });
+  async ({ target, width, height, widths, scheme, schemes, scroll, shadow, findings_only, colors, element, children, timeout }) => {
+    const text = await inspectPage({
+      target,
+      width,
+      height,
+      widths,
+      scheme,
+      schemes,
+      scroll,
+      shadow,
+      findingsOnly: findings_only,
+      colors,
+      selector: element,
+      withChildren: children,
+      timeout,
+    });
     return { content: [{ type: 'text', text }] };
   },
 );

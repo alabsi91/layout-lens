@@ -60,7 +60,9 @@ npx playwright install chromium
 That is the whole setup. Your agent now has three tools.
 
 - `inspect_layout` measures the page and returns the tree. It takes a url or a file path, a viewport,
-  a scroll position, a color scheme, and `findings_only` when the agent wants just what looks wrong.
+  a scroll position, a color scheme, `findings_only` when the agent wants just what looks wrong,
+  `colors` for the hex of everything that is painted, and `element` to print one component instead of
+  the page.
 - `screenshot_layout` returns a png of the same page, whole or one element, when the agent does want
   to look.
 - `layout_legend` returns the syntax. A model reads it once instead of on every run.
@@ -78,6 +80,8 @@ can already read the CSS. It cannot see the result.
 - Which text is cut off, with and without an ellipsis
 - Where the glyphs sit inside their line box, so a label that looks low is a number
 - Contrast ratios against whatever is actually painted behind the text
+- The color every box and every word came out as, as hex, with translucency already blended in. A
+  screenshot cannot answer that: a glyph is antialiased and a swatch is a few pixels to guess at
 - Gaps between siblings, and where one gap breaks the rhythm
 - What changed since the last run, so a fix is confirmed in one line
 

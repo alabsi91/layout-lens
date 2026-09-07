@@ -35,6 +35,12 @@ export type InspectPageOptions = {
   shadow?: boolean;
   /** Print only the lines that carry a finding, with their ancestors. Default false. */
   findingsOnly?: boolean;
+  /** Write the rendered color of what each element paints, as hex. Default false. */
+  colors?: boolean;
+  /** Print only the elements matching this css selector, with the path down to each one. */
+  selector?: string;
+  /** With `selector`, print what is inside the matched elements too. Default true. */
+  withChildren?: boolean;
   /** How long to wait for the page to load, in ms. Default 30000. */
   timeout?: number;
 };
@@ -220,6 +226,44 @@ function keepLinesWithFindings(treeText: string): string {
   }
 
   return keptLines.join('\n');
+}
+
+// Element mode. The whole page is still measured, since coverage, alignment and spacing are all
+// measured against the rest of it. Only the matched elements are printed, with the path down to
+// them, so the tree costs a handful of lines instead of the page.
+function keepSelectedElements(report: ElementReport, withChildren: boolean): ElementReport | null {
+  if (report.isSelected && withChildren) return report;
+
+  const keptChildren = report.children.map((child) => keepSelectedElements(child, withChildren)).filter((child) => child !== null);
+  // A match inside a match is still asked for, whatever `withChildren` says about the rest.
+  if (report.isSelected) return { ...report, children: keptChildren };
+  if (keptChildren.length === 0) return null;
+
+  return { ...report, children: keptChildren };
+}
+
+function countSelectedElements(report: ElementReport): number {
+  const own = report.isSelected ? 1 : 0;
+  return report.children.reduce((total, child) => total + countSelectedElements(child), own);
+}
+
+type TreeOptions = { selector: string | undefined; withChildren: boolean; findingsOnly: boolean };
+
+// The tree as it is printed: the whole page, or only what a selector matched, and findings mode on
+// top of either.
+function formatTree(root: ElementReport, { selector, withChildren, findingsOnly }: TreeOptions): string {
+  const printedRoot = selector === undefined ? root : keepSelectedElements(root, withChildren);
+  if (!printedRoot) return `no element matched ${selector}`;
+
+  const fullTree = formatReport(printedRoot, 0, new Map()).text;
+  const tree = findingsOnly ? keepLinesWithFindings(fullTree) : fullTree;
+  if (selector === undefined) return tree;
+
+  // Everything above the tree was measured on the whole page. Without this the matched element
+  // reads as all there is, and a summary counting findings it cannot see reads as a bug.
+  const matchCount = countSelectedElements(printedRoot);
+  const matched = `${matchCount} element${matchCount === 1 ? '' : 's'} matching ${selector}`;
+  return `showing ${matched}, with the path down to each. the lines above are the whole page\n${tree}`;
 }
 
 type FindingEntry = { identifier: string; finding: string };
@@ -570,7 +614,21 @@ function describeAcrossRuns(heading: string, runs: MeasuredRun[]): string {
  * loads comes back as a `could not load` line rather than throwing.
  */
 export async function inspectPage(options: InspectPageOptions): Promise<string> {
-  const { target, width = 1280, height = 720, scheme = 'light', scroll = 0, shadow = true, findingsOnly = false, timeout = 30000, widths, schemes } = options;
+  const {
+    target,
+    width = 1280,
+    height = 720,
+    scheme = 'light',
+    scroll = 0,
+    shadow = true,
+    findingsOnly = false,
+    colors = false,
+    selector,
+    withChildren = true,
+    timeout = 30000,
+    widths,
+    schemes,
+  } = options;
   const url = getTargetUrl(target);
   const viewports = widths && widths.length > 0 ? parseViewports(widths, height) : [{ width, height }];
   const schemesToMeasure = schemes && schemes.length > 0 ? schemes : [scheme];
@@ -604,7 +662,7 @@ export async function inspectPage(options: InspectPageOptions): Promise<string> 
 
         // The walk runs in the page and a page with thousands of siblings can take minutes. Give it
         // the same ceiling the load got, so one call cannot hang for ever.
-        const walk = page.evaluate(inspectLayout, { walkShadowRoots: shadow, httpStatus });
+        const walk = page.evaluate(inspectLayout, { walkShadowRoots: shadow, httpStatus, colors, selector });
         let giveUpTimer: ReturnType<typeof setTimeout> | undefined;
         const gaveUp = new Promise<null>((resolve) => {
           giveUpTimer = setTimeout(() => resolve(null), timeout);
@@ -612,7 +670,8 @@ export async function inspectPage(options: InspectPageOptions): Promise<string> 
         const measured = await Promise.race([walk, gaveUp]).finally(() => clearTimeout(giveUpTimer));
         if (!measured) return `${loadFailurePrefix}measure ${target}: the page is too large to walk within ${timeout}ms`;
 
-        const { header, headerFindings, root } = measured;
+        const { header, headerFindings, root, isSelectorValid } = measured;
+        if (!isSelectorValid) return `${selector} is not a valid css selector`;
 
         // A page that sends you somewhere else is measured at the place you landed, not the one you asked for.
         // Compared as urls, so the slash a browser adds to a bare host is not a redirect.
@@ -634,8 +693,7 @@ export async function inspectPage(options: InspectPageOptions): Promise<string> 
         const labelParts = [hasSeveralViewports ? String(viewport.width) : '', hasSeveralSchemes ? runScheme : ''];
         const label = labelParts.filter(Boolean).join(' ');
 
-        const fullTree = formatReport(root, 0, new Map()).text;
-        const tree = findingsOnly ? keepLinesWithFindings(fullTree) : fullTree;
+        const tree = formatTree(root, { selector, withChildren, findingsOnly });
         const summary = summarizeFindings(entries);
         runs.push({ viewport, scheme: runScheme, label, header: headerWithRedirect, summary, sinceLastRun, tree, findingLines: currentLines });
       }
