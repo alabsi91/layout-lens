@@ -1,6 +1,6 @@
 {
   "name": "layout-lens",
-  "version": "0.2.0",
+  "version": "0.1.1",
   "description": "Turns a rendered web page into layout facts a model can reason about",
   "license": "MIT",
   "author": "Ahmed Alabsi",
