@@ -2,7 +2,7 @@ import { chromium } from 'playwright';
 import type { Page } from 'playwright';
 
 import type { ColorScheme, Viewport } from './inspectPage.ts';
-import { loadPage, loadFailurePrefix, parseViewports } from './inspectPage.ts';
+import { finishAnimations, loadPage, loadFailurePrefix, parseViewports, scrollWindow } from './inspectPage.ts';
 import { getTargetUrl } from './targetUrl.ts';
 
 export type ScreenshotPageOptions = {
@@ -45,20 +45,6 @@ export type ScreenshotResult = {
   /** The color scheme the page was rendered in. */
   scheme: ColorScheme;
 };
-
-function scrollWindow(target: number | 'bottom'): void {
-  window.scrollTo(0, target === 'bottom' ? document.documentElement.scrollHeight : target);
-}
-
-function finishAnimations(): void {
-  for (const animation of document.getAnimations()) {
-    try {
-      animation.finish();
-    } catch {
-      animation.cancel();
-    }
-  }
-}
 
 /** Reads the width and height of a PNG out of its header. */
 export function getPngSize(png: Buffer): { width: number; height: number } {

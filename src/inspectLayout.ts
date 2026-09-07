@@ -30,13 +30,15 @@ export type InspectOptions = {
   colors?: boolean;
   /** Mark the elements matching this css selector. The caller then prints only those. */
   selector?: string;
+  /** How far the page was scrolled down before the walk. Defaults to what the window says. */
+  scrolledTo?: number;
 };
 
 /**
  * Runs inside the page. Everything it needs lives inside the function body
  * because Playwright serializes it as source text.
  */
-export function inspectLayout({ walkShadowRoots, httpStatus, colors = false, selector }: InspectOptions): LayoutReport {
+export function inspectLayout({ walkShadowRoots, httpStatus, colors = false, selector, scrolledTo }: InspectOptions): LayoutReport {
   const tolerance = 1;
   const nearlyCenteredThreshold = 8;
   const freeSpaceThreshold = 8;
@@ -2939,7 +2941,8 @@ export function inspectLayout({ walkShadowRoots, httpStatus, colors = false, sel
   const status = isErrorStatus ? `, status ${httpStatus}` : '';
 
   const pageSize = `page ${pageWidth}x${pageHeight}, painted to ${paintedTo}`;
-  const viewportSize = `viewport ${window.innerWidth}x${window.innerHeight}, scroll ${round(window.scrollY)}`;
+  // A page that scrolls inside a box leaves the window at 0, so the caller says how far it scrolled.
+  const viewportSize = `viewport ${window.innerWidth}x${window.innerHeight}, scroll ${round(scrolledTo ?? window.scrollY)}`;
   // Which physical side start is on. Nothing then has to remember what rtl does to the inline axis.
   const direction = isPageRtl ? 'rtl, start is right' : 'ltr, start is left';
   // What the page itself answers. A dark mode measured in light then shows on the first line.

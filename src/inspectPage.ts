@@ -532,12 +532,57 @@ export async function loadPage(page: Page, url: string, timeout: number): Promis
   }
 }
 
-function scrollWindow(target: number | 'bottom'): void {
-  window.scrollTo(0, target === 'bottom' ? document.documentElement.scrollHeight : target);
+/**
+ * Scrolls the page down and returns how far it got. Runs inside the page, so it carries everything
+ * it needs. Instant, since `scroll-behavior: smooth` would still be animating when the page is
+ * measured.
+ */
+export async function scrollWindow(target: number | 'bottom'): Promise<number> {
+  // Most pages scroll the document itself. An app shell scrolls a box inside it, and then the
+  // window never moves however far you ask it to. Take the box with the most to scroll.
+  // Asking for 0 asks for the page as it loads, so a chat that scrolled itself to the newest
+  // message is left where it is.
+  const documentScroller = document.scrollingElement ?? document.documentElement;
+  let scroller = documentScroller;
+
+  if (target !== 0 && documentScroller.scrollHeight <= documentScroller.clientHeight) {
+    let widestScrollableRoom = 0;
+
+    for (const candidate of document.querySelectorAll('*')) {
+      const room = candidate.scrollHeight - candidate.clientHeight;
+      if (room <= widestScrollableRoom) continue;
+
+      const overflow = getComputedStyle(candidate).overflowY;
+      const isScrollable = overflow === 'auto' || overflow === 'scroll';
+      if (!isScrollable) continue;
+
+      widestScrollableRoom = room;
+      scroller = candidate;
+    }
+  }
+
+  const top = target === 'bottom' ? scroller.scrollHeight : target;
+  scroller.scrollTo({ top, behavior: 'instant' });
+
+  // An animation driven by scrolling moves on the next frame. Reading the page before that frame
+  // shows it as it was before the scroll.
+  await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+
+  return scroller.scrollTop;
 }
 
-function finishAnimations(): void {
+/**
+ * Finishes every animation that runs on time, so nothing is measured half way through a transition.
+ * Runs inside the page.
+ */
+export function finishAnimations(): void {
   for (const animation of document.getAnimations()) {
+    // An animation tied to scrolling is already where the scroll put it. Finishing one jumps it to
+    // its end state, and a page whose cards pile up as you scroll then reads the same at every
+    // offset.
+    const isScrollDriven = animation.timeline !== document.timeline;
+    if (isScrollDriven) continue;
+
     try {
       animation.finish();
     } catch {
@@ -656,13 +701,13 @@ export async function inspectPage(options: InspectPageOptions): Promise<string> 
         const { httpStatus, failure } = await loadPage(page, url, timeout);
         if (failure) return `${loadFailurePrefix}load ${target}: ${failure}`;
 
-        await page.evaluate(scrollWindow, scroll);
+        const scrolledTo = await page.evaluate(scrollWindow, scroll);
         await page.evaluate(finishAnimations);
         await page.evaluate(() => document.fonts.ready);
 
         // The walk runs in the page and a page with thousands of siblings can take minutes. Give it
         // the same ceiling the load got, so one call cannot hang for ever.
-        const walk = page.evaluate(inspectLayout, { walkShadowRoots: shadow, httpStatus, colors, selector });
+        const walk = page.evaluate(inspectLayout, { walkShadowRoots: shadow, httpStatus, colors, selector, scrolledTo });
         let giveUpTimer: ReturnType<typeof setTimeout> | undefined;
         const gaveUp = new Promise<null>((resolve) => {
           giveUpTimer = setTimeout(() => resolve(null), timeout);
