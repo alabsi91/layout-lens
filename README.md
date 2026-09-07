@@ -21,13 +21,13 @@ It is an MCP server over stdio, so it goes anywhere MCP goes.
 Claude Code:
 
 ```
-claude mcp add -s user layout-lens -- npx --yes --package=layout-lens layout-lens-mcp
+claude mcp add -s user layout-lens -- npx --yes --package=layout-lens@latest layout-lens-mcp
 ```
 
 Codex:
 
 ```
-codex mcp add layout-lens -- npx --yes --package=layout-lens layout-lens-mcp
+codex mcp add layout-lens -- npx --yes --package=layout-lens@latest layout-lens-mcp
 ```
 
 Cursor, Windsurf, Zed, Continue and anything else that reads the JSON form:
@@ -37,7 +37,7 @@ Cursor, Windsurf, Zed, Continue and anything else that reads the JSON form:
   "mcpServers": {
     "layout-lens": {
       "command": "npx",
-      "args": ["--yes", "--package=layout-lens", "layout-lens-mcp"]
+      "args": ["--yes", "--package=layout-lens@latest", "layout-lens-mcp"]
     }
   }
 }
@@ -48,7 +48,7 @@ Codex keeps the same thing as TOML in `~/.codex/config.toml`, if you would rathe
 ```toml
 [mcp_servers.layout-lens]
 command = "npx"
-args = ["--yes", "--package=layout-lens", "layout-lens-mcp"]
+args = ["--yes", "--package=layout-lens@latest", "layout-lens-mcp"]
 ```
 
 Chromium is a separate download that Playwright does once. Nothing runs without it:
